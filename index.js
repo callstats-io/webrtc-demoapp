@@ -29,21 +29,30 @@ if (process.env.SSL == 'true') {
 		server.listen(process.env.port);
 }
 var io = socketIO.listen(server);
-
 console.log("IO created");
-
 
 // functionality
 io.sockets.on('connection', function (socket){
 
-  socket.on('join', function () {
-		socket.broadcast.emit('join', 'new user');
-		// for a real app, would be room only (not broadcast)
-		//socket.broadcast.to('game').emit('message', 'nice game');
+  socket.on('join', function (room) {
+    var from = socket.id;
+    console.log(from, 'joins', room);
+    socket.room = room;
+    socket.join(room);
+		socket.broadcast.to(room).emit('join', from);
   });
 
   socket.on('leave', function () {
-		socket.broadcast.emit('leave', 'user left');
+    var from = socket.id;
+    var room = socket.room;
+    console.log(from, 'leaves', room);
+		socket.broadcast.to(room).emit('leave', from);
+    socket.leave(room);
+  });
+
+  socket.on('message', function(userId, message) {
+    var from = socket.id;
+    socket.to(userId).emit('message', from, message);
   });
 
 });
