@@ -1,0 +1,23 @@
+{
+  "name": "webrtc-demoapp",
+  "version": "1.0.0",
+  "description": "webrtc sample app written from scratch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webrtc"
+  ],
+  "author": "lennart",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "devDependencies": {}
+}
