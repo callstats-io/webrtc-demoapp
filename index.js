@@ -35,8 +35,7 @@ console.log("IO created");
 io.sockets.on('connection', function (socket){
 
   socket.on('join', function (room) {
-    if (socket.room)
-      leaveRoom(socket);
+    leaveRoom(socket);
 
     var id = socket.id;
     console.log(id, 'joins', room);
@@ -45,9 +44,6 @@ io.sockets.on('connection', function (socket){
 		socket.broadcast.to(room).emit('join', id);
   });
 
-  socket.on('leave', function () {
-    leaveRoom(socket);
-  });
   socket.on('disconnect', function() {
     leaveRoom(socket);
   });
@@ -60,6 +56,9 @@ io.sockets.on('connection', function (socket){
 });
 
 function leaveRoom(socket) {
+  if (!socket.room)
+    return;
+
   var id = socket.id;
   var room = socket.room;
   console.log(id, 'leaves', room);
