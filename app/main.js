@@ -1,6 +1,3 @@
-// parts borrowed from
-// https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/multiple/js/main.js
-
 
 // HTTP elements
 var startButton   = document.getElementById('startButton');
@@ -53,13 +50,18 @@ function gotStream(stream) {
  */
 function call() {
   console.log('Starting call');
-  callButton.disabled = true;
+  callButton.disabled   = true;
+  roomInput.disabled    = true;
   hangupButton.disabled = false;
 
   // annouce your presence
-  // TODO second click on callButton seems to stop here?
   socket = io.connect();
   socket.on('connect', function(data) {
+    room = roomInput.value;
+    console.log('joining', room);
+    socket.emit('join', room);
+  });
+  socket.on('reconnect', function(data) {
     room = roomInput.value;
     console.log('joining', room);
     socket.emit('join', room);
@@ -101,5 +103,6 @@ function hangup() {
   //TODO how to stop the local media?
 
   hangupButton.disabled = true;
-  callButton.disabled = false;
+  roomInput.disabled    = false;
+  callButton.disabled   = false;
 }
