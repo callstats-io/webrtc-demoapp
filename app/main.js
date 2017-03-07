@@ -24,7 +24,7 @@ function start() {
  */
 function call(room) {
   console.log('Starting call');
-  signallingStart(room);
+  signalling.start(room);
 }
 
 /**
@@ -32,8 +32,7 @@ function call(room) {
  */
 function hangup() {
   console.log('Ending call');
-  signallingStop();
-
+  signalling.stop();
   stopCalls();
 
   //TODO how to stop the local media?

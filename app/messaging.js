@@ -2,6 +2,12 @@
 var pcs = {};
 var servers;
 
+var signalling = new Signalling();
+signalling.setCallbackUserJoin(messagingUserJoin); // param: userId
+signalling.setCallbackUserLeave(messagingUserLeave); // param: userId
+signalling.setCallbackUserMessage(messagingUserMessage); // param: userId, msg
+var sendMessage = signalling.send; // param: to, msg
+
 /**
  * A new user joins, send your details
  */
@@ -52,7 +58,7 @@ function onIceCandidate(pc, e) {
     // send ICE candidate
     var json = {"ice": e.candidate};
     var str  = JSON.stringify(json);
-    signallingSend(userId, str);
+    sendMessage(userId, str);
   }
 }
 
@@ -63,7 +69,7 @@ function onCreateOfferSuccess(pc, e) {
   // send offer
   var json = {"offer": e};
   var str  = JSON.stringify(json);
-  signallingSend(userId, str);
+  sendMessage(userId, str);
 }
 
 /**
