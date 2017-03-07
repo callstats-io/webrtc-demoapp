@@ -18,6 +18,7 @@ function messagingUserJoin(userId) {
       onCreateOfferSuccess(pc, e);
     });
 }
+
 function createPC(userId) {
   var pc = new RTCPeerConnection(servers);
   pcs[userId] = pc;
@@ -38,10 +39,12 @@ function createPC(userId) {
 
   return pc;
 }
+
 function gotRemoteStream(pc, e) {
   console.log(pc.userId, 'received remote stream');
   addRemoteVideo(pc.userId, e.stream);
 }
+
 function onIceCandidate(pc, e) {
   if (e.candidate) {
     var userId = pc.userId;
@@ -52,6 +55,7 @@ function onIceCandidate(pc, e) {
     signallingSend(userId, str);
   }
 }
+
 function onCreateOfferSuccess(pc, e) {
   var userId = pc.userId;
   pc.setLocalDescription(e);
@@ -68,8 +72,10 @@ function onCreateOfferSuccess(pc, e) {
 function messagingUserLeave(userId) {
   removeRemoteVideo(userId);
 
-  pcs[userId].close();
-  delete pcs[userId];
+  if (pcs[userId]) {
+    pcs[userId].close();
+    delete pcs[userId];
+  }
 }
 
 /**
@@ -96,25 +102,27 @@ function messagingUserMessage(userId, message) {
   }
   if (json.offer) {
     var l = new RTCSessionDescription(json.offer);
-    pc.setRemoteDescription(l);
-
-    if (pc.remoteDescription.type == "offer") {
-      pc.createAnswer().then(
-        function(e) {
-          console.log(userId, 'send answer');
-          onCreateOfferSuccess(pc, e);
-        });
-      console.log(userId, 'offer received');
-    } else { console.log(userId, 'answer received'); }
+    pc.setRemoteDescription(l)
+    .then(
+      function() {
+        if (pc.remoteDescription.type == "offer") {
+          pc.createAnswer().then(
+            function(e) {
+              console.log(userId, 'send answer');
+              onCreateOfferSuccess(pc, e);
+            });
+          console.log(userId, 'offer received');
+        } else { console.log(userId, 'answer received'); }
+      });
   }
 }
 
 function onAddIceCandidateSuccess(pc) {
- console.log(pc.userId, 'addIceCandidate success');
+  console.log(pc.userId, 'addIceCandidate success');
 }
 
 function onAddIceCandidateError(pc, error) {
- console.log(pc.userId, 'failed to add ICE Candidate: ' + error.toString());
+  console.log(pc.userId, 'failed to add ICE Candidate: ' + error.toString());
 }
 
 /**
