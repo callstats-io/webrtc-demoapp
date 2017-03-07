@@ -1,39 +1,54 @@
 
-/**
- * Initialize (local media)
- */
-function start() {
-  console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
-  .then(function (stream) {
-    console.log('Received local stream');
-    localVideo.srcObject = stream;
-    window.localStream = stream;
-  })
-  .catch(function(e) {
-    console.log('getUserMedia() error: ', e);
-  });
+// HTTP elements
+var startButton   = document.getElementById('startButton');
+var callButton    = document.getElementById('callButton');
+var hangupButton  = document.getElementById('hangupButton');
+var roomInput     = document.getElementById('roomInput');
+var localVideo    = document.getElementById('localVideo');
+
+// startup settings
+callButton.disabled   = true;
+hangupButton.disabled = true;
+
+// assign functions
+startButton.onclick   = function() {
+  startButton.disabled = true;
+  callButton.disabled = false;
+  start();
+};
+
+callButton.onclick    = function() {
+  callButton.disabled   = true;
+  roomInput.disabled    = true;
+  hangupButton.disabled = false;
+  call(roomInput.value);
+};
+
+hangupButton.onclick  = function() {
+  hangupButton.disabled = true;
+  roomInput.disabled    = false;
+  callButton.disabled   = false;
+  hangup();
 }
 
+// handle incoming video
+function addRemoteVideo(userId,stream) {
+  var v;
+  if ((v = document.getElementById(userId)) === null) {
+    v = document.createElement("video");
+    v.id = userId;
+    v.width = 320;
+    v.height = 240;
+    v.autoplay = true;
 
-/**
- * Start the webRTC context
- */
-function call(room) {
-  console.log('Starting call');
-  signalling.start(room);
+    document.getElementById("remoteVideos").append(v);
+  }
+  v.srcObject = stream;
 }
 
-/**
- * Turn down the webRTC context
- */
-function hangup() {
-  console.log('Ending call');
-  signalling.stop();
-  stopCalls();
-
-  //TODO how to stop the local media?
+function removeRemoteVideo(userId) {
+  var v;
+  if (v = document.getElementById(userId)) {
+    document.getElementById(userId).remove();
+  }
 }
