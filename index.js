@@ -35,24 +35,34 @@ console.log("IO created");
 io.sockets.on('connection', function (socket){
 
   socket.on('join', function (room) {
-    var from = socket.id;
-    console.log(from, 'joins', room);
-    socket.room = room;
+    leaveRoom(socket);
+
+    var id = socket.id;
+    console.log(id, 'joins', room);
     socket.join(room);
-		socket.broadcast.to(room).emit('join', from);
+    socket.room = room;
+		socket.broadcast.to(room).emit('join', id);
   });
 
-  socket.on('leave', function () {
-    var from = socket.id;
-    var room = socket.room;
-    console.log(from, 'leaves', room);
-		socket.broadcast.to(room).emit('leave', from);
-    socket.leave(room);
+  socket.on('disconnect', function() {
+    leaveRoom(socket);
   });
 
-  socket.on('message', function(userId, message) {
+  socket.on('message', function(to, message) {
     var from = socket.id;
-    socket.to(userId).emit('message', from, message);
+    socket.to(to).emit('message', from, message);
   });
 
 });
+
+function leaveRoom(socket) {
+  if (!socket.room)
+    return;
+
+  var id = socket.id;
+  var room = socket.room;
+  console.log(id, 'leaves', room);
+  socket.broadcast.to(room).emit('leave', id);
+  socket.leave(room);
+  socket.room = null;
+}

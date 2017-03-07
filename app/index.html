@@ -1,5 +1,3 @@
-<!-- parts borrowed from
-  https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/multiple/index.html-->
 
 <html>
 
@@ -17,11 +15,69 @@
     </div>
 
     <video id="localVideo" width="320" height="240" autoplay muted></video>
+    <div id="remoteVideos"></div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.js"></script>
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="signalling.js"></script>
+
+  <script src="messaging.js"></script>
+
   <script src="main.js"></script>
+
+  <script>
+    // HTTP elements
+    var startButton   = document.getElementById('startButton');
+    var callButton    = document.getElementById('callButton');
+    var hangupButton  = document.getElementById('hangupButton');
+    var roomInput     = document.getElementById('roomInput');
+    var localVideo    = document.getElementById('localVideo');
+
+    // startup settings
+    callButton.disabled   = true;
+    hangupButton.disabled = true;
+
+    // assign functions
+    startButton.onclick   = function() {
+      startButton.disabled = true;
+      callButton.disabled = false;
+      start();
+    };
+    callButton.onclick    = function() {
+      callButton.disabled   = true;
+      roomInput.disabled    = true;
+      hangupButton.disabled = false;
+      call(roomInput.value);
+    };
+    hangupButton.onclick  = function() {
+      hangupButton.disabled = true;
+      roomInput.disabled    = false;
+      callButton.disabled   = false;
+      hangup();
+    }
+
+    function addRemoteVideo(userId,stream) {
+      var v;
+      if ((v = document.getElementById(userId)) === null) {
+        v = document.createElement("video");
+        v.id = userId;
+        v.width = 320;
+        v.height = 240;
+        v.autoplay = true;
+
+        document.getElementById("remoteVideos").append(v);
+      }
+      v.srcObject = stream;
+    }
+    function removeRemoteVideo(userId) {
+      var v;
+      if (v = document.getElementById(userId)) {
+        document.getElementById(userId).remove();
+      }
+    }
+  </script>
 </body>
 
 </html>
