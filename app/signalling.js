@@ -8,21 +8,20 @@ function signallingStart(room) {
   // annouce your presence
   socket = io.connect();
   socket.on('connect', function(data) {
-    console.log('joining', room);
+    console.log('Joining', room);
     socket.emit('join', room);
   });
 
   // hear from others
   socket.on('join', function(userId) {
-    console.log('user joining:', userId);
+    console.log(userId, 'user joining');
     messagingUserJoin(userId);
   });
   socket.on('leave', function(userId) {
-    console.log('user leaving:', userId);
+    console.log(userId, 'user leaving');
     messagingUserLeave(userId);
   });
   socket.on('message', function(userId, message) {
-    //console.log(userId + ': ' + message);
     messagingUserMessage(userId, message);
   });
 }

@@ -9,12 +9,12 @@ function messagingUserJoin(userId) {
   // init webRTC
   var pc = createPC(userId);
 
-  console.log('createOffer start for', userId);
   pc.createOffer({
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 1
   }).then(
     function(e) {
+      console.log(userId, 'send offer');
       onCreateOfferSuccess(pc, e);
     });
 }
@@ -23,12 +23,14 @@ function createPC(userId) {
   pcs[userId] = pc;
   pc.userId = userId;
 
-  console.log('Created new peer connection for', userId);
+  console.log(userId, 'new peer connection');
   pc.onicecandidate = function(e) {
     onIceCandidate(pc, e);
   };
+
+  // TODO addStream, onAddStream deprecated, use tracks
   pc.addStream(window.localStream);
-  console.log('Added local stream to pc for', userId);
+  console.log(userId, 'added local stream');
 
   pc.onaddstream = function(e) {
     gotRemoteStream(pc, e);
@@ -41,32 +43,21 @@ function gotRemoteStream(pc, e) {
   addRemoteVideo(pc.userId, e.stream);
 }
 function onIceCandidate(pc, e) {
-  var userId = pc.userId;
-  //console.log(userId, 'ICE candidate: \n' + (e.candidate ?
-  //    e.candidate.candidate : '(null)'));
+  if (e.candidate) {
+    var userId = pc.userId;
 
-  // send ICE candidate
-  var json = {"ice": e.candidate};
-  var str  = JSON.stringify(json);
-  signallingSend(userId, str);
+    // send ICE candidate
+    var json = {"ice": e.candidate};
+    var str  = JSON.stringify(json);
+    signallingSend(userId, str);
+  }
 }
 function onCreateOfferSuccess(pc, e) {
   var userId = pc.userId;
-  //console.log(userId, 'Send '+type+':', e.sdp);
   pc.setLocalDescription(e);
 
   // send offer
   var json = {"offer": e};
-  var str  = JSON.stringify(json);
-  signallingSend(userId, str);
-}
-function onCreateAnswerSuccess(pc, e) {
-  var userId = pc.userId;
-  //console.log(userId, 'Send '+type+':', e.sdp);
-  pc.setLocalDescription(e);
-
-  // send offer
-  var json = {"answer": e};
   var str  = JSON.stringify(json);
   signallingSend(userId, str);
 }
@@ -93,9 +84,7 @@ function messagingUserMessage(userId, message) {
   }
 
   var json = JSON.parse(message);
-  console.log(json);
   if (json.ice) {
-    console.log(json.ice);
     pc.addIceCandidate(new RTCIceCandidate(json.ice))
     .then(
       function() {
@@ -108,17 +97,15 @@ function messagingUserMessage(userId, message) {
   if (json.offer) {
     var l = new RTCSessionDescription(json.offer);
     pc.setRemoteDescription(l);
-    console.log(userId, 'createAnswer start');
 
-    pc.createAnswer().then(
-      function(e) {
-        onCreateAnswerSuccess(pc, e);
-      }
-    );
-  }
-  if (json.answer) {
-    var l = new RTCSessionDescription(json.answer);
-    pc.setRemoteDescription(l);
+    if (pc.remoteDescription.type == "offer") {
+      pc.createAnswer().then(
+        function(e) {
+          console.log(userId, 'send answer');
+          onCreateOfferSuccess(pc, e);
+        });
+      console.log(userId, 'offer received');
+    } else { console.log(userId, 'answer received'); }
   }
 }
 
@@ -130,12 +117,12 @@ function onAddIceCandidateError(pc, error) {
  console.log(pc.userId, 'failed to add ICE Candidate: ' + error.toString());
 }
 
-
-
+/**
+ * Stop all ongoing calls
+ */
 function stopCalls() {
-  console.log("PCs:", pcs);
   for (var userId in pcs) {
-    console.log("Remove", userId);
+    console.log(userId, "remove");
     messagingUserLeave(userId);
   }
   console.log("PCs:", pcs);

@@ -18,11 +18,12 @@
     <div id="remoteVideos"></div>
   </div>
 
-
-  <script src="messaging.js"></script>
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="signalling.js"></script>
+
+  <script src="messaging.js"></script>
 
   <script src="main.js"></script>
 
@@ -32,7 +33,7 @@
     var callButton    = document.getElementById('callButton');
     var hangupButton  = document.getElementById('hangupButton');
     var roomInput     = document.getElementById('roomInput');
-    var localVideo    = document.querySelector('video#localVideo');
+    var localVideo    = document.getElementById('localVideo');
 
     // startup settings
     callButton.disabled   = true;
@@ -58,19 +59,23 @@
     }
 
     function addRemoteVideo(userId,stream) {
-      var v = document.createElement("video");
-      v.srcObject = stream;
-      v.id = userId;
-      v.width = 320;
-      v.height = 240;
-      v.autoplay = true;
+      var v;
+      if ((v = document.getElementById(userId)) === null) {
+        v = document.createElement("video");
+        v.id = userId;
+        v.width = 320;
+        v.height = 240;
+        v.autoplay = true;
 
-      document.getElementById("remoteVideos").append(v);
+        document.getElementById("remoteVideos").append(v);
+      }
+      v.srcObject = stream;
     }
     function removeRemoteVideo(userId) {
-      //var v = document.getElementById(userId);
-      //document.getElementById("remoteVideos").removeChild(v);
-      document.getElementById(userId).remove();
+      var v;
+      if (v = document.getElementById(userId)) {
+        document.getElementById(userId).remove();
+      }
     }
   </script>
 </body>
