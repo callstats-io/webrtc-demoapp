@@ -14,8 +14,8 @@ $ npm install
   ```
 3. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (ca.crt, server.crt, server.key)
 4. Run the app:
-  ```npm start```
+  ```port=8081 npm start```
 or
-  ```SSL=true npm start```
+  ```SSL=true portSSL=4440 npm start```
 
   Try the app locally by opening https://localhost:4440/.
