@@ -46,6 +46,12 @@ hangupButton.onclick = function() {
   hangup();
 };
 
+
+document.addEventListener('addRemoteVideo',
+    function(e) {
+      addRemoteVideo(e.detail.userId, e.detail.stream);
+    },
+    false);
 // handle incoming video
 function addRemoteVideo(userId,stream) {
   var v;
@@ -60,7 +66,11 @@ function addRemoteVideo(userId,stream) {
   }
   v.srcObject = stream;
 }
-
+document.addEventListener('removeRemoteVideo',
+    function(e) {
+      removeRemoteVideo(e.detail.userId);
+    },
+    false);
 function removeRemoteVideo(userId) {
   var v = document.getElementById(userId);
   if (v !== null) {

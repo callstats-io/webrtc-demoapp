@@ -1,23 +1,23 @@
+/**
+ * Callbacks: events for userJoin, userLeave, userMessage
+ * Functions: send a message on event sendMessage
+ */
+
 'use strict';
 
-class csioSignalling {
+function triggerEvent(name, detail) {
+  var newEvent = new CustomEvent(name, {'detail': detail});
+  document.dispatchEvent(newEvent);
+}
+
+class CsioSignalling {
   constructor() {
     this.socket = null;
-    this.callbackUserJoin = function(userId) {};
-    this.callbackUserLeave = function(userId) {};
-    this.callbackUserMessage = function(userId, message) {};
-  }
-
-  setCallbackUserJoin(func) {
-    this.callbackUserJoin = func;
-  }
-
-  setCallbackUserLeave(func) {
-    this.callbackUserLeave = func;
-  }
-
-  setCallbackUserMessage(func) {
-    this.callbackUserMessage = func;
+    document.addEventListener('sendMessage',
+        function(e) {
+          this.send(e.detail.userId, e.detail.message);
+        }.bind(this),
+        false);
   }
 
   /**
@@ -27,6 +27,7 @@ class csioSignalling {
   start(room) {
     // annouce your presence
     this.socket = io.connect();
+
     this.socket.on('connect', function(data) {
       console.log('Joining', room);
       this.emit('join', room);
@@ -35,14 +36,16 @@ class csioSignalling {
     // hear from others
     this.socket.on('join', function(userId) {
       console.log(userId, 'user joining');
-      this.callbackUserJoin(userId);
+      triggerEvent('userJoin', {'userId': userId});
     }.bind(this));
+
     this.socket.on('leave', function(userId) {
       console.log(userId, 'user leaving');
-      this.callbackUserLeave(userId);
+      triggerEvent('userLeave', {'userId': userId});
     }.bind(this));
+
     this.socket.on('message', function(userId, message) {
-      this.callbackUserMessage(userId, message);
+      triggerEvent('userMessage', {'userId': userId, 'message': message});
     }.bind(this));
   }
 

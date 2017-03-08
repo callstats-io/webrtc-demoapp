@@ -1,12 +1,12 @@
+/**
+ * Callbacks: events for sendMessage, addRemoteVideo
+ */
+
 'use strict';
 
 var servers;
-var csioPeerConnectionSettings = {
-  send: function(to, msg) {},
-  //addRemoteVideo: function(userId, stream) {},
-};
 
-class csioPeerConnection {
+class CsioPeerConnection {
   constructor(userId) {
     this.userId = userId;
 
@@ -71,7 +71,8 @@ class csioPeerConnection {
   // callback functions
   onRemoteStream(e) {
     console.log(this.userId, 'received remote stream');
-    addRemoteVideo(this.userId, e.stream);
+    triggerEvent('addRemoteVideo',
+        {'userId': this.userId, 'stream': e.stream});
   }
 
   onAddIceCandidateSuccess() {
@@ -89,7 +90,7 @@ class csioPeerConnection {
       var json = {'ice': e.candidate};
       var str = JSON.stringify(json);
       console.log(this.userId, 'sending ICE');
-      csioPeerConnectionSettings.send(this.userId, str);
+      triggerEvent('sendMessage', {'userId': this.userId, 'message': str});
     }
   }
 
@@ -99,6 +100,6 @@ class csioPeerConnection {
     // send offer
     var json = {'offer': e};
     var str = JSON.stringify(json);
-    csioPeerConnectionSettings.send(this.userId, str);
+    triggerEvent('sendMessage', {'userId': this.userId, 'message': str});
   }
 }

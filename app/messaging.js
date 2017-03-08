@@ -2,13 +2,22 @@
 
 var pcs = {};
 
-var signalling = new csioSignalling();
-signalling.setCallbackUserJoin(messagingUserJoin); // param: userId
-signalling.setCallbackUserLeave(messagingUserLeave); // param: userId
-signalling.setCallbackUserMessage(messagingUserMessage); // param: userId, msg
-
-csioPeerConnectionSettings.send = signalling.send.bind(signalling);
-// csioPeerConnectionSettings.addRemoteVideo = addRemoteVideo;
+var signalling = new CsioSignalling();
+document.addEventListener('userJoin',
+    function(e) {
+      messagingUserJoin(e.detail.userId);
+    },
+    false);
+document.addEventListener('userLeave',
+    function(e) {
+      messagingUserLeave(e.detail.userId);
+    },
+    false);
+document.addEventListener('userMessage',
+    function(e) {
+      messagingUserMessage(e.detail.userId, e.detail.message);
+    },
+    false);
 
 /**
  * Start the webRTC context
@@ -40,7 +49,7 @@ function hangup() {
  */
 function messagingUserJoin(userId) {
   // init webRTC
-  var pc = new csioPeerConnection(userId);
+  var pc = new CsioPeerConnection(userId);
   pcs[userId] = pc;
   pc.createOffer();
 }
@@ -49,7 +58,7 @@ function messagingUserJoin(userId) {
  * A user leaves, turn down local user associated content
  */
 function messagingUserLeave(userId) {
-  removeRemoteVideo(userId);
+  triggerEvent('removeRemoteVideo', {'userId': userId});
 
   if (pcs[userId]) {
     pcs[userId].close();
@@ -65,7 +74,7 @@ function messagingUserMessage(userId, message) {
   if (pcs[userId]) {
     pc = pcs[userId];
   } else {
-    pc = new csioPeerConnection(userId);
+    pc = new CsioPeerConnection(userId);
     pcs[userId] = pc;
   }
 
