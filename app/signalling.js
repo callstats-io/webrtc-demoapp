@@ -1,48 +1,49 @@
+'use strict';
 
-class Signalling {
+class csioSignalling {
   constructor() {
-    self = this;
-    self.socket = null;
-    self.callbackUserJoin = function(userId) {};
-    self.callbackUserLeave = function(userId) {};
-    self.callbackUserMessage = function(userId, message) {};
+    this.socket = null;
+    this.callbackUserJoin = function(userId) {};
+    this.callbackUserLeave = function(userId) {};
+    this.callbackUserMessage = function(userId, message) {};
   }
 
   setCallbackUserJoin(func) {
-    self.callbackUserJoin = func;
+    this.callbackUserJoin = func;
   }
 
   setCallbackUserLeave(func) {
-    self.callbackUserLeave = func;
+    this.callbackUserLeave = func;
   }
 
   setCallbackUserMessage(func) {
-    self.callbackUserMessage = func;
+    this.callbackUserMessage = func;
   }
 
   /**
-   * Open connection and set hooks for users joining, leaving and incoming message
+   * Open connection and set hooks for users joining,
+   * leaving and incoming message
    */
   start(room) {
     // annouce your presence
-    self.socket = io.connect();
-    self.socket.on('connect', function(data) {
+    this.socket = io.connect();
+    this.socket.on('connect', function(data) {
       console.log('Joining', room);
-      self.socket.emit('join', room);
+      this.emit('join', room);
     });
 
     // hear from others
-    self.socket.on('join', function(userId) {
+    this.socket.on('join', function(userId) {
       console.log(userId, 'user joining');
-      self.callbackUserJoin(userId);
-    });
-    self.socket.on('leave', function(userId) {
+      this.callbackUserJoin(userId);
+    }.bind(this));
+    this.socket.on('leave', function(userId) {
       console.log(userId, 'user leaving');
-      self.callbackUserLeave(userId);
-    });
-    self.socket.on('message', function(userId, message) {
-     self.callbackUserMessage(userId, message);
-    });
+      this.callbackUserLeave(userId);
+    }.bind(this));
+    this.socket.on('message', function(userId, message) {
+      this.callbackUserMessage(userId, message);
+    }.bind(this));
   }
 
   /**
@@ -50,13 +51,13 @@ class Signalling {
    */
   stop() {
     // server automatically tells others it's leaving
-    self.socket.disconnect();
+    this.socket.disconnect();
   }
 
   /**
    * Send a signalling message to another user
    */
   send(to, msg) {
-    self.socket.emit('message', to, msg);
+    this.socket.emit('message', to, msg);
   }
 }

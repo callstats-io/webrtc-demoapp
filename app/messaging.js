@@ -1,31 +1,14 @@
+'use strict';
 
 var pcs = {};
-var servers;
 
-var signalling = new Signalling();
+var signalling = new csioSignalling();
 signalling.setCallbackUserJoin(messagingUserJoin); // param: userId
 signalling.setCallbackUserLeave(messagingUserLeave); // param: userId
 signalling.setCallbackUserMessage(messagingUserMessage); // param: userId, msg
-var sendMessage = signalling.send; // param: to, msg
 
-/**
- * Initialize (local media)
- */
-function start() {
-  console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
-  .then(function (stream) {
-    console.log('Received local stream');
-    localVideo.srcObject = stream;
-    window.localStream = stream;
-  })
-  .catch(function(e) {
-    console.log('getUserMedia() error: ', e);
-  });
-}
+csioPeerConnectionSettings.send = signalling.send.bind(signalling);
+// csioPeerConnectionSettings.addRemoteVideo = addRemoteVideo;
 
 /**
  * Start the webRTC context
@@ -41,9 +24,15 @@ function call(room) {
 function hangup() {
   console.log('Ending call');
   signalling.stop();
-  stopCalls();
 
-  //TODO how to stop the local media?
+  // Stop all ongoing calls
+  for (var userId in pcs) {
+    console.log(userId, 'remove');
+    messagingUserLeave(userId);
+  }
+  console.log('PCs:', pcs);
+
+  // TODO how to stop the local media?
 }
 
 /**
@@ -51,63 +40,9 @@ function hangup() {
  */
 function messagingUserJoin(userId) {
   // init webRTC
-  var pc = createPC(userId);
-
-  pc.createOffer({
-    offerToReceiveAudio: 1,
-    offerToReceiveVideo: 1
-  }).then(
-    function(e) {
-      console.log(userId, 'send offer');
-      onCreateOfferSuccess(pc, e);
-    });
-}
-
-function createPC(userId) {
-  var pc = new RTCPeerConnection(servers);
+  var pc = new csioPeerConnection(userId);
   pcs[userId] = pc;
-  pc.userId = userId;
-
-  console.log(userId, 'new peer connection');
-  pc.onicecandidate = function(e) {
-    onIceCandidate(pc, e);
-  };
-
-  // TODO addStream, onAddStream deprecated, use tracks
-  pc.addStream(window.localStream);
-  console.log(userId, 'added local stream');
-
-  pc.onaddstream = function(e) {
-    gotRemoteStream(pc, e);
-  };
-
-  return pc;
-}
-
-function gotRemoteStream(pc, e) {
-  console.log(pc.userId, 'received remote stream');
-  addRemoteVideo(pc.userId, e.stream);
-}
-
-function onIceCandidate(pc, e) {
-  if (e.candidate) {
-    var userId = pc.userId;
-
-    // send ICE candidate
-    var json = {"ice": e.candidate};
-    var str  = JSON.stringify(json);
-    sendMessage(userId, str);
-  }
-}
-
-function onCreateOfferSuccess(pc, e) {
-  var userId = pc.userId;
-  pc.setLocalDescription(e);
-
-  // send offer
-  var json = {"offer": e};
-  var str  = JSON.stringify(json);
-  sendMessage(userId, str);
+  pc.createOffer();
 }
 
 /**
@@ -130,52 +65,15 @@ function messagingUserMessage(userId, message) {
   if (pcs[userId]) {
     pc = pcs[userId];
   } else {
-    pc = createPC(userId);
+    pc = new csioPeerConnection(userId);
+    pcs[userId] = pc;
   }
 
   var json = JSON.parse(message);
   if (json.ice) {
-    pc.addIceCandidate(new RTCIceCandidate(json.ice))
-    .then(
-      function() {
-        onAddIceCandidateSuccess(pc);
-      },
-      function(err) {
-        onAddIceCandidateError(pc, err);
-      });
+    pc.addIceCandidate(json.ice);
   }
   if (json.offer) {
-    var l = new RTCSessionDescription(json.offer);
-    pc.setRemoteDescription(l)
-    .then(
-      function() {
-        if (pc.remoteDescription.type == "offer") {
-          pc.createAnswer().then(
-            function(e) {
-              console.log(userId, 'send answer');
-              onCreateOfferSuccess(pc, e);
-            });
-          console.log(userId, 'offer received');
-        } else { console.log(userId, 'answer received'); }
-      });
+    pc.setRemoteDescription(json.offer);
   }
-}
-
-function onAddIceCandidateSuccess(pc) {
-  console.log(pc.userId, 'addIceCandidate success');
-}
-
-function onAddIceCandidateError(pc, error) {
-  console.log(pc.userId, 'failed to add ICE Candidate: ' + error.toString());
-}
-
-/**
- * Stop all ongoing calls
- */
-function stopCalls() {
-  for (var userId in pcs) {
-    console.log(userId, "remove");
-    messagingUserLeave(userId);
-  }
-  console.log("PCs:", pcs);
 }
