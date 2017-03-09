@@ -17,9 +17,11 @@
   },
   "private": true,
   "devDependencies": {
+    "browserify": "^14.1.0",
     "eslint": "^3.17.1",
     "eslint-config-webrtc": "^1.0.0",
     "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0"
   }

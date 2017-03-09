@@ -7,13 +7,18 @@ Get started:
 
 1. Install node.js if not installed (https://nodejs.org/en/download/)
 2. Clone and install
-```bash
+```
+bash
 $ https://github.com/callstats-io/webrtc-demoapp.git
 $ cd webrtc-demoapp/
 $ npm install
-  ```
-3. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (ca.crt, server.crt, server.key)
-4. Run the app:
+```
+3. Generate the library
+```
+npm build
+```
+4. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (ca.crt, server.crt, server.key)
+5. Run the app
   ```port=8081 npm start```
 or
   ```SSL=true portSSL=4440 npm start```

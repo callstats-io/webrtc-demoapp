@@ -4,7 +4,19 @@ module.exports = function(grunt) {
       options: {
         configFile: '.eslintrc',
       },
-      target: ['app/*.js']
+      target: ['library/*.js', 'app/*.js']
+    },
+    browserify: {
+      standalone: {
+        src: ['library/main.js'],
+        dest: 'app/library.js'
+      },
+      options: {
+        require: [],
+        browserifyOptions: {
+          standalone: 'Library'
+        }
+      }
     },
     watch: {
       files: ['<%= eslint.target %>'],
@@ -14,5 +26,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-eslint');
-  grunt.registerTask('default', ['eslint']);
+  grunt.loadNpmTasks('grunt-browserify');
+
+  grunt.registerTask('linter', ['eslint']);
+  grunt.registerTask('build', ['browserify']);
 };

@@ -7,11 +7,14 @@ var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
+// library
+var lib = Library();
+
 // startup settings
 callButton.disabled = true;
 hangupButton.disabled = true;
 
-// assign functions
+// assign functions to buttons
 startButton.onclick = function() {
   startButton.disabled = true;
   callButton.disabled = false;
@@ -36,23 +39,23 @@ callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
-  call(roomInput.value);
+  lib.call(roomInput.value);
 };
 
 hangupButton.onclick = function() {
   hangupButton.disabled = true;
   roomInput.disabled = false;
   callButton.disabled = false;
-  hangup();
+  lib.hangup();
 };
 
 
+// handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
     function(e) {
       addRemoteVideo(e.detail.userId, e.detail.stream);
     },
     false);
-// handle incoming video
 function addRemoteVideo(userId,stream) {
   var v;
   if ((v = document.getElementById(userId)) === null) {
@@ -66,6 +69,7 @@ function addRemoteVideo(userId,stream) {
   }
   v.srcObject = stream;
 }
+
 document.addEventListener('removeRemoteVideo',
     function(e) {
       removeRemoteVideo(e.detail.userId);

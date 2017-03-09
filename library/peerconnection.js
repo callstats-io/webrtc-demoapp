@@ -4,6 +4,8 @@
 
 'use strict';
 
+var modCommon = require('./common');
+
 var servers;
 
 class CsioPeerConnection {
@@ -71,7 +73,7 @@ class CsioPeerConnection {
   // callback functions
   onRemoteStream(e) {
     console.log(this.userId, 'received remote stream');
-    triggerEvent('addRemoteVideo',
+    modCommon.triggerEvent('addRemoteVideo',
         {'userId': this.userId, 'stream': e.stream});
   }
 
@@ -90,7 +92,8 @@ class CsioPeerConnection {
       var json = {'ice': e.candidate};
       var str = JSON.stringify(json);
       console.log(this.userId, 'sending ICE');
-      triggerEvent('sendMessage', {'userId': this.userId, 'message': str});
+      modCommon.triggerEvent('sendMessage',
+          {'userId': this.userId, 'message': str});
     }
   }
 
@@ -100,6 +103,9 @@ class CsioPeerConnection {
     // send offer
     var json = {'offer': e};
     var str = JSON.stringify(json);
-    triggerEvent('sendMessage', {'userId': this.userId, 'message': str});
+    modCommon.triggerEvent('sendMessage',
+        {'userId': this.userId, 'message': str});
   }
 }
+
+module.exports.CsioPeerConnection = CsioPeerConnection;

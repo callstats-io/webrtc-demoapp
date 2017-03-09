@@ -5,10 +5,7 @@
 
 'use strict';
 
-function triggerEvent(name, detail) {
-  var newEvent = new CustomEvent(name, {'detail': detail});
-  document.dispatchEvent(newEvent);
-}
+var modCommon = require('./common');
 
 class CsioSignalling {
   constructor() {
@@ -36,16 +33,17 @@ class CsioSignalling {
     // hear from others
     this.socket.on('join', function(userId) {
       console.log(userId, 'user joining');
-      triggerEvent('userJoin', {'userId': userId});
+      modCommon.triggerEvent('userJoin', {'userId': userId});
     }.bind(this));
 
     this.socket.on('leave', function(userId) {
       console.log(userId, 'user leaving');
-      triggerEvent('userLeave', {'userId': userId});
+      modCommon.triggerEvent('userLeave', {'userId': userId});
     }.bind(this));
 
     this.socket.on('message', function(userId, message) {
-      triggerEvent('userMessage', {'userId': userId, 'message': message});
+      modCommon.triggerEvent('userMessage',
+          {'userId': userId, 'message': message});
     }.bind(this));
   }
 
@@ -64,3 +62,5 @@ class CsioSignalling {
     this.socket.emit('message', to, msg);
   }
 }
+
+module.exports.CsioSignalling = CsioSignalling;
