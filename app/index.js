@@ -1,7 +1,6 @@
 'use strict';
 
 // HTTP elements
-var startButton = document.getElementById('startButton');
 var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
@@ -14,27 +13,23 @@ var lib = new CsioWebrtcApp();
 callButton.disabled = true;
 hangupButton.disabled = true;
 
-// assign functions to buttons
-startButton.onclick = function() {
-  startButton.disabled = true;
+// Initialize (local media)
+console.log('Requesting local stream');
+navigator.mediaDevices.getUserMedia({
+  audio: true,
+  video: true
+})
+.then(function(stream) {
+  console.log('Received local stream');
+  localVideo.srcObject = stream;
+  window.localStream = stream;
   callButton.disabled = false;
+})
+.catch(function(e) {
+  console.log('getUserMedia() error: ', e);
+});
 
-  // Initialize (local media)
-  console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
-  .then(function(stream) {
-    console.log('Received local stream');
-    localVideo.srcObject = stream;
-    window.localStream = stream;
-  })
-  .catch(function(e) {
-    console.log('getUserMedia() error: ', e);
-  });
-};
-
+// assign functions to buttons
 callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
