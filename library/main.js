@@ -2,6 +2,8 @@
 
 /**
  * Main file for the library.
+ * Requirement:
+ *    window.localStream
  * Provides functions:
  *    call(room)
  *    hangup()
