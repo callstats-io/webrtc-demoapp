@@ -57,5 +57,5 @@
     "require": true,
     "module": true,
     "io": true,
-    "Library": true;
+    "CsioWebrtcApp": true;
   }}

@@ -104,13 +104,13 @@ function hangup() {
 
 
 // public functions
-function Library() {
+function CsioWebrtcApp() {
 }
-Library.prototype.call = function(room) {
+CsioWebrtcApp.prototype.call = function(room) {
   call(room);
 };
-Library.prototype.hangup = function() {
+CsioWebrtcApp.prototype.hangup = function() {
   hangup();
 };
 
-module.exports = Library;
+module.exports = CsioWebrtcApp;

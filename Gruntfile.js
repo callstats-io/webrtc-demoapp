@@ -9,12 +9,12 @@ module.exports = function(grunt) {
     browserify: {
       standalone: {
         src: ['library/main.js'],
-        dest: 'app/library.js'
+        dest: 'app/csio-webrtc-app.js'
       },
       options: {
         require: [],
         browserifyOptions: {
-          standalone: 'Library'
+          standalone: 'CsioWebrtcApp'
         }
       }
     },

@@ -8,7 +8,7 @@ var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
 // library
-var lib = new Library();
+var lib = new CsioWebrtcApp();
 
 // startup settings
 callButton.disabled = true;
