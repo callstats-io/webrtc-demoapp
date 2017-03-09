@@ -8,7 +8,7 @@ var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
 // library
-var lib = Library();
+var lib = new Library();
 
 // startup settings
 callButton.disabled = true;

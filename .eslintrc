@@ -56,5 +56,6 @@
     "trace": true,
     "require": true,
     "module": true,
-    "io": true
+    "io": true,
+    "Library": true;
   }}
