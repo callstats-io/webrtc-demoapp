@@ -15,7 +15,7 @@ $ npm install
 ```
 3. Generate the library
 ```
-npm build
+grunt build
 ```
 4. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (ca.crt, server.crt, server.key)
 5. Run the app
