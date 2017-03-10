@@ -6,6 +6,64 @@ var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
+// callstats
+var callstats = new callstats();
+var AppID = '425973066';
+var AppSecret = 'MBKqPIW6bPZM:Veq6vZD4xgTo7xLPqVaaaPFCBz6e9rlnF0r2FDIzzQU=';
+// var localUserId = {userName: 'Clark Kent', aliasName: 'superman'};
+var localUserId = Math.random().toString(16).slice(2);
+
+function csInitCallback(csError, csErrMsg) {
+  console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg );
+}
+var reportType = {
+  inbound: 'inbound',
+  outbound: 'outbound'
+};
+var csStatsCallback = function(stats) {
+  var ssrc;
+  for (ssrc in stats.streams) {
+    console.log('SSRC is: ', ssrc);
+    var dataSsrc = stats.streams[ssrc];
+    console.log('SSRC Type ', dataSsrc.reportType);
+    if (dataSsrc.reportType === reportType.outbound) {
+      console.log('RTT is: ', dataSsrc.rtt);
+    } else if (dataSsrc.reportType === reportType.inbound) {
+      console.log('Inbound loss rate is: ', dataSsrc.fractionLoss);
+    }
+  }
+};
+var configParams = {
+  disableBeforeUnloadHandler: false,
+  applicationVersion: 'v1.0'
+};
+callstats.initialize(AppID, AppSecret, localUserId, csInitCallback,
+    csStatsCallback, configParams);
+
+function pcCallback(err, msg) {
+  console.log('Monitoring status: '+ err + ' msg: ' + msg);
+}
+document.addEventListener('newPeerConnection',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var remoteUserID = e.detail.userId;
+      var usage = callstats.fabricUsage.multiplex;
+      var conferenceID = roomInput.value;
+      callstats.addNewFabric(pcObject, remoteUserID, usage,
+          conferenceID, pcCallback);
+    },
+    false);
+
+document.addEventListener('createOfferError',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var err = e.detail.error;
+      var conferenceID = roomInput.value;
+      callstats.reportError(pcObject, conferenceID,
+          callstats.webRTCFunctions.createOffer, err);
+    },
+    false);
+
 // library
 var lib = new CsioWebrtcApp();
 
