@@ -4,7 +4,7 @@
   "description": "webrtc sample app written from scratch",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "keywords": [
     "webrtc"
@@ -16,8 +16,16 @@
     "socket.io": "^1.3.7"
   },
   "private": true,
-  "scripts": {
-    "start": "node index.js"
-  },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.1.0",
+    "eslint": "^3.17.1",
+    "eslint-config-webrtc": "^1.0.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-uglify": "^2.2.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0"
+  }
 }

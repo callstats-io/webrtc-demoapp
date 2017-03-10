@@ -1,0 +1,78 @@
+'use strict';
+
+// HTTP elements
+var callButton = document.getElementById('callButton');
+var hangupButton = document.getElementById('hangupButton');
+var roomInput = document.getElementById('roomInput');
+var localVideo = document.getElementById('localVideo');
+
+// library
+var lib = new CsioWebrtcApp();
+
+// startup settings
+callButton.disabled = true;
+hangupButton.disabled = true;
+
+// Initialize (local media)
+console.log('Requesting local stream');
+navigator.mediaDevices.getUserMedia({
+  audio: true,
+  video: true
+})
+.then(function(stream) {
+  console.log('Received local stream');
+  localVideo.srcObject = stream;
+  window.localStream = stream;
+  callButton.disabled = false;
+})
+.catch(function(e) {
+  console.log('getUserMedia() error: ', e);
+});
+
+// assign functions to buttons
+callButton.onclick = function() {
+  callButton.disabled = true;
+  roomInput.disabled = true;
+  hangupButton.disabled = false;
+  lib.call(roomInput.value);
+};
+
+hangupButton.onclick = function() {
+  hangupButton.disabled = true;
+  roomInput.disabled = false;
+  callButton.disabled = false;
+  lib.hangup();
+};
+
+
+// handle video add/remove provided by library
+document.addEventListener('addRemoteVideo',
+    function(e) {
+      addRemoteVideo(e.detail.userId, e.detail.stream);
+    },
+    false);
+function addRemoteVideo(userId,stream) {
+  var v;
+  if ((v = document.getElementById(userId)) === null) {
+    v = document.createElement('video');
+    v.id = userId;
+    v.width = 320;
+    v.height = 240;
+    v.autoplay = true;
+
+    document.getElementById('remoteVideos').append(v);
+  }
+  v.srcObject = stream;
+}
+
+document.addEventListener('removeRemoteVideo',
+    function(e) {
+      removeRemoteVideo(e.detail.userId);
+    },
+    false);
+function removeRemoteVideo(userId) {
+  var v = document.getElementById(userId);
+  if (v !== null) {
+    document.getElementById(userId).remove();
+  }
+}
