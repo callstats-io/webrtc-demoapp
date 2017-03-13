@@ -127,6 +127,9 @@ navigator.mediaDevices.getUserMedia({
 })
 .catch(function(e) {
   console.log('getUserMedia() error: ', e);
+  var conferenceID = roomInput.value;
+  callstats.reportError(null, conferenceID,
+      callstats.webRTCFunctions.getUserMedia);
 });
 
 // assign functions to buttons
