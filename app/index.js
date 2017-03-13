@@ -6,12 +6,12 @@ var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
+
 // callstats
 var callstats = new callstats();
 var AppID = '425973066';
 var AppSecret = 'MBKqPIW6bPZM:Veq6vZD4xgTo7xLPqVaaaPFCBz6e9rlnF0r2FDIzzQU=';
-// var localUserId = {userName: 'Clark Kent', aliasName: 'superman'};
-var localUserId = Math.random().toString(16).slice(2);
+var localUserId = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg );
@@ -37,8 +37,17 @@ var configParams = {
   disableBeforeUnloadHandler: false,
   applicationVersion: 'v1.0'
 };
-callstats.initialize(AppID, AppSecret, localUserId, csInitCallback,
-    csStatsCallback, configParams);
+
+// This event is triggered by CsioWebrtcApp when the name is available
+// from the server
+document.addEventListener('localName',
+    function(e) {
+      localUserId = e.detail.localname;
+      console.log('Initialize callstats', localUserId);
+      callstats.initialize(AppID, AppSecret, localUserId, csInitCallback,
+          csStatsCallback, configParams);
+    },
+    false);
 
 function pcCallback(err, msg) {
   console.log('Monitoring status: '+ err + ' msg: ' + msg);
@@ -64,8 +73,41 @@ document.addEventListener('createOfferError',
     },
     false);
 
+
 // library
 var lib = new CsioWebrtcApp();
+
+// handle video add/remove provided by library
+document.addEventListener('addRemoteVideo',
+    function(e) {
+      addRemoteVideo(e.detail.userId, e.detail.stream);
+    },
+    false);
+function addRemoteVideo(userId,stream) {
+  var v;
+  if ((v = document.getElementById(userId)) === null) {
+    v = document.createElement('video');
+    v.id = userId;
+    v.width = 320;
+    v.height = 240;
+    v.autoplay = true;
+
+    document.getElementById('remoteVideos').append(v);
+  }
+  v.srcObject = stream;
+}
+
+document.addEventListener('removeRemoteVideo',
+    function(e) {
+      removeRemoteVideo(e.detail.userId);
+    },
+    false);
+function removeRemoteVideo(userId) {
+  var v = document.getElementById(userId);
+  if (v !== null) {
+    document.getElementById(userId).remove();
+  }
+}
 
 // startup settings
 callButton.disabled = true;
@@ -101,36 +143,3 @@ hangupButton.onclick = function() {
   callButton.disabled = false;
   lib.hangup();
 };
-
-
-// handle video add/remove provided by library
-document.addEventListener('addRemoteVideo',
-    function(e) {
-      addRemoteVideo(e.detail.userId, e.detail.stream);
-    },
-    false);
-function addRemoteVideo(userId,stream) {
-  var v;
-  if ((v = document.getElementById(userId)) === null) {
-    v = document.createElement('video');
-    v.id = userId;
-    v.width = 320;
-    v.height = 240;
-    v.autoplay = true;
-
-    document.getElementById('remoteVideos').append(v);
-  }
-  v.srcObject = stream;
-}
-
-document.addEventListener('removeRemoteVideo',
-    function(e) {
-      removeRemoteVideo(e.detail.userId);
-    },
-    false);
-function removeRemoteVideo(userId) {
-  var v = document.getElementById(userId);
-  if (v !== null) {
-    document.getElementById(userId).remove();
-  }
-}
