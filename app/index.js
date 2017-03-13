@@ -91,6 +91,7 @@ function addRemoteVideo(userId,stream) {
     v.width = 320;
     v.height = 240;
     v.autoplay = true;
+    v.style = 'transform: scaleX(-1)'; // flip video
 
     document.getElementById('remoteVideos').append(v);
   }
@@ -129,7 +130,7 @@ navigator.mediaDevices.getUserMedia({
   console.log('getUserMedia() error: ', e);
   var conferenceID = roomInput.value;
   callstats.reportError(null, conferenceID,
-      callstats.webRTCFunctions.getUserMedia);
+      callstats.webRTCFunctions.getUserMedia, e);
 });
 
 // assign functions to buttons
