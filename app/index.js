@@ -6,6 +6,11 @@ var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
+// parse URL for room name
+var urlRoom = window.location.pathname.split('/')[1];
+if (urlRoom !== '') {
+  roomInput.value = urlRoom;
+}
 
 // callstats
 var callstats = new callstats();
