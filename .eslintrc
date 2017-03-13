@@ -57,5 +57,7 @@
     "require": true,
     "module": true,
     "io": true,
-    "CsioWebrtcApp": true;
+    "CsioWebrtcApp": true,
+    "__dirname": true,
+    "process": true,
   }}
