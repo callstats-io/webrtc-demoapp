@@ -6,20 +6,7 @@
 
 var modCommon = require('./common');
 
-var turnServer = {
-  url: 'turn:turn-server-1.dialogue.io:3478',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var turnServerTls = {
-  url: 'turn:turn-server-1.dialogue.io:5349',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var iceServers = [turnServer, turnServerTls];
-var servers = {'iceTransports': 'all','iceServers': iceServers};
+var servers;
 
 class CsioPeerConnection {
   constructor(userId) {
@@ -33,9 +20,6 @@ class CsioPeerConnection {
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
 
     // FIXME addStream, onAddStream deprecated, use tracks
-    // but this doesnt work in Chrome, even with adapter
-    // window.localStream.getTracks().forEach(track =>
-    //    this.pc.addTrack(track, window.localStream));
     this.pc.addStream(window.localStream);
     console.log(userId, 'added local stream');
 

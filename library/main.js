@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Main file for the library.
  * Requirement:
@@ -8,11 +10,7 @@
  * Emits events:
  *    addRemoteVideo({'userId', 'stream'})
  *    removeRemoteVideo({'userId'})
- *    localName({'localname'})
- *    createOfferError({'userId', 'pc', 'error'})
  */
-
-'use strict';
 
 var modCommon = require('./common');
 var modSignalling = require('./signalling');
