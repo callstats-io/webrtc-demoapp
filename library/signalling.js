@@ -53,8 +53,7 @@ class CsioSignalling {
    * Leaving, tell others
    */
   stop() {
-    // server automatically tells others it's leaving
-    this.socket.disconnect();
+    this.socket.emit('leave');
   }
 
   /**

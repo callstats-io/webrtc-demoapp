@@ -55,6 +55,10 @@ io.sockets.on('connection', function(socket) {
     leaveRoom(socket);
   });
 
+  socket.on('leave', function() {
+    leaveRoom(socket);
+  });
+
   socket.on('message', function(to, message) {
     var from = socket.id;
     socket.to(to).emit('message', from, message);
