@@ -9,8 +9,16 @@ var socketIO = require('socket.io');
 var app = express();
 var server;
 
+var fileDir = 'app';
+var fileDefault = 'index.html';
+
+var dir = path.join(__dirname, fileDir);
+var def = path.join(dir, fileDefault);
+
 // offered files
-app.use(express.static(path.join(__dirname, 'app')));
+app.use(express.static(dir));
+// not found in static files, so default to index.html
+app.use((req, res) => res.sendFile(def));
 
 // server
 if (process.env.SSL === 'true') {
