@@ -6,7 +6,20 @@
 
 var modCommon = require('./common');
 
-var servers;
+var turnServer = {
+  url: 'turn:turn-server-1.dialogue.io:3478',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var turnServerTls = {
+  url: 'turn:turn-server-1.dialogue.io:5349',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var iceServers = [turnServer, turnServerTls];
+var servers = {'iceTransports': 'all','iceServers': iceServers};
 
 class CsioPeerConnection {
   constructor(userId) {
