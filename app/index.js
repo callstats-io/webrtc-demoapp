@@ -1,3 +1,10 @@
+/*
+ * Sequence of initialization:
+ *  init CsioWebrtcApp
+ *  CsioWebrtcApp emit localName -> init callstats
+ *  callstats callback csInitCallback -> initLocalMedia
+ */
+
 'use strict';
 
 // HTTP elements
@@ -28,7 +35,8 @@ var AppSecret = appConfig.appSecret;
 var localUserId = '';
 
 function csInitCallback(csError, csErrMsg) {
-  console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg );
+  console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
+  initLocalMedia();
 }
 var reportType = {
   inbound: 'inbound',
@@ -129,23 +137,25 @@ callButton.disabled = true;
 hangupButton.disabled = true;
 
 // Initialize (local media)
-console.log('Requesting local stream');
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-})
-.then(function(stream) {
-  console.log('Received local stream');
-  localVideo.srcObject = stream;
-  window.localStream = stream;
-  callButton.disabled = false;
-})
-.catch(function(e) {
-  console.log('getUserMedia() error: ', e);
-  var conferenceID = roomInput.value;
-  callstats.reportError(null, conferenceID,
-      callstats.webRTCFunctions.getUserMedia, e);
-});
+function initLocalMedia() {
+  console.log('Requesting local stream');
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: true
+  })
+  .then(function(stream) {
+    console.log('Received local stream');
+    localVideo.srcObject = stream;
+    window.localStream = stream;
+    callButton.disabled = false;
+  })
+  .catch(function(e) {
+    console.log('getUserMedia() error: ', e);
+    var conferenceID = roomInput.value;
+    callstats.reportError(null, conferenceID,
+        callstats.webRTCFunctions.getUserMedia, e);
+  });
+}
 
 // assign functions to buttons
 callButton.onclick = function() {
