@@ -9,8 +9,10 @@ var localVideo = document.getElementById('localVideo');
 
 // callstats
 var callstats = new callstats();
-var AppID = '425973066';
-var AppSecret = 'MBKqPIW6bPZM:Veq6vZD4xgTo7xLPqVaaaPFCBz6e9rlnF0r2FDIzzQU=';
+
+var appConfig = new AppConfiguration();
+var AppID = appConfig.appId;
+var AppSecret = appConfig.appSecret;
 var localUserId = '';
 
 function csInitCallback(csError, csErrMsg) {
