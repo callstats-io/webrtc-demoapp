@@ -11,6 +11,13 @@ var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
   roomInput.value = decodeURI(urlRoom);
 }
+// update url for easy distribution
+roomInput.onchange = function() {
+  var room = roomInput.value;
+  history.replaceState({'room': room} /* state object */,
+                       'Room ' + room /* title */,
+                       room /* URL */);
+};
 
 // callstats
 var callstats = new callstats();
