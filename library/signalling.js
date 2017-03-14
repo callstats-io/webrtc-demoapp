@@ -46,7 +46,7 @@ class CsioSignalling {
   start(room) {
     // annouce your presence
     console.log('Joining', room);
-    this.emit('join', room);
+    this.socket.emit('join', room);
   }
 
   /**
