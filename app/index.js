@@ -9,7 +9,7 @@ var localVideo = document.getElementById('localVideo');
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
-  roomInput.value = urlRoom;
+  roomInput.value = decodeURI(urlRoom);
 }
 
 // callstats
