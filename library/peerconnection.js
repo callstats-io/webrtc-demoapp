@@ -13,6 +13,8 @@ class CsioPeerConnection {
     this.userId = userId;
 
     this.pc = new RTCPeerConnection(servers);
+    modCommon.triggerEvent('newPeerConnection',
+        {'userId': userId, 'pc': this.pc});
 
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
@@ -49,6 +51,10 @@ class CsioPeerConnection {
       function(e) {
         console.log(this.userId, 'send offer');
         this.onCreateOfferSuccess(e);
+      }.bind(this),
+      function(e) {
+        modCommon.triggerEvent('createOfferError',
+            {'userId': this.userId, 'pc': this.pc, 'error': e});
       }.bind(this));
   }
 

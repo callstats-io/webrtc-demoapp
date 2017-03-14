@@ -13,35 +13,34 @@ var server;
 app.use(express.static(path.join(__dirname, 'app')));
 
 // server
-if (process.env.SSL == 'true') {
-    var options = {
-        key:    fs.readFileSync('ssl/server.key'),
-        cert:   fs.readFileSync('ssl/server.crt'),
-        ca:     fs.readFileSync('ssl/ca.crt'),
-        requestCert:        true,
-        rejectUnauthorized: false,
-        passphrase: "v2ZIZj2jKUap",
-    };
-    server = https.createServer(options, app);
-    server.listen(process.env.portSSL);
+if (process.env.SSL === 'true') {
+  var options = {
+    key: fs.readFileSync('ssl/server.key'),
+    cert: fs.readFileSync('ssl/server.crt'),
+    ca: fs.readFileSync('ssl/ca.crt'),
+    requestCert: true,
+    rejectUnauthorized: false,
+    passphrase: 'v2ZIZj2jKUap',
+  };
+  server = https.createServer(options, app);
+  server.listen(process.env.portSSL);
 } else {
-		server = http.createServer(app);
-		server.listen(process.env.port);
+  server = http.createServer(app);
+  server.listen(process.env.port);
 }
 var io = socketIO.listen(server);
-console.log("IO created");
+console.log('IO created');
 
 // functionality
-io.sockets.on('connection', function (socket){
-
-  socket.on('join', function (room) {
+io.sockets.on('connection', function(socket) {
+  socket.on('join', function(room) {
     leaveRoom(socket);
 
     var id = socket.id;
     console.log(id, 'joins', room);
     socket.join(room);
     socket.room = room;
-		socket.broadcast.to(room).emit('join', id);
+    socket.broadcast.to(room).emit('join', id);
   });
 
   socket.on('disconnect', function() {
@@ -52,12 +51,12 @@ io.sockets.on('connection', function (socket){
     var from = socket.id;
     socket.to(to).emit('message', from, message);
   });
-
 });
 
 function leaveRoom(socket) {
-  if (!socket.room)
+  if (!socket.room) {
     return;
+  }
 
   var id = socket.id;
   var room = socket.room;

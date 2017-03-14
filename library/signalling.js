@@ -27,6 +27,7 @@ class CsioSignalling {
 
     this.socket.on('connect', function(data) {
       console.log('Joining', room);
+      modCommon.triggerEvent('localName', {'localname': this.id});
       this.emit('join', room);
     });
 
