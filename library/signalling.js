@@ -15,15 +15,20 @@ class CsioSignalling {
           this.send(e.detail.userId, e.detail.message);
         }.bind(this),
         false);
+  }
 
-    /**
-     * Open connection and set hooks for users joining,
-     * leaving and incoming message
-     */
+  /**
+   * Open connection and set hooks for users joining,
+   * leaving and incoming message
+   */
+  start(room) {
+    // annouce your presence
     this.socket = io.connect();
 
     this.socket.on('connect', function(data) {
+      console.log('Joining', room);
       modCommon.triggerEvent('localName', {'localname': this.id});
+      this.emit('join', room);
     });
 
     // hear from others
@@ -41,12 +46,6 @@ class CsioSignalling {
       modCommon.triggerEvent('userMessage',
           {'userId': userId, 'message': message});
     }.bind(this));
-  }
-
-  start(room) {
-    // annouce your presence
-    console.log('Joining', room);
-    this.socket.emit('join', room);
   }
 
   /**
