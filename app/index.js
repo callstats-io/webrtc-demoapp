@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+ * Sequence of initialization:
+ *  init CsioWebrtcApp
+ *  CsioWebrtcApp emit localName -> init callstats
+ *  callstats callback csInitCallback -> initLocalMedia
+ */
+
 // HTTP elements
 var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
@@ -9,8 +16,15 @@ var localVideo = document.getElementById('localVideo');
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
-  roomInput.value = urlRoom;
+  roomInput.value = decodeURI(urlRoom);
 }
+// update url for easy distribution
+roomInput.onchange = function() {
+  var room = roomInput.value;
+  history.replaceState({'room': room} /* state object */,
+                       'Room ' + room /* title */,
+                       room /* URL */);
+};
 
 // callstats
 var callstats = new callstats();
@@ -21,7 +35,9 @@ var AppSecret = appConfig.appSecret;
 var localUserId = '';
 
 function csInitCallback(csError, csErrMsg) {
-  console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg );
+  console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
+
+  initLocalMedia();
 }
 var reportType = {
   inbound: 'inbound',
@@ -121,24 +137,26 @@ function removeRemoteVideo(userId) {
 callButton.disabled = true;
 hangupButton.disabled = true;
 
-// Initialize (local media)
-console.log('Requesting local stream');
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-})
-.then(function(stream) {
-  console.log('Received local stream');
-  localVideo.srcObject = stream;
-  window.localStream = stream;
-  callButton.disabled = false;
-})
-.catch(function(e) {
-  console.log('getUserMedia() error: ', e);
-  var conferenceID = roomInput.value;
-  callstats.reportError(null, conferenceID,
-      callstats.webRTCFunctions.getUserMedia, e);
-});
+function initLocalMedia() {
+  // Initialize (local media)
+  console.log('Requesting local stream');
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: true
+  })
+  .then(function(stream) {
+    console.log('Received local stream');
+    localVideo.srcObject = stream;
+    window.localStream = stream;
+    callButton.disabled = false;
+  })
+  .catch(function(e) {
+    console.log('getUserMedia() error: ', e);
+    var conferenceID = roomInput.value;
+    callstats.reportError(null, conferenceID,
+        callstats.webRTCFunctions.getUserMedia, e);
+  });
+}
 
 // assign functions to buttons
 callButton.onclick = function() {
