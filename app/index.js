@@ -103,10 +103,11 @@ document.addEventListener('createOfferError',
 // library
 var lib;
 
-// When the user clicks on <span> (x), close the modal
+// When the user clicks 'OK', room name should be available
 popupCloseButton.onclick = function() {
   roomName = roomInput.value;
   if (roomName !== '') {
+    console.log('init webRTC app');
     lib = new CsioWebrtcApp();
     popup.style.display = 'none';
   } else {
