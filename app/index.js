@@ -1,6 +1,7 @@
 /*
  * Sequence of initialization:
- *  init CsioWebrtcApp
+ *  show popup for room name
+ *  popup OK -> init CsioWebrtcApp
  *  CsioWebrtcApp emit localName -> init callstats
  *  callstats callback csInitCallback -> initLocalMedia
  */
@@ -151,29 +152,31 @@ callButton.disabled = true;
 hangupButton.disabled = true;
 
 // Initialize (local media)
-console.log('Requesting local stream');
-navigator.mediaDevices.getUserMedia({
-  audio: true,
-  video: true
-})
-.then(function(stream) {
-  console.log('Received local stream');
-  localVideo.srcObject = stream;
-  window.localStream = stream;
-  callButton.disabled = false;
-})
-.catch(function(e) {
-  console.log('getUserMedia() error: ', e);
-  // FIXME roomName is probably default
-  callstats.reportError(null, roomName,
-      callstats.webRTCFunctions.getUserMedia, e);
-});
+function initLocalMedia() {
+  console.log('Requesting local stream');
+  navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: true
+  })
+  .then(function(stream) {
+    console.log('Received local stream');
+    localVideo.srcObject = stream;
+    window.localStream = stream;
+    callButton.disabled = false;
+  })
+  .catch(function(e) {
+    console.log('getUserMedia() error: ', e);
+    callstats.reportError(null, roomName,
+        callstats.webRTCFunctions.getUserMedia, e);
+  });
+}
 
 // assign functions to buttons
 callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
+  roomName = roomInput.value;
   lib.call(roomName);
 };
 
