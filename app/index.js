@@ -8,6 +8,8 @@
 
 'use strict';
 
+var debug = false;
+
 // HTTP elements
 var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
@@ -49,6 +51,9 @@ var reportType = {
   outbound: 'outbound'
 };
 var csStatsCallback = function(stats) {
+  if (!debug) {
+    return;
+  }
   var ssrc;
   for (ssrc in stats.streams) {
     console.log('SSRC is: ', ssrc);
@@ -133,7 +138,7 @@ document.addEventListener('addRemoteVideo',
         if (type === 'a') {
           if (reg.test(content)) {
             var match = content.match(reg);
-            if (!(match[1] in ssrcs)) {
+            if (!(ssrcs.includes(match[1]))) {
               ssrcs.push(match[1]);
             }
           }
@@ -141,7 +146,7 @@ document.addEventListener('addRemoteVideo',
       });
       for (var ssrc in ssrcs) {
         callstats.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
-            'camera', 'video_'+remoteUserId);
+            'camera', /* video element id */remoteUserId);
       }
     },
     false);
