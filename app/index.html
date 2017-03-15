@@ -60,7 +60,6 @@
         <div>
           <button id="callButton">Call</button>
           <button id="hangupButton">Hang Up</button>
-          <input  id="roomInput" type="text" value="Room">
         </div>
 
         <div>
@@ -70,6 +69,17 @@
         </div>
       </div>
 
+      <div id="popup" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          Room: <input id="roomInput" type="text" value="Room">
+          <button id="popupCloseButton">OK</button>
+          <p id=popupError></p>
+        </div>
+      </div>
+
+      <!-- style for modal -->
+      <link href="index.css" rel="stylesheet">
       <!-- library and dependencies -->
       <script src="//webrtc.github.io/adapter/adapter-latest.js"></script>
       <script src="/socket.io/socket.io.js"></script>
