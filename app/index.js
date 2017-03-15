@@ -176,7 +176,6 @@ callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
-  roomName = roomInput.value;
   lib.call(roomName);
 };
 
