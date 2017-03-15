@@ -26,6 +26,7 @@ var appConfig = new AppConfiguration();
 var AppID = appConfig.appId;
 var AppSecret = appConfig.appSecret;
 var localUserId = '';
+var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg );
@@ -71,9 +72,8 @@ document.addEventListener('newPeerConnection',
       var pcObject = e.detail.pc;
       var remoteUserID = e.detail.userId;
       var usage = callstats.fabricUsage.multiplex;
-      var conferenceID = roomInput.value;
       callstats.addNewFabric(pcObject, remoteUserID, usage,
-          conferenceID, pcCallback);
+          roomName, pcCallback);
     },
     false);
 
@@ -81,8 +81,7 @@ document.addEventListener('createOfferError',
     function(e) {
       var pcObject = e.detail.pc;
       var err = e.detail.error;
-      var conferenceID = roomInput.value;
-      callstats.reportError(pcObject, conferenceID,
+      callstats.reportError(pcObject, roomName,
           callstats.webRTCFunctions.createOffer, err);
     },
     false);
@@ -142,8 +141,8 @@ navigator.mediaDevices.getUserMedia({
 })
 .catch(function(e) {
   console.log('getUserMedia() error: ', e);
-  var conferenceID = roomInput.value;
-  callstats.reportError(null, conferenceID,
+  // FIXME roomName is probably default
+  callstats.reportError(null, roomName,
       callstats.webRTCFunctions.getUserMedia, e);
 });
 
@@ -152,7 +151,8 @@ callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
-  lib.call(roomInput.value);
+  roomName = roomInput.value;
+  lib.call(roomName);
 };
 
 hangupButton.onclick = function() {
