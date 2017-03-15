@@ -90,12 +90,33 @@ document.addEventListener('newPeerConnection',
     },
     false);
 
-document.addEventListener('createOfferError',
+document.addEventListener('webrtcError',
     function(e) {
       var pcObject = e.detail.pc;
       var err = e.detail.error;
-      callstats.reportError(pcObject, roomName,
-          callstats.webRTCFunctions.createOffer, err);
+      var type = e.detail.type;
+      var csioType;
+      switch (type) {
+      case 'createOffer':
+        csioType = callstats.webRTCFunctions.createOffer;
+        break;
+      case 'createAnswer':
+        csioType = callstats.webRTCFunctions.createAnswer;
+        break;
+      case 'setLocalDescription':
+        csioType = callstats.webRTCFunctions.setLocalDescription;
+        break;
+      case 'setRemoteDescription':
+        csioType = callstats.webRTCFunctions.setRemoteDescription;
+        break;
+      case 'addIceCandidate':
+        csioType = callstats.webRTCFunctions.addIceCandidate;
+        break;
+      default:
+        console.log('Error', type, 'not handled!');
+        return;
+      }
+      callstats.reportError(pcObject, roomName, csioType, err);
     },
     false);
 
