@@ -14,6 +14,10 @@ var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
 
+var popup = document.getElementById('popup');
+var popupCloseButton = document.getElementById('popupCloseButton');
+var popupError = document.getElementById('popupError');
+
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
@@ -97,7 +101,18 @@ document.addEventListener('createOfferError',
 
 
 // library
-var lib = new CsioWebrtcApp();
+var lib;
+
+// When the user clicks on <span> (x), close the modal
+popupCloseButton.onclick = function() {
+  roomName = roomInput.value;
+  if (roomName !== '') {
+    lib = new CsioWebrtcApp();
+    popup.style.display = 'none';
+  } else {
+    popupError.innerHTML = 'Please provide a room name!';
+  }
+};
 
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
@@ -161,7 +176,6 @@ callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
-  roomName = roomInput.value;
   lib.call(roomName);
 };
 
@@ -170,4 +184,6 @@ hangupButton.onclick = function() {
   roomInput.disabled = false;
   callButton.disabled = false;
   lib.hangup();
+
+  popup.style.display = 'block';
 };
