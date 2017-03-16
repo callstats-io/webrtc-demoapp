@@ -20,6 +20,10 @@ var popup = document.getElementById('popup');
 var popupCloseButton = document.getElementById('popupCloseButton');
 var popupError = document.getElementById('popupError');
 
+var chatBox = document.getElementById('chatBox');
+var chatInput = document.getElementById('chatInput');
+var chatButton = document.getElementById('chatButton');
+
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
@@ -260,3 +264,24 @@ hangupButton.onclick = function() {
 
   popup.style.display = 'block';
 };
+
+// chat
+chatButton.onclick = function() {
+  var message = chatInput.value;
+  lib.sendChatMessageAll(message);
+  addChatMessage('Me', message);
+  chatInput.value = '';
+};
+
+document.addEventListener('chatMessage',
+    function(e) {
+      var userId = e.detail.userId;
+      var message = e.detail.message;
+
+      addChatMessage(userId, message);
+    },
+    false);
+
+function addChatMessage(user, message) {
+  chatBox.innerHTML = chatBox.innerHTML + '\n' + user + ': ' + message;
+}
