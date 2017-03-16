@@ -90,6 +90,14 @@ document.addEventListener('newPeerConnection',
     },
     false);
 
+document.addEventListener('closePeerConnection',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var fabricEvent = callstats.fabricEvent.fabricTerminated;
+      callstats.sendFabricEvent(pcObject, fabricEvent, roomName);
+    },
+    false);
+
 document.addEventListener('createOfferError',
     function(e) {
       var pcObject = e.detail.pc;
