@@ -30,9 +30,9 @@ class CsioPeerConnection {
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});
 
+    this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
     // chat
     this.chat = null;
-    this.pc.ondatachannel = this.receiveChatChannelCallback.bind(this);
 
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
@@ -154,12 +154,17 @@ class CsioPeerConnection {
     }.bind(this);
   }
 
-  receiveChatChannelCallback(event) {
-    console.log('receive chat channel');
-    this.chat = event.channel;
-    this.setChatChannelCallbacks();
+  receiveChannelCallback(event) {
+    if (event.channel.label === 'chat') {
+      console.log('receive chat channel');
+      this.chat = event.channel;
+      this.setChatChannelCallbacks();
+    }
   }
 
+  /*
+   * Chat methods
+   */
   handleChatMessage(event) {
     var message = event.data;
     console.log('CHAT', this.userId+':', message);
