@@ -118,4 +118,10 @@ CsioWebrtcApp.prototype.hangup = function() {
   hangup();
 };
 
+CsioWebrtcApp.prototype.sendChatMessageAll = function(message) {
+  for (var i in pcs) {
+    pcs[i].sendChatMessage(message);
+  }
+};
+
 module.exports = CsioWebrtcApp;
