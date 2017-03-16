@@ -42,7 +42,9 @@ var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  initLocalMedia();
+  if (csError === 'success') {
+    initLocalMedia();
+  }
 }
 var reportType = {
   inbound: 'inbound',
