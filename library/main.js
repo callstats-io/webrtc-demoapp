@@ -21,7 +21,7 @@ var modPeerconnection = require('./peerconnection');
 var pcs = {};
 
 // TODO events are in document. create own event domain?
-var signalling = new modSignalling.CsioSignalling();
+var signalling;
 document.addEventListener('userJoin',
     function(e) {
       handleUserJoin(e.detail.userId);
@@ -109,6 +109,7 @@ function hangup() {
 
 // public functions
 function CsioWebrtcApp() {
+   signalling = new modSignalling.CsioSignalling();
 }
 CsioWebrtcApp.prototype.call = function(room) {
   call(room);

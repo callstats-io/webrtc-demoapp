@@ -1,6 +1,7 @@
 /*
  * Sequence of initialization:
- *  init CsioWebrtcApp
+ *  show popup for room name
+ *  popup OK -> init CsioWebrtcApp
  *  CsioWebrtcApp emit localName -> init callstats
  *  callstats callback csInitCallback -> initLocalMedia
  */
@@ -12,6 +13,10 @@ var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
 var roomInput = document.getElementById('roomInput');
 var localVideo = document.getElementById('localVideo');
+
+var popup = document.getElementById('popup');
+var popupCloseButton = document.getElementById('popupCloseButton');
+var popupError = document.getElementById('popupError');
 
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
@@ -33,6 +38,7 @@ var appConfig = new AppConfiguration();
 var AppID = appConfig.appId;
 var AppSecret = appConfig.appSecret;
 var localUserId = '';
+var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
@@ -79,9 +85,8 @@ document.addEventListener('newPeerConnection',
       var pcObject = e.detail.pc;
       var remoteUserID = e.detail.userId;
       var usage = callstats.fabricUsage.multiplex;
-      var conferenceID = roomInput.value;
       callstats.addNewFabric(pcObject, remoteUserID, usage,
-          conferenceID, pcCallback);
+          roomName, pcCallback);
     },
     false);
 
@@ -89,15 +94,26 @@ document.addEventListener('createOfferError',
     function(e) {
       var pcObject = e.detail.pc;
       var err = e.detail.error;
-      var conferenceID = roomInput.value;
-      callstats.reportError(pcObject, conferenceID,
+      callstats.reportError(pcObject, roomName,
           callstats.webRTCFunctions.createOffer, err);
     },
     false);
 
 
 // library
-var lib = new CsioWebrtcApp();
+var lib;
+
+// When the user clicks 'OK', room name should be available
+popupCloseButton.onclick = function() {
+  roomName = roomInput.value;
+  if (roomName !== '') {
+    console.log('init webRTC app');
+    lib = new CsioWebrtcApp();
+    popup.style.display = 'none';
+  } else {
+    popupError.innerHTML = 'Please provide a room name!';
+  }
+};
 
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
@@ -151,8 +167,7 @@ function initLocalMedia() {
   })
   .catch(function(e) {
     console.log('getUserMedia() error: ', e);
-    var conferenceID = roomInput.value;
-    callstats.reportError(null, conferenceID,
+    callstats.reportError(null, roomName,
         callstats.webRTCFunctions.getUserMedia, e);
   });
 }
@@ -162,7 +177,7 @@ callButton.onclick = function() {
   callButton.disabled = true;
   roomInput.disabled = true;
   hangupButton.disabled = false;
-  lib.call(roomInput.value);
+  lib.call(roomName);
 };
 
 hangupButton.onclick = function() {
@@ -170,4 +185,6 @@ hangupButton.onclick = function() {
   roomInput.disabled = false;
   callButton.disabled = false;
   lib.hangup();
+
+  popup.style.display = 'block';
 };
