@@ -174,6 +174,13 @@ function initLocalMedia() {
   });
 }
 
+function stopLocalMedia() {
+  for (var i in window.localStream.getTracks()) {
+    window.localStream.getTracks()[i].stop();
+  }
+  localVideo.srcObject = null;
+}
+
 // assign functions to buttons
 callButton.onclick = function() {
   callButton.disabled = true;
@@ -187,6 +194,8 @@ hangupButton.onclick = function() {
   roomInput.disabled = false;
   callButton.disabled = false;
   lib.hangup();
+
+  stopLocalMedia();
 
   popup.style.display = 'block';
 };
