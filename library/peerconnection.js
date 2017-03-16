@@ -46,6 +46,8 @@ class CsioPeerConnection {
   // callable functions
   close() {
     this.pc.close();
+    modCommon.triggerEvent('closePeerConnection',
+        {'userId': this.userId, 'pc': this.pc});
   }
 
   addIceCandidate(ic) {
