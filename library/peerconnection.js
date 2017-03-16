@@ -108,7 +108,7 @@ class CsioPeerConnection {
   onRemoteStream(e) {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
-        {'userId': this.userId, 'stream': e.stream});
+        {'pc': this.pc, 'userId': this.userId, 'stream': e.stream});
   }
 
   onAddIceCandidateSuccess() {

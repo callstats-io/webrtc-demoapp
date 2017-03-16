@@ -8,6 +8,8 @@
 
 'use strict';
 
+var debug = false;
+
 // HTTP elements
 var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
@@ -49,6 +51,9 @@ var reportType = {
   outbound: 'outbound'
 };
 var csStatsCallback = function(stats) {
+  if (!debug) {
+    return;
+  }
   var ssrc;
   for (ssrc in stats.streams) {
     console.log('SSRC is: ', ssrc);
@@ -141,7 +146,31 @@ popupCloseButton.onclick = function() {
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
     function(e) {
-      addRemoteVideo(e.detail.userId, e.detail.stream);
+      var pc = e.detail.pc;
+      var remoteUserId = e.detail.userId;
+      addRemoteVideo(remoteUserId, e.detail.stream);
+
+      // associate SSRCs
+      var ssrcs = [];
+      var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+      var reg = /^ssrc:(\d*) ([\w_]*):(.*)/;
+      pc.remoteDescription.sdp.split(/(\r\n|\r|\n)/).filter(validLine)
+      .forEach(function(l) {
+        var type = l[0];
+        var content = l.slice(2);
+        if (type === 'a') {
+          if (reg.test(content)) {
+            var match = content.match(reg);
+            if (!(ssrcs.includes(match[1]))) {
+              ssrcs.push(match[1]);
+            }
+          }
+        }
+      });
+      for (var ssrc in ssrcs) {
+        callstats.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
+            'camera', /* video element id */remoteUserId);
+      }
     },
     false);
 function addRemoteVideo(userId,stream) {
