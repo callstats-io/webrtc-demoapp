@@ -163,6 +163,8 @@ class CsioPeerConnection {
   handleChatMessage(event) {
     var message = event.data;
     console.log('CHAT', this.userId+':', message);
+    modCommon.triggerEvent('chatMessage',
+        {'userId': this.userId, 'message': message});
   }
 
   sendChatMessage(message) {
