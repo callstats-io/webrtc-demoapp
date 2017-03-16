@@ -190,7 +190,7 @@ function initLocalMedia() {
   })
   .catch(function(e) {
     console.log('getUserMedia() error: ', e);
-
+    
     var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
     handleWebrtcError({'detail': detail});
   });
