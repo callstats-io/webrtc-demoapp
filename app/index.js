@@ -90,37 +90,14 @@ document.addEventListener('newPeerConnection',
     },
     false);
 
-document.addEventListener('webrtcError', handleWebrtcError, false);
-function handleWebrtcError(e) {
-  var pcObject = e.detail.pc;
-  var err = e.detail.error;
-  var type = e.detail.type;
-  var csioType;
-  switch (type) {
-  case 'createOffer':
-    csioType = callstats.webRTCFunctions.createOffer;
-    break;
-  case 'createAnswer':
-    csioType = callstats.webRTCFunctions.createAnswer;
-    break;
-  case 'setLocalDescription':
-    csioType = callstats.webRTCFunctions.setLocalDescription;
-    break;
-  case 'setRemoteDescription':
-    csioType = callstats.webRTCFunctions.setRemoteDescription;
-    break;
-  case 'addIceCandidate':
-    csioType = callstats.webRTCFunctions.addIceCandidate;
-    break;
-  case 'getUserMedia':
-    csioType = callstats.webRTCFunctions.getUserMedia;
-    break;
-  default:
-    console.log('Error', type, 'not handled!');
-    return;
-  }
-  callstats.reportError(pcObject, roomName, csioType, err);
-}
+document.addEventListener('createOfferError',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var err = e.detail.error;
+      callstats.reportError(pcObject, roomName,
+          callstats.webRTCFunctions.createOffer, err);
+    },
+    false);
 
 
 // library
@@ -190,9 +167,8 @@ function initLocalMedia() {
   })
   .catch(function(e) {
     console.log('getUserMedia() error: ', e);
-
-    var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
-    handleWebrtcError({'detail': detail});
+    callstats.reportError(null, roomName,
+        callstats.webRTCFunctions.getUserMedia, e);
   });
 }
 
