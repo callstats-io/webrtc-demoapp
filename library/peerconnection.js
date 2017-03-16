@@ -52,6 +52,8 @@ class CsioPeerConnection {
   close() {
     this.chat.close();
     this.pc.close();
+    modCommon.triggerEvent('closePeerConnection',
+        {'userId': this.userId, 'pc': this.pc});
   }
 
   addIceCandidate(ic) {
@@ -73,8 +75,9 @@ class CsioPeerConnection {
         this.onCreateOfferSuccess(e);
       }.bind(this),
       function(e) {
-        modCommon.triggerEvent('createOfferError',
-            {'userId': this.userId, 'pc': this.pc, 'error': e});
+        modCommon.triggerEvent('webrtcError',
+          {'type': 'createOffer',
+            'userId': this.userId, 'pc': this.pc, 'error': e});
       }.bind(this));
   }
 
@@ -82,17 +85,31 @@ class CsioPeerConnection {
     var l = new RTCSessionDescription(offer);
     this.pc.setRemoteDescription(l)
     .then(
+      // setRemoteDescription success
       function() {
         if (this.pc.remoteDescription.type === 'offer') {
+          console.log(this.userId, 'offer received');
           this.pc.createAnswer().then(
+            // createAnswer success
             function(e) {
               console.log(this.userId, 'send answer');
               this.onCreateOfferSuccess(e);
+            }.bind(this),
+            // createAnswer failure
+            function(e) {
+              modCommon.triggerEvent('webrtcError',
+                {'type': 'createAnswer',
+                  'userId': this.userId, 'pc': this.pc, 'error': e});
             }.bind(this));
-          console.log(this.userId, 'offer received');
         } else {
           console.log(this.userId, 'answer received');
         }
+      }.bind(this),
+      // setRemoteDescription failure
+      function(e) {
+        modCommon.triggerEvent('webrtcError',
+          {'type': 'setRemoteDescription',
+            'userId': this.userId, 'pc': this.pc, 'error': e});
       }.bind(this));
   }
 
@@ -100,7 +117,7 @@ class CsioPeerConnection {
   onRemoteStream(e) {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
-        {'userId': this.userId, 'stream': e.stream});
+        {'pc': this.pc, 'userId': this.userId, 'stream': e.stream});
 
     if (this.opener) {
       console.log('Opening chat ..');
@@ -118,6 +135,10 @@ class CsioPeerConnection {
   onAddIceCandidateError(error) {
     console.log(this.userId, 'failed to add ICE Candidate: '
         + error.toString());
+
+    modCommon.triggerEvent('webrtcError',
+      {'type': 'addIceCandidate',
+        'userId': this.userId, 'pc': this.pc, 'error': error});
   }
 
   onIceCandidate(e) {
@@ -132,13 +153,20 @@ class CsioPeerConnection {
   }
 
   onCreateOfferSuccess(e) {
-    this.pc.setLocalDescription(e);
-
-    // send offer
-    var json = {'offer': e};
-    var str = JSON.stringify(json);
-    modCommon.triggerEvent('sendMessage',
-        {'userId': this.userId, 'message': str});
+    this.pc.setLocalDescription(e)
+    .then(
+      function() {
+        // send offer
+        var json = {'offer': e};
+        var str = JSON.stringify(json);
+        modCommon.triggerEvent('sendMessage',
+            {'userId': this.userId, 'message': str});
+      }.bind(this),
+      function(error) {
+        modCommon.triggerEvent('webrtcError',
+          {'type': 'setLocalDescription',
+            'userId': this.userId, 'pc': this.pc, 'error': error});
+      }.bind(this));
   }
 
   /*

@@ -8,6 +8,8 @@
 
 'use strict';
 
+var debug = false;
+
 // HTTP elements
 var callButton = document.getElementById('callButton');
 var hangupButton = document.getElementById('hangupButton');
@@ -46,13 +48,18 @@ var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  initLocalMedia();
+  if (csError === 'success') {
+    initLocalMedia();
+  }
 }
 var reportType = {
   inbound: 'inbound',
   outbound: 'outbound'
 };
 var csStatsCallback = function(stats) {
+  if (!debug) {
+    return;
+  }
   var ssrc;
   for (ssrc in stats.streams) {
     console.log('SSRC is: ', ssrc);
@@ -94,15 +101,45 @@ document.addEventListener('newPeerConnection',
     },
     false);
 
-document.addEventListener('createOfferError',
+document.addEventListener('closePeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
-      var err = e.detail.error;
-      callstats.reportError(pcObject, roomName,
-          callstats.webRTCFunctions.createOffer, err);
+      var fabricEvent = callstats.fabricEvent.fabricTerminated;
+      callstats.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);
 
+document.addEventListener('webrtcError', handleWebrtcError, false);
+function handleWebrtcError(e) {
+  var pcObject = e.detail.pc;
+  var err = e.detail.error;
+  var type = e.detail.type;
+  var csioType;
+  switch (type) {
+  case 'createOffer':
+    csioType = callstats.webRTCFunctions.createOffer;
+    break;
+  case 'createAnswer':
+    csioType = callstats.webRTCFunctions.createAnswer;
+    break;
+  case 'setLocalDescription':
+    csioType = callstats.webRTCFunctions.setLocalDescription;
+    break;
+  case 'setRemoteDescription':
+    csioType = callstats.webRTCFunctions.setRemoteDescription;
+    break;
+  case 'addIceCandidate':
+    csioType = callstats.webRTCFunctions.addIceCandidate;
+    break;
+  case 'getUserMedia':
+    csioType = callstats.webRTCFunctions.getUserMedia;
+    break;
+  default:
+    console.log('Error', type, 'not handled!');
+    return;
+  }
+  callstats.reportError(pcObject, roomName, csioType, err);
+}
 
 // library
 var lib;
@@ -122,7 +159,31 @@ popupCloseButton.onclick = function() {
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
     function(e) {
-      addRemoteVideo(e.detail.userId, e.detail.stream);
+      var pc = e.detail.pc;
+      var remoteUserId = e.detail.userId;
+      addRemoteVideo(remoteUserId, e.detail.stream);
+
+      // associate SSRCs
+      var ssrcs = [];
+      var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+      var reg = /^ssrc:(\d*) ([\w_]*):(.*)/;
+      pc.remoteDescription.sdp.split(/(\r\n|\r|\n)/).filter(validLine)
+      .forEach(function(l) {
+        var type = l[0];
+        var content = l.slice(2);
+        if (type === 'a') {
+          if (reg.test(content)) {
+            var match = content.match(reg);
+            if (!(ssrcs.includes(match[1]))) {
+              ssrcs.push(match[1]);
+            }
+          }
+        }
+      });
+      for (var ssrc in ssrcs) {
+        callstats.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
+            'camera', /* video element id */remoteUserId);
+      }
     },
     false);
 function addRemoteVideo(userId,stream) {
@@ -171,9 +232,18 @@ function initLocalMedia() {
   })
   .catch(function(e) {
     console.log('getUserMedia() error: ', e);
-    callstats.reportError(null, roomName,
-        callstats.webRTCFunctions.getUserMedia, e);
+    
+    var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
+    handleWebrtcError({'detail': detail});
   });
+}
+
+function stopLocalMedia() {
+  console.log('Stopping local stream');
+  for (var i in window.localStream.getTracks()) {
+    window.localStream.getTracks()[i].stop();
+  }
+  localVideo.srcObject = null;
 }
 
 // assign functions to buttons
@@ -189,6 +259,8 @@ hangupButton.onclick = function() {
   roomInput.disabled = false;
   callButton.disabled = false;
   lib.hangup();
+
+  stopLocalMedia();
 
   popup.style.display = 'block';
 };

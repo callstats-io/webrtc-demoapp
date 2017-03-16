@@ -32,7 +32,12 @@
 
     <title>WebRTC Demo App &mdash; callstats.io</title>
 
-    <script src="https://api.callstats.io/static/callstats.min.js"></script>
+    <!-- local env -->
+    <script src="http://192.168.99.100:3000/static/callstats.js"></script>
+    <script src="config-local.js"></script>
+    <!-- production env -->
+    <!--<script src="https://api.callstats.io/static/callstats.min.js"></script>
+    <script src="config.js"></script>-->
   </head>
 
   <body>
@@ -83,9 +88,8 @@
       <!-- style for modal -->
       <link href="index.css" rel="stylesheet">
       <!-- library and dependencies -->
-      <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+      <script src="//webrtc.github.io/adapter/adapter-latest.js"></script>
       <script src="/socket.io/socket.io.js"></script>
-      <script src="config.js"></script>
       <script src="csio-webrtc-app.min.js"></script>
 
       <!-- library to fill the HTML -->
