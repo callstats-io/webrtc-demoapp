@@ -175,6 +175,7 @@ function initLocalMedia() {
 }
 
 function stopLocalMedia() {
+  console.log('Stopping local stream');
   for (var i in window.localStream.getTracks()) {
     window.localStream.getTracks()[i].stop();
   }
