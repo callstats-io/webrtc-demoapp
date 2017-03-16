@@ -24,10 +24,15 @@ var servers = {'iceTransports': 'all','iceServers': iceServers};
 class CsioPeerConnection {
   constructor(userId) {
     this.userId = userId;
+    this.opener = false;
 
     this.pc = new RTCPeerConnection(servers);
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});
+
+    // chat
+    this.chat = null;
+    this.pc.ondatachannel = this.receiveChatChannelCallback.bind(this);
 
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
@@ -45,6 +50,7 @@ class CsioPeerConnection {
 
   // callable functions
   close() {
+    this.chat.close();
     this.pc.close();
   }
 
@@ -57,6 +63,7 @@ class CsioPeerConnection {
   }
 
   createOffer() {
+    this.opener = true;
     this.pc.createOffer({
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 1
@@ -94,6 +101,14 @@ class CsioPeerConnection {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
         {'userId': this.userId, 'stream': e.stream});
+
+    if (this.opener) {
+      console.log('Opening chat ..');
+      this.chat = this.pc.createDataChannel('chat');
+      this.setChatChannelCallbacks();
+      // re-negotiation needed, since it's the first datachannel
+      this.createOffer();
+    }
   }
 
   onAddIceCandidateSuccess() {
@@ -124,6 +139,34 @@ class CsioPeerConnection {
     var str = JSON.stringify(json);
     modCommon.triggerEvent('sendMessage',
         {'userId': this.userId, 'message': str});
+  }
+
+  /*
+   * Methods for data channel
+   */
+  setChatChannelCallbacks() {
+    this.chat.onmessage = this.handleChatMessage.bind(this);
+    this.chat.onopen = function(e) {
+      console.log('Chat opened');
+    }.bind(this);
+    this.chat.onclose = function(e) {
+      console.log('Chat closed');
+    }.bind(this);
+  }
+
+  receiveChatChannelCallback(event) {
+    console.log('receive chat channel');
+    this.chat = event.channel;
+    this.setChatChannelCallbacks();
+  }
+
+  handleChatMessage(event) {
+    var message = event.data;
+    console.log('CHAT', this.userId+':', message);
+  }
+
+  sendChatMessage(message) {
+    this.chat.send(message);
   }
 }
 
