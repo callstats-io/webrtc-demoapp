@@ -44,7 +44,9 @@ var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  initLocalMedia();
+  if (csError === 'success') {
+    initLocalMedia();
+  }
 }
 var reportType = {
   inbound: 'inbound',
@@ -225,6 +227,14 @@ function initLocalMedia() {
   });
 }
 
+function stopLocalMedia() {
+  console.log('Stopping local stream');
+  for (var i in window.localStream.getTracks()) {
+    window.localStream.getTracks()[i].stop();
+  }
+  localVideo.srcObject = null;
+}
+
 // assign functions to buttons
 callButton.onclick = function() {
   callButton.disabled = true;
@@ -238,6 +248,8 @@ hangupButton.onclick = function() {
   roomInput.disabled = false;
   callButton.disabled = false;
   lib.hangup();
+
+  stopLocalMedia();
 
   popup.style.display = 'block';
 };
