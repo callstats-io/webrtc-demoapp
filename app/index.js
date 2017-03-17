@@ -143,15 +143,13 @@ function handleWebrtcError(e) {
 
 // library
 var lib;
-var chatLabel = 'chat';
 
 // When the user clicks 'OK', room name should be available
 popupCloseButton.onclick = function() {
   roomName = roomInput.value;
   if (roomName !== '') {
-    var datachannels = [chatLabel];
-    console.log('init webRTC app, datachannels:', datachannels);
-    lib = new CsioWebrtcApp(datachannels);
+    console.log('init webRTC app');
+    lib = new CsioWebrtcApp();
     popup.style.display = 'none';
   } else {
     popupError.innerHTML = 'Please provide a room name!';
@@ -234,7 +232,7 @@ function initLocalMedia() {
   })
   .catch(function(e) {
     console.log('getUserMedia() error: ', e);
-
+    
     var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
     handleWebrtcError({'detail': detail});
   });
@@ -270,20 +268,17 @@ hangupButton.onclick = function() {
 // chat
 chatButton.onclick = function() {
   var message = chatInput.value;
-  lib.sendChannelMessageAll(chatLabel, message);
+  lib.sendChatMessageAll(message);
   addChatMessage('Me', message);
   chatInput.value = '';
 };
 
-document.addEventListener('channelMessage',
+document.addEventListener('chatMessage',
     function(e) {
-      var label = e.detail.label;
       var userId = e.detail.userId;
       var message = e.detail.message;
 
-      if (label === chatLabel) {
-        addChatMessage(userId, message);
-      }
+      addChatMessage(userId, message);
     },
     false);
 
