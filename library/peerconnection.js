@@ -24,15 +24,13 @@ var servers = {'iceTransports': 'all','iceServers': iceServers};
 class CsioPeerConnection {
   constructor(userId) {
     this.userId = userId;
-    this.opener = false;
 
     this.pc = new RTCPeerConnection(servers);
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});
 
+    this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
-    // chat
-    this.chat = null;
 
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
@@ -50,7 +48,9 @@ class CsioPeerConnection {
 
   // callable functions
   close() {
-    this.chat.close();
+    for (var label in this.datachannels) {
+      this.datachannels[label].close();
+    }
     this.pc.close();
     modCommon.triggerEvent('closePeerConnection',
         {'userId': this.userId, 'pc': this.pc});
@@ -118,14 +118,6 @@ class CsioPeerConnection {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
         {'pc': this.pc, 'userId': this.userId, 'stream': e.stream});
-
-    if (this.opener) {
-      console.log('Opening chat ..');
-      this.chat = this.pc.createDataChannel('chat');
-      this.setChatChannelCallbacks();
-      // re-negotiation needed, since it's the first datachannel
-      this.createOffer();
-    }
   }
 
   onAddIceCandidateSuccess() {
@@ -170,38 +162,41 @@ class CsioPeerConnection {
   }
 
   /*
-   * Methods for data channel
+   * Channel related functions
    */
-  setChatChannelCallbacks() {
-    this.chat.onmessage = this.handleChatMessage.bind(this);
-    this.chat.onopen = function(e) {
-      console.log('Chat opened');
+
+  createChannel(label) {
+    console.log('Channel creating:', label);
+    this.datachannels[label] = this.pc.createDataChannel(label);
+    this.setChannelCallbacks(label);
+  }
+
+  setChannelCallbacks(label) {
+    this.datachannels[label].onmessage = this.handleChannelMessage.bind(this);
+    this.datachannels[label].onopen = function(e) {
+      console.log('Channel opened:', label);
     }.bind(this);
-    this.chat.onclose = function(e) {
-      console.log('Chat closed');
+    this.datachannels[label].onclose = function(e) {
+      console.log('Channel closed:', label);
     }.bind(this);
   }
 
   receiveChannelCallback(event) {
-    if (event.channel.label === 'chat') {
-      console.log('receive chat channel');
-      this.chat = event.channel;
-      this.setChatChannelCallbacks();
-    }
+    var label = event.channel.label;
+    console.log(this.userId, 'receive channel:', label);
+    this.datachannels[label] = event.channel;
+    this.setChannelCallbacks(label);
   }
 
-  /*
-   * Chat methods
-   */
-  handleChatMessage(event) {
+  handleChannelMessage(event) {
+    var label = event.currentTarget.label;
     var message = event.data;
-    console.log('CHAT', this.userId+':', message);
-    modCommon.triggerEvent('chatMessage',
-        {'userId': this.userId, 'message': message});
+    modCommon.triggerEvent('channelMessage',
+        {'label': label, 'userId': this.userId, 'message': message});
   }
 
-  sendChatMessage(message) {
-    this.chat.send(message);
+  sendChannelMessage(label, message) {
+    this.datachannels[label].send(message);
   }
 }
 
