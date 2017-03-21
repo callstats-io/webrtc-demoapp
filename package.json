@@ -24,8 +24,10 @@
     "eslint-config-webrtc": "^1.0.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
+    "grunt-config": "^1.0.0",
     "grunt-contrib-uglify": "^2.2.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-eslint": "^19.0.0"
+    "grunt-eslint": "^19.0.0",
+    "grunt-replace": "^1.0.1"
   }
 }
