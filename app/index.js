@@ -27,11 +27,11 @@ var chatButton = document.getElementById('chatButton');
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
-  roomInput.value = decodeURI(urlRoom);
+  roomInput.value = decodeURIComponent(urlRoom);
 }
 // update url for easy distribution
 roomInput.onchange = function() {
-  var room = roomInput.value;
+  var room = encodeURIComponent(roomInput.value);
   history.replaceState({'room': room} /* state object */,
                        'Room ' + room /* title */,
                        room /* URL */);
