@@ -109,8 +109,6 @@ function hangup() {
     handleUserLeave(userId);
   }
   console.log('PCs:', pcs);
-
-  // TODO how to stop the local media?
 }
 
 
