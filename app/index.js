@@ -8,6 +8,14 @@
 
 'use strict';
 
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+ReactDOM.render(
+  <h1>Hello, world!</h1>,
+  document.getElementById('root')
+);
+
 var debug = false;
 
 // HTTP elements
@@ -38,7 +46,12 @@ roomInput.onchange = function() {
 };
 
 // callstats
-var callstats = new callstats();
+var csObject;
+window.onload = test;
+function test() {
+  console.log('create callstats');
+  csObject = new callstats();
+};
 
 var AppID = '@@APPID';
 var AppSecret = '@@APPSECRET';
@@ -82,7 +95,7 @@ document.addEventListener('localName',
     function(e) {
       localUserId = e.detail.localname;
       console.log('Initialize callstats', localUserId);
-      callstats.initialize(AppID, AppSecret, localUserId, csInitCallback,
+      csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
           csStatsCallback, configParams);
     },
     false);
@@ -94,8 +107,8 @@ document.addEventListener('newPeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
       var remoteUserID = e.detail.userId;
-      var usage = callstats.fabricUsage.multiplex;
-      callstats.addNewFabric(pcObject, remoteUserID, usage,
+      var usage = csObject.fabricUsage.multiplex;
+      csObject.addNewFabric(pcObject, remoteUserID, usage,
           roomName, pcCallback);
     },
     false);
@@ -103,8 +116,8 @@ document.addEventListener('newPeerConnection',
 document.addEventListener('closePeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
-      var fabricEvent = callstats.fabricEvent.fabricTerminated;
-      callstats.sendFabricEvent(pcObject, fabricEvent, roomName);
+      var fabricEvent = csObject.fabricEvent.fabricTerminated;
+      csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);
 
@@ -116,28 +129,28 @@ function handleWebrtcError(e) {
   var csioType;
   switch (type) {
   case 'createOffer':
-    csioType = callstats.webRTCFunctions.createOffer;
+    csioType = csObject.webRTCFunctions.createOffer;
     break;
   case 'createAnswer':
-    csioType = callstats.webRTCFunctions.createAnswer;
+    csioType = csObject.webRTCFunctions.createAnswer;
     break;
   case 'setLocalDescription':
-    csioType = callstats.webRTCFunctions.setLocalDescription;
+    csioType = csObject.webRTCFunctions.setLocalDescription;
     break;
   case 'setRemoteDescription':
-    csioType = callstats.webRTCFunctions.setRemoteDescription;
+    csioType = csObject.webRTCFunctions.setRemoteDescription;
     break;
   case 'addIceCandidate':
-    csioType = callstats.webRTCFunctions.addIceCandidate;
+    csioType = csObject.webRTCFunctions.addIceCandidate;
     break;
   case 'getUserMedia':
-    csioType = callstats.webRTCFunctions.getUserMedia;
+    csioType = csObject.webRTCFunctions.getUserMedia;
     break;
   default:
     console.log('Error', type, 'not handled!');
     return;
   }
-  callstats.reportError(pcObject, roomName, csioType, err);
+  csObject.reportError(pcObject, roomName, csioType, err);
 }
 
 // library
@@ -180,7 +193,7 @@ document.addEventListener('addRemoteVideo',
         }
       });
       for (var ssrc in ssrcs) {
-        callstats.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
+        csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
             'camera', /* video element id */remoteUserId);
       }
     },

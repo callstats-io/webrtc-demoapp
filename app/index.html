@@ -31,8 +31,6 @@
     <link rel="shortcut icon" href="//www.callstats.io/static/favicon.ico" type="image/x-icon" />
 
     <title>WebRTC Demo App &mdash; callstats.io</title>
-
-    <script src="@@CSJS"></script>
   </head>
 
   <body>
@@ -56,6 +54,8 @@
           <button id="callButton">Call</button>
           <button id="hangupButton">Hang Up</button>
         </div>
+
+        <div id="root"></div>
 
         <div>
           <video id="localVideo" width="320" height="240"
@@ -88,7 +88,8 @@
       <script src="csio-webrtc-app.min.js"></script>
 
       <!-- library to fill the HTML -->
-      <script src="index.js"></script>
+      <script src="/app/index.js"></script>
+      <script src="@@CSJS"></script>
       <!--
       CONTENT END
       -->

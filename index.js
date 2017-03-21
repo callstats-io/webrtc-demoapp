@@ -5,6 +5,11 @@ var fs = require('fs');
 var path = require('path');
 var socketIO = require('socket.io');
 
+var browserify = require('browserify');
+var react = require('react');
+var jsx = require('node-jsx');
+jsx.install();
+
 // variables
 var app = express();
 var server;
@@ -17,6 +22,32 @@ var def = path.join(dir, fileDefault);
 
 // offered files
 app.use(express.static(dir));
+
+// react
+app.use('/react', express.static(__dirname + '/react'));
+app.use('/react/bundle.js', function(req, res) {
+  console.log('request bundle');
+  res.setHeader('content-type', 'application/javascript');
+  browserify('react/index.js', {
+    debug: true
+  })
+  .transform('reactify')
+  .bundle()
+  .pipe(res);
+});
+
+
+app.use('/app/index.js', function(req, res) {
+  console.log('request bundle: index.js');
+  res.setHeader('content-type', 'application/javascript');
+  browserify('build/index.js', {
+    debug: true
+  })
+  .transform('reactify')
+  .bundle()
+  .pipe(res);
+});
+
 // not found in static files, so default to index.html
 app.use((req, res) => res.sendFile(def));
 

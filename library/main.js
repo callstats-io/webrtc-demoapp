@@ -102,14 +102,12 @@ function hangup() {
     handleUserLeave(userId);
   }
   console.log('PCs:', pcs);
-
-  // TODO how to stop the local media?
 }
 
 
 // public functions
 function CsioWebrtcApp() {
-   signalling = new modSignalling.CsioSignalling();
+  signalling = new modSignalling.CsioSignalling();
 }
 CsioWebrtcApp.prototype.call = function(room) {
   call(room);
