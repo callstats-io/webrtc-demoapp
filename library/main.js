@@ -2,6 +2,8 @@
  * Main file for the library.
  * Requirement:
  *    window.localStream
+ * Arguments:
+ *    array of datachannel labels (optional)
  * Provides functions:
  *    call(room)
  *    hangup()
@@ -19,6 +21,7 @@ var modSignalling = require('./signalling');
 var modPeerconnection = require('./peerconnection');
 
 var pcs = {};
+var datachannels = [];
 
 // TODO events are in document. create own event domain?
 var signalling;
@@ -44,6 +47,10 @@ document.addEventListener('userMessage',
 function handleUserJoin(userId) {
   // init webRTC
   var pc = new modPeerconnection.CsioPeerConnection(userId);
+  for (var i in datachannels) {
+    pc.createChannel(datachannels[i]);
+  }
+
   pcs[userId] = pc;
   pc.createOffer();
 }
@@ -108,8 +115,11 @@ function hangup() {
 
 
 // public functions
-function CsioWebrtcApp() {
-   signalling = new modSignalling.CsioSignalling();
+function CsioWebrtcApp(labels) {
+  datachannels = (typeof labels === 'undefined')
+      ? [] : labels;
+
+  signalling = new modSignalling.CsioSignalling();
 }
 CsioWebrtcApp.prototype.call = function(room) {
   call(room);
@@ -118,9 +128,9 @@ CsioWebrtcApp.prototype.hangup = function() {
   hangup();
 };
 
-CsioWebrtcApp.prototype.sendChatMessageAll = function(message) {
+CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   for (var i in pcs) {
-    pcs[i].sendChatMessage(message);
+    pcs[i].sendChannelMessage(label, message);
   }
 };
 
