@@ -1,13 +1,15 @@
 module.exports = function(grunt) {
-  var envTarget = grunt.option('envtarget') || 'prod';
+  var envTarget = process.env.TARGET || 'prod';
+  var appid = process.env.APPID || '';
+  var appsecret = process.env.APPSECRET || '';
   grunt.initConfig({
     config: {
       local: {
         options: {
           variables: {
             csjs: 'http://192.168.99.100:3000/static/callstats.js',
-            appid: '766154323',
-            appsecret: 'JusbctbKCw3l:HZP+y1NrNEeesjXB4WvEh504t6kFlR8dAYPfnYjgvh0='
+            appid: appid,
+            appsecret: appsecret
           }
         }
       },
@@ -15,8 +17,8 @@ module.exports = function(grunt) {
         options: {
           variables: {
             csjs: 'https://api.callstats.io/static/callstats.min.js',
-            appid: '425973066',
-            appsecret: 'MBKqPIW6bPZM:Veq6vZD4xgTo7xLPqVaaaPFCBz6e9rlnF0r2FDIzzQU='
+            appid: appid,
+            appsecret: appsecret
           }
         }
       }
