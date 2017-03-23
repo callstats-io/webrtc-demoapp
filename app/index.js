@@ -11,26 +11,230 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-ReactDOM.render(
-  <h1>Hello, world!</h1>,
-  document.getElementById('root')
-);
+var roomName = '';
+var remoteVideos = {}; //userId: stream
 
-var debug = false;
+function Video(props) {
+  var muted = false;
+  if (props.name === 'local') {
+    muted = true;
+  }
 
-// HTTP elements
-var callButton = document.getElementById('callButton');
-var hangupButton = document.getElementById('hangupButton');
-var roomInput = document.getElementById('roomInput');
-var localVideo = document.getElementById('localVideo');
+  // TODO hopefully this supports srcObject soon ..
+  // https://github.com/facebook/react/pull/9146
+  return (
+    <video key={props.name} width="320" height="240"
+        style={{transform: 'scaleX(-1)'}}
+        autoPlay='true' muted={muted}
+        src={window.URL.createObjectURL(props.stream)}>
+    </video>
+  );
+}
 
-var popup = document.getElementById('popup');
-var popupCloseButton = document.getElementById('popupCloseButton');
-var popupError = document.getElementById('popupError');
+class Popup extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      inputText: roomName,
+      onroomset: props.onroomset,
+    };
+  }
+  updateInputText(e) {
+    this.setState({
+      inputText: e.target.value
+    });
+  }
+  closeModal() {
+    var temp = this.state.inputText;
+    if (temp != '') {
+      console.log('room:', temp);
+      roomName = temp;
+      this.state.onroomset();
+    }
+  }
+  render() {
+    return (
+      <div id="popup" className="modal" style={{display: this.props.show}}>
+        <div className="modal-content">
+          Room: <input id="roomInput" type="text"
+                  value={this.state.inputText}
+                  onChange={this.updateInputText.bind(this)}/>
+          <button id="popupCloseButton"
+            onClick={this.closeModal.bind(this)}>OK</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-var chatBox = document.getElementById('chatBox');
-var chatInput = document.getElementById('chatInput');
-var chatButton = document.getElementById('chatButton');
+class Chat extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      inputText: '',
+      onnewmessage: props.onnewmessage,
+    };
+  }
+  onInputChange(e) {
+    this.setState({
+      inputText: e.target.value
+    });
+  }
+  onSendClick() {
+    var msg = this.state.inputText;
+    this.state.onnewmessage(msg);
+    this.setState({
+      inputText: ''
+    });
+  }
+  render() {
+    var left = "-320px";
+    if (this.props.show) {
+      left = "0px";
+    }
+    var chatText = '';
+    for (var i in chatMessages) {
+      chatText = chatText + '\n' + chatMessages[i].user
+          + ': ' + chatMessages[i].message;
+    }
+    return (
+      <div id="slideout" style={{left: left}}>
+        <textarea className="form-control" readOnly='true' value={chatText}/>
+        <div>
+          <input id="chatInput" style={{width: '80%'}} type="text"
+              value={this.state.inputText}
+              onChange={this.onInputChange.bind(this)}/>
+          <button id="chatButton"
+              onClick={this.onSendClick.bind(this)}>Send</button>
+        </div>
+      </div>
+    );
+  }
+}
+
+class Display extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      onroomset: props.onroomset,
+      onclickcall: props.onclickcall,
+      onclickhangup: props.onclickhangup,
+      onnewmessage: props.onnewmessage,
+      showChat: false,
+      showPopup: 'block',
+      messagesCount: chatMessages.length,
+      enableCall: false,
+      enableHangup: false,
+      enableChat: false,
+    };
+  }
+  renderLocalVideo() {
+    if (window.localStream) {
+      return <Video name={'local'} stream={window.localStream} />;
+    } else {
+      return null;
+    }
+  }
+  renderRemoteVideos() {
+    var ret = [];
+    for (var u in remoteVideos) {
+      ret.push(<Video name={u} stream={remoteVideos[u]} />);
+    }
+    return <div>{ret}</div>;
+  }
+  onRoomSet() {
+    this.setState({
+      showPopup: 'none',
+      enableCall: true,
+    });
+    this.state.onroomset();
+  }
+  onClickCall() {
+    this.setState({
+      enableCall: false,
+      enableHangup: true,
+      enableChat: true,
+    });
+    this.state.onclickcall();
+  }
+  onClickHangup() {
+    this.setState({
+      enableHangup: false,
+      enableChat: false,
+      showPopup: 'block',
+      showChat: false,
+    });
+    this.state.onclickhangup();
+  }
+  onClickChat() {
+    var temp = !(this.state.showChat);
+    this.setState({
+      showChat: temp,
+    });
+    if (this.state.showChat) {
+      this.setState({
+        messagesCount: chatMessages.length,
+      });
+    }
+  }
+
+  render() {
+    var cbColor = 'black';
+    if ((this.state.messagesCount < chatMessages.length)
+        && (!this.state.showChat)) {
+      cbColor = 'red';
+    }
+    return (
+      <div>
+        <div>
+          <button id="callButton"
+              onClick={this.onClickCall.bind(this)}
+              disabled={!this.state.enableCall}>Call</button>
+          <button id="hangupButton"
+              onClick={this.onClickHangup.bind(this)}
+              disabled={!this.state.enableHangup}>Hangup</button>
+          <button id="toggleChat" style={{color: cbColor}}
+              onClick={this.onClickChat.bind(this)}
+              disabled={!this.state.enableChat}>Chat</button>
+        </div>
+        <div>{this.renderLocalVideo()}</div>
+        <div>{this.renderRemoteVideos()}</div>
+        <Popup onroomset={this.onRoomSet.bind(this)}
+            show={this.state.showPopup}/>
+        <Chat onnewmessage={this.state.onnewmessage}
+            show={this.state.showChat}/>
+      </div>
+    );
+  }
+}
+
+function render() {
+  ReactDOM.render(
+    <Display
+        onroomset={onRoomSet}
+        onclickcall={onClickCall}
+        onclickhangup={onClickHangup}
+        onnewmessage={sendChatMessage}/>,
+    document.getElementById('container')
+  );
+}
+
+function onClickCall() {
+  lib.call(roomName);
+}
+
+function onClickHangup() {
+  lib.hangup();
+  stopLocalMedia();
+}
+
+var lib;
+function onRoomSet() {
+  history.replaceState({'room': roomName} /* state object */,
+                        'Room ' + roomName /* title */,
+                        roomName /* URL */);
+  lib = new CsioWebrtcApp();
+}
 
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
@@ -45,18 +249,19 @@ roomInput.onchange = function() {
                        room /* URL */);
 };
 
+var debug = false;
 // callstats
 var csObject;
-window.onload = test;
-function test() {
+window.onload = init;
+function init() {
   console.log('create callstats');
   csObject = new callstats();
-};
+  render();
+}
 
 var AppID = '@@APPID';
 var AppSecret = '@@APPSECRET';
 var localUserId = '';
-var roomName = '';
 
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
@@ -154,21 +359,6 @@ function handleWebrtcError(e) {
 }
 
 // library
-var lib;
-var chatLabel = 'chat';
-
-// When the user clicks 'OK', room name should be available
-popupCloseButton.onclick = function() {
-  roomName = roomInput.value;
-  if (roomName !== '') {
-    var datachannels = [chatLabel];
-    console.log('init webRTC app, datachannels:', datachannels);
-    lib = new CsioWebrtcApp(datachannels);
-    popup.style.display = 'none';
-  } else {
-    popupError.innerHTML = 'Please provide a room name!';
-  }
-};
 
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
@@ -201,18 +391,8 @@ document.addEventListener('addRemoteVideo',
     },
     false);
 function addRemoteVideo(userId,stream) {
-  var v;
-  if ((v = document.getElementById(userId)) === null) {
-    v = document.createElement('video');
-    v.id = userId;
-    v.width = 320;
-    v.height = 240;
-    v.autoplay = true;
-    v.style = 'transform: scaleX(-1)'; // flip video
-
-    document.getElementById('remoteVideos').append(v);
-  }
-  v.srcObject = stream;
+  remoteVideos[userId] = stream;
+  render();
 }
 
 document.addEventListener('removeRemoteVideo',
@@ -221,15 +401,9 @@ document.addEventListener('removeRemoteVideo',
     },
     false);
 function removeRemoteVideo(userId) {
-  var v = document.getElementById(userId);
-  if (v !== null) {
-    document.getElementById(userId).remove();
-  }
+  delete remoteVideos[userId];
+  render();
 }
-
-// startup settings
-callButton.disabled = true;
-hangupButton.disabled = true;
 
 // Initialize (local media)
 function initLocalMedia() {
@@ -240,11 +414,11 @@ function initLocalMedia() {
   })
   .then(function(stream) {
     console.log('Received local stream');
-    localVideo.srcObject = stream;
     window.localStream = stream;
-    callButton.disabled = false;
-  })
-  .catch(function(e) {
+
+    render();
+  },
+  function(e) {
     console.log('getUserMedia() error: ', e);
 
     var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
@@ -257,27 +431,9 @@ function stopLocalMedia() {
   for (var i in window.localStream.getTracks()) {
     window.localStream.getTracks()[i].stop();
   }
-  localVideo.srcObject = null;
+  window.localStream = null;
+  render();
 }
-
-// assign functions to buttons
-callButton.onclick = function() {
-  callButton.disabled = true;
-  roomInput.disabled = true;
-  hangupButton.disabled = false;
-  lib.call(roomName);
-};
-
-hangupButton.onclick = function() {
-  hangupButton.disabled = true;
-  roomInput.disabled = false;
-  callButton.disabled = false;
-  lib.hangup();
-
-  stopLocalMedia();
-
-  popup.style.display = 'block';
-};
 
 // chat
 chatButton.onclick = function() {
@@ -299,6 +455,13 @@ document.addEventListener('channelMessage',
     },
     false);
 
+var chatMessages = [];
 function addChatMessage(user, message) {
-  chatBox.innerHTML = chatBox.innerHTML + '\n' + user + ': ' + message;
+  chatMessages.push({user: user, message: message});
+  render();
+}
+
+function sendChatMessage(message) {
+  lib.sendChatMessageAll(message);
+  addChatMessage('Me', message);
 }

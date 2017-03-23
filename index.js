@@ -23,20 +23,6 @@ var def = path.join(dir, fileDefault);
 // offered files
 app.use(express.static(dir));
 
-// react
-app.use('/react', express.static(__dirname + '/react'));
-app.use('/react/bundle.js', function(req, res) {
-  console.log('request bundle');
-  res.setHeader('content-type', 'application/javascript');
-  browserify('react/index.js', {
-    debug: true
-  })
-  .transform('reactify')
-  .bundle()
-  .pipe(res);
-});
-
-
 app.use('/app/index.js', function(req, res) {
   console.log('request bundle: index.js');
   res.setHeader('content-type', 'application/javascript');
