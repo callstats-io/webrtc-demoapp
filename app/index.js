@@ -232,26 +232,24 @@ function onClickHangup() {
   chatMessages = []; //clear chat
 }
 
+// library
 var lib;
+var chatLabel = 'chat';
 function onRoomSet() {
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
-                        roomName /* URL */);
-  lib = new CsioWebrtcApp();
+                        encodeURIComponent(roomName) /* URL */);
+
+  var datachannels = [chatLabel];
+  console.log('init webRTC app, datachannels:', datachannels);
+  lib = new CsioWebrtcApp(datachannels);
 }
 
 // parse URL for room name
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
-  roomInput.value = decodeURIComponent(urlRoom);
+  roomName = decodeURIComponent(urlRoom);
 }
-// update url for easy distribution
-roomInput.onchange = function() {
-  var room = encodeURIComponent(roomInput.value);
-  history.replaceState({'room': room} /* state object */,
-                       'Room ' + room /* title */,
-                       room /* URL */);
-};
 
 var debug = false;
 // callstats
@@ -362,8 +360,6 @@ function handleWebrtcError(e) {
   csObject.reportError(pcObject, roomName, csioType, err);
 }
 
-// library
-
 // handle video add/remove provided by library
 document.addEventListener('addRemoteVideo',
     function(e) {
@@ -442,13 +438,6 @@ function stopLocalMedia() {
 }
 
 // chat
-chatButton.onclick = function() {
-  var message = chatInput.value;
-  lib.sendChannelMessageAll(chatLabel, message);
-  addChatMessage('Me', message);
-  chatInput.value = '';
-};
-
 document.addEventListener('channelMessage',
     function(e) {
       var label = e.detail.label;
@@ -467,6 +456,6 @@ function addChatMessage(user, message) {
 }
 
 function sendChatMessage(message) {
-  lib.sendChatMessageAll(message);
+  lib.sendChannelMessageAll(chatLabel, message);
   addChatMessage('Me', message);
 }
