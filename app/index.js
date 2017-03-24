@@ -40,9 +40,8 @@ roomInput.onchange = function() {
 // callstats
 var callstats = new callstats();
 
-var appConfig = new AppConfiguration();
-var AppID = appConfig.appId;
-var AppSecret = appConfig.appSecret;
+var AppID = '@@APPID';
+var AppSecret = '@@APPSECRET';
 var localUserId = '';
 var roomName = '';
 

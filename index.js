@@ -9,7 +9,7 @@ var socketIO = require('socket.io');
 var app = express();
 var server;
 
-var fileDir = 'app';
+var fileDir = 'build';
 var fileDefault = 'index.html';
 
 var dir = path.join(__dirname, fileDir);
