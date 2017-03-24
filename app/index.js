@@ -12,7 +12,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var roomName = '';
-var remoteVideos = {}; //userId: stream
+var remoteVideos = {}; //userId: streamUrl (for now)
 
 function Video(props) {
   var muted = false;
@@ -23,10 +23,10 @@ function Video(props) {
   // TODO hopefully this supports srcObject soon ..
   // https://github.com/facebook/react/pull/9146
   return (
-    <video key={props.name} width="320" height="240"
+    <video key={props.name} id={props.name} width="320" height="240"
         style={{transform: 'scaleX(-1)'}}
         autoPlay='true' muted={muted}
-        src={window.URL.createObjectURL(props.stream)}>
+        src={props.stream}>
     </video>
   );
 }
@@ -88,9 +88,9 @@ class Chat extends React.Component {
     });
   }
   render() {
-    var left = "-320px";
+    var left = "0px";
     if (this.props.show) {
-      left = "0px";
+      left = "-300px";
     }
     var chatText = '';
     for (var i in chatMessages) {
@@ -98,7 +98,8 @@ class Chat extends React.Component {
           + ': ' + chatMessages[i].message;
     }
     return (
-      <div id="slideout" style={{left: left}}>
+      <div id="slideout"
+          style={{left: '100%', transform: 'translateX('+left+')'}}>
         <textarea className="form-control" readOnly='true' value={chatText}/>
         <div>
           <input id="chatInput" style={{width: '80%'}} type="text"
@@ -129,8 +130,8 @@ class Display extends React.Component {
     };
   }
   renderLocalVideo() {
-    if (window.localStream) {
-      return <Video name={'local'} stream={window.localStream} />;
+    if (window.localStreamUrl) {
+      return <Video name={'local'} stream={window.localStreamUrl} />;
     } else {
       return null;
     }
@@ -186,14 +187,14 @@ class Display extends React.Component {
     }
     return (
       <div>
-        <div>
+        <div style={{padding: '5px'}}>
           <button id="callButton"
               onClick={this.onClickCall.bind(this)}
               disabled={!this.state.enableCall}>Call</button>
           <button id="hangupButton"
               onClick={this.onClickHangup.bind(this)}
               disabled={!this.state.enableHangup}>Hangup</button>
-          <button id="toggleChat" style={{color: cbColor}}
+          <button id="toggleChat" style={{color: cbColor, float: 'right'}}
               onClick={this.onClickChat.bind(this)}
               disabled={!this.state.enableChat}>Chat</button>
         </div>
@@ -384,7 +385,7 @@ document.addEventListener('addRemoteVideo',
     },
     false);
 function addRemoteVideo(userId,stream) {
-  remoteVideos[userId] = stream;
+  remoteVideos[userId] = window.URL.createObjectURL(stream);
   render();
 }
 
@@ -408,6 +409,7 @@ function initLocalMedia() {
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
+    window.localStreamUrl = window.URL.createObjectURL(stream);
 
     render();
   },
@@ -425,6 +427,7 @@ function stopLocalMedia() {
     window.localStream.getTracks()[i].stop();
   }
   window.localStream = null;
+  window.localStreamUrl = null;
   render();
 }
 
