@@ -29,11 +29,8 @@
   color: #333;
   position: fixed;
   top: 100px;
-  left: -320px;
+  left: 100%;
   width: 300px;
-  -webkit-transition-duration: 0.3s;
-  -moz-transition-duration: 0.3s;
-  -o-transition-duration: 0.3s;
   transition-duration: 0.3s;
 }
 #slideout textarea {
