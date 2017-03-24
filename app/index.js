@@ -12,7 +12,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var roomName = '';
-var remoteVideos = {}; //userId: streamUrl (for now)
+var remoteVideos = {}; // userId: streamUrl (for now)
 var chatMessages = [];
 
 function Video(props) {
@@ -47,7 +47,7 @@ class Popup extends React.Component {
   }
   closeModal() {
     var temp = this.state.inputText;
-    if (temp != '') {
+    if (temp !== '') {
       console.log('room:', temp);
       roomName = temp;
       this.state.onroomset();
@@ -89,9 +89,9 @@ class Chat extends React.Component {
     });
   }
   render() {
-    var left = "0px";
+    var left = '0px';
     if (this.props.show) {
-      left = "-300px";
+      left = '-300px';
     }
     var chatText = '';
     for (var i in chatMessages) {
@@ -134,9 +134,8 @@ class Display extends React.Component {
     if (window.localStreamUrl) {
       return <Video key={'local'} name={'local'}
           stream={window.localStreamUrl} />;
-    } else {
-      return null;
     }
+    return null;
   }
   renderRemoteVideos() {
     var ret = [];
@@ -229,7 +228,7 @@ function onClickCall() {
 function onClickHangup() {
   lib.hangup();
   stopLocalMedia();
-  chatMessages = []; //clear chat
+  chatMessages = []; // clear chat
 }
 
 // library
@@ -257,7 +256,7 @@ var csObject;
 window.onload = init;
 function init() {
   console.log('create callstats');
-  csObject = new callstats();
+  csObject = new callstats(); // eslint-disable-line new-cap
   render();
 }
 
