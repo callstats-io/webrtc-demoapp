@@ -23,7 +23,7 @@ function Video(props) {
   // TODO hopefully this supports srcObject soon ..
   // https://github.com/facebook/react/pull/9146
   return (
-    <video key={props.name} id={props.name} width="320" height="240"
+    <video id={props.name} width="320" height="240"
         style={{transform: 'scaleX(-1)'}}
         autoPlay='true' muted={muted}
         src={props.stream}>
@@ -131,7 +131,8 @@ class Display extends React.Component {
   }
   renderLocalVideo() {
     if (window.localStreamUrl) {
-      return <Video name={'local'} stream={window.localStreamUrl} />;
+      return <Video key={'local'} name={'local'}
+          stream={window.localStreamUrl} />;
     } else {
       return null;
     }
@@ -139,7 +140,7 @@ class Display extends React.Component {
   renderRemoteVideos() {
     var ret = [];
     for (var u in remoteVideos) {
-      ret.push(<Video name={u} stream={remoteVideos[u]} />);
+      ret.push(<Video key={u} name={u} stream={remoteVideos[u]} />);
     }
     return <div>{ret}</div>;
   }
