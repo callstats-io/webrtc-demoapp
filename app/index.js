@@ -13,6 +13,7 @@ var ReactDOM = require('react-dom');
 
 var roomName = '';
 var remoteVideos = {}; //userId: streamUrl (for now)
+var chatMessages = [];
 
 function Video(props) {
   var muted = false;
@@ -99,7 +100,7 @@ class Chat extends React.Component {
     }
     return (
       <div id="slideout"
-          style={{left: '100%', transform: 'translateX('+left+')'}}>
+          style={{transform: 'translateX('+left+')'}}>
         <textarea className="form-control" readOnly='true' value={chatText}/>
         <div>
           <input id="chatInput" style={{width: '80%'}} type="text"
@@ -228,6 +229,7 @@ function onClickCall() {
 function onClickHangup() {
   lib.hangup();
   stopLocalMedia();
+  chatMessages = []; //clear chat
 }
 
 var lib;
@@ -442,7 +444,6 @@ document.addEventListener('chatMessage',
     },
     false);
 
-var chatMessages = [];
 function addChatMessage(user, message) {
   chatMessages.push({user: user, message: message});
   render();
