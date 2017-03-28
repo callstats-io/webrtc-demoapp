@@ -41,7 +41,6 @@ class Popup extends React.Component {
     super();
     this.state = {
       inputText: roomName,
-      onRoomSet: props.onRoomSet,
     };
   }
   updateInputText(e) {
@@ -54,7 +53,7 @@ class Popup extends React.Component {
     if (temp !== '') {
       console.log('room:', temp);
       roomName = temp;
-      this.state.onRoomSet();
+      this.props.onRoomSet();
     }
   }
   render() {
@@ -81,7 +80,6 @@ class Chat extends React.Component {
     super();
     this.state = {
       inputText: '',
-      onNewMessage: props.onNewMessage,
     };
   }
   onInputChange(e) {
@@ -91,7 +89,7 @@ class Chat extends React.Component {
   }
   onSendClick() {
     var msg = this.state.inputText;
-    this.state.onNewMessage(msg);
+    this.props.onNewMessage(msg);
     this.setState({
       inputText: ''
     });
@@ -130,10 +128,6 @@ class Display extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      onRoomSet: props.onRoomSet,
-      onClickCall: props.onClickCall,
-      onClickHangup: props.onClickHangup,
-      onNewMessage: props.onNewMessage,
       showChat: false,
       showPopup: 'block',
       messagesCount: chatMessages.length,
@@ -161,7 +155,7 @@ class Display extends React.Component {
       showPopup: 'none',
       enableCall: true,
     });
-    this.state.onRoomSet();
+    this.props.onRoomSet();
   }
   onClickCall() {
     this.setState({
@@ -169,7 +163,7 @@ class Display extends React.Component {
       enableHangup: true,
       enableChat: true,
     });
-    this.state.onClickCall();
+    this.props.onClickCall();
   }
   onClickHangup() {
     this.setState({
@@ -178,7 +172,7 @@ class Display extends React.Component {
       showPopup: 'block',
       showChat: false,
     });
-    this.state.onClickHangup();
+    this.props.onClickHangup();
   }
   onClickChat() {
     var temp = !(this.state.showChat);
@@ -215,7 +209,7 @@ class Display extends React.Component {
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
             show={this.state.showPopup}/>
-        <Chat onNewMessage={this.state.onNewMessage}
+        <Chat onNewMessage={this.props.onNewMessage}
             show={this.state.showChat}/>
       </div>
     );
