@@ -41,7 +41,7 @@ class Popup extends React.Component {
     super();
     this.state = {
       inputText: roomName,
-      onroomset: props.onroomset,
+      onRoomSet: props.onRoomSet,
     };
   }
   updateInputText(e) {
@@ -54,7 +54,7 @@ class Popup extends React.Component {
     if (temp !== '') {
       console.log('room:', temp);
       roomName = temp;
-      this.state.onroomset();
+      this.state.onRoomSet();
     }
   }
   render() {
@@ -72,7 +72,7 @@ class Popup extends React.Component {
   }
 }
 Popup.propTypes = {
-  onroomset: React.PropTypes.func,
+  onRoomSet: React.PropTypes.func,
   show: React.PropTypes.string,
 };
 
@@ -81,7 +81,7 @@ class Chat extends React.Component {
     super();
     this.state = {
       inputText: '',
-      onnewmessage: props.onnewmessage,
+      onNewMessage: props.onNewMessage,
     };
   }
   onInputChange(e) {
@@ -91,7 +91,7 @@ class Chat extends React.Component {
   }
   onSendClick() {
     var msg = this.state.inputText;
-    this.state.onnewmessage(msg);
+    this.state.onNewMessage(msg);
     this.setState({
       inputText: ''
     });
@@ -122,7 +122,7 @@ class Chat extends React.Component {
   }
 }
 Chat.propTypes = {
-  onnewmessage: React.PropTypes.func,
+  onNewMessage: React.PropTypes.func,
   show: React.PropTypes.bool,
 };
 
@@ -130,10 +130,10 @@ class Display extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      onroomset: props.onroomset,
-      onclickcall: props.onclickcall,
-      onclickhangup: props.onclickhangup,
-      onnewmessage: props.onnewmessage,
+      onRoomSet: props.onRoomSet,
+      onClickCall: props.onClickCall,
+      onClickHangup: props.onClickHangup,
+      onNewMessage: props.onNewMessage,
       showChat: false,
       showPopup: 'block',
       messagesCount: chatMessages.length,
@@ -161,7 +161,7 @@ class Display extends React.Component {
       showPopup: 'none',
       enableCall: true,
     });
-    this.state.onroomset();
+    this.state.onRoomSet();
   }
   onClickCall() {
     this.setState({
@@ -169,7 +169,7 @@ class Display extends React.Component {
       enableHangup: true,
       enableChat: true,
     });
-    this.state.onclickcall();
+    this.state.onClickCall();
   }
   onClickHangup() {
     this.setState({
@@ -178,7 +178,7 @@ class Display extends React.Component {
       showPopup: 'block',
       showChat: false,
     });
-    this.state.onclickhangup();
+    this.state.onClickHangup();
   }
   onClickChat() {
     var temp = !(this.state.showChat);
@@ -213,28 +213,28 @@ class Display extends React.Component {
         </div>
         <div>{this.renderLocalVideo()}</div>
         <div>{this.renderRemoteVideos()}</div>
-        <Popup onroomset={this.onRoomSet.bind(this)}
+        <Popup onRoomSet={this.onRoomSet.bind(this)}
             show={this.state.showPopup}/>
-        <Chat onnewmessage={this.state.onnewmessage}
+        <Chat onNewMessage={this.state.onNewMessage}
             show={this.state.showChat}/>
       </div>
     );
   }
 }
 Display.propTypes = {
-  onroomset: React.PropTypes.func,
-  onclickcall: React.PropTypes.func,
-  onclickhangup: React.PropTypes.func,
-  onnewmessage: React.PropTypes.func,
+  onRoomSet: React.PropTypes.func,
+  onClickCall: React.PropTypes.func,
+  onClickHangup: React.PropTypes.func,
+  onNewMessage: React.PropTypes.func,
 };
 
 function render() {
   ReactDOM.render(
     <Display
-        onroomset={onRoomSet}
-        onclickcall={onClickCall}
-        onclickhangup={onClickHangup}
-        onnewmessage={sendChatMessage}/>,
+        onRoomSet={onRoomSet}
+        onClickCall={onClickCall}
+        onClickHangup={onClickHangup}
+        onNewMessage={sendChatMessage}/>,
     document.getElementById('container')
   );
 }
