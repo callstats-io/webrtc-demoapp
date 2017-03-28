@@ -31,6 +31,10 @@ function Video(props) {
     </video>
   );
 }
+Video.propTypes = {
+  name: React.PropTypes.string,
+  stream: React.PropTypes.string,
+};
 
 class Popup extends React.Component {
   constructor(props) {
@@ -67,6 +71,10 @@ class Popup extends React.Component {
     );
   }
 }
+Popup.propTypes = {
+  onroomset: React.PropTypes.func,
+  show: React.PropTypes.string,
+};
 
 class Chat extends React.Component {
   constructor(props) {
@@ -113,6 +121,10 @@ class Chat extends React.Component {
     );
   }
 }
+Chat.propTypes = {
+  onnewmessage: React.PropTypes.func,
+  show: React.PropTypes.bool,
+};
 
 class Display extends React.Component {
   constructor(props) {
@@ -209,6 +221,12 @@ class Display extends React.Component {
     );
   }
 }
+Display.propTypes = {
+  onroomset: React.PropTypes.func,
+  onclickcall: React.PropTypes.func,
+  onclickhangup: React.PropTypes.func,
+  onnewmessage: React.PropTypes.func,
+};
 
 function render() {
   ReactDOM.render(
