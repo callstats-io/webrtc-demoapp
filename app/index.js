@@ -12,8 +12,6 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 
 var roomName = '';
-var remoteVideos = {}; // userId: streamUrl (for now)
-var chatMessages = [];
 
 function Video(props) {
   var muted = false;
@@ -99,15 +97,11 @@ class Chat extends React.Component {
     if (this.props.show) {
       left = '-300px';
     }
-    var chatText = '';
-    for (var i in chatMessages) {
-      chatText = chatText + '\n' + chatMessages[i].user
-          + ': ' + chatMessages[i].message;
-    }
     return (
       <div id="slideout"
           style={{transform: 'translateX('+left+')'}}>
-        <textarea className="form-control" readOnly='true' value={chatText}/>
+        <textarea className="form-control" readOnly='true'
+            value={this.props.chatText}/>
         <div>
           <input id="chatInput" style={{width: '80%'}} type="text"
               value={this.state.inputText}
@@ -130,12 +124,56 @@ class Display extends React.Component {
     this.state = {
       showChat: false,
       showPopup: 'block',
-      messagesCount: chatMessages.length,
+      messagesCount: 0,
       enableCall: false,
       enableHangup: false,
       enableChat: false,
+      remoteVideos: {},
+      chatMessages: [],
+      chatText: '',
     };
+
+    document.addEventListener('addRemoteVideo',
+        function(e) {
+          var stream = e.detail.stream;
+          var remoteUserId = e.detail.userId;
+
+          var temp = this.state.remoteVideos;
+          temp[remoteUserId] = window.URL.createObjectURL(stream);
+          this.setState({
+            remoteVideos: temp,
+          });
+        }.bind(this), false);
+    document.addEventListener('removeRemoteVideo',
+        function(e) {
+          var temp = this.state.remoteVideos;
+          delete temp[e.detail.userId];
+          this.setState({
+            remoteVideos: temp,
+          });
+        }.bind(this), false);
+    // chat
+    document.addEventListener('channelMessage',
+        function(e) {
+          var label = e.detail.label;
+          var userId = e.detail.userId;
+          var message = e.detail.message;
+
+          if (label === chatLabel) {
+            this.addChatMessage(userId, message);
+          }
+        }.bind(this), false);
   }
+  addChatMessage(userId, message) {
+    var temp = this.state.chatMessages;
+    temp.push({user: userId, message: message});
+    var temp2 = this.state.chatText + '\n' + userId + ': ' + message;
+    this.setState({
+      chatMessages: temp,
+      chatText: temp2,
+    });
+  }
+
   renderLocalVideo() {
     if (window.localStreamUrl) {
       return <Video key={'local'} name={'local'}
@@ -145,8 +183,8 @@ class Display extends React.Component {
   }
   renderRemoteVideos() {
     var ret = [];
-    for (var u in remoteVideos) {
-      ret.push(<Video key={u} name={u} stream={remoteVideos[u]} />);
+    for (var u in this.state.remoteVideos) {
+      ret.push(<Video key={u} name={u} stream={this.state.remoteVideos[u]} />);
     }
     return <div>{ret}</div>;
   }
@@ -171,6 +209,7 @@ class Display extends React.Component {
       enableChat: false,
       showPopup: 'block',
       showChat: false,
+      chatMessages: [],
     });
     this.props.onClickHangup();
   }
@@ -179,16 +218,20 @@ class Display extends React.Component {
     this.setState({
       showChat: temp,
     });
-    if (this.state.showChat) {
+    if (temp) {
       this.setState({
-        messagesCount: chatMessages.length,
+        messagesCount: this.state.chatMessages.length,
       });
     }
+  }
+  onNewMessage(msg) {
+    this.addChatMessage('Me', msg);
+    this.props.onNewMessage(msg);
   }
 
   render() {
     var cbColor = 'black';
-    if ((this.state.messagesCount < chatMessages.length)
+    if ((this.state.messagesCount < this.state.chatMessages.length)
         && (!this.state.showChat)) {
       cbColor = 'red';
     }
@@ -209,7 +252,8 @@ class Display extends React.Component {
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
             show={this.state.showPopup}/>
-        <Chat onNewMessage={this.props.onNewMessage}
+        <Chat onNewMessage={this.onNewMessage.bind(this)}
+            chatText={this.state.chatText}
             show={this.state.showChat}/>
       </div>
     );
@@ -240,7 +284,6 @@ function onClickCall() {
 function onClickHangup() {
   lib.hangup();
   stopLocalMedia();
-  chatMessages = []; // clear chat
 }
 
 // library
@@ -376,7 +419,6 @@ document.addEventListener('addRemoteVideo',
     function(e) {
       var pc = e.detail.pc;
       var remoteUserId = e.detail.userId;
-      addRemoteVideo(remoteUserId, e.detail.stream);
 
       // associate SSRCs
       var ssrcs = [];
@@ -401,20 +443,6 @@ document.addEventListener('addRemoteVideo',
       }
     },
     false);
-function addRemoteVideo(userId,stream) {
-  remoteVideos[userId] = window.URL.createObjectURL(stream);
-  render();
-}
-
-document.addEventListener('removeRemoteVideo',
-    function(e) {
-      removeRemoteVideo(e.detail.userId);
-    },
-    false);
-function removeRemoteVideo(userId) {
-  delete remoteVideos[userId];
-  render();
-}
 
 // Initialize (local media)
 function initLocalMedia() {
@@ -448,25 +476,6 @@ function stopLocalMedia() {
   render();
 }
 
-// chat
-document.addEventListener('channelMessage',
-    function(e) {
-      var label = e.detail.label;
-      var userId = e.detail.userId;
-      var message = e.detail.message;
-
-      if (label === chatLabel) {
-        addChatMessage(userId, message);
-      }
-    },
-    false);
-
-function addChatMessage(user, message) {
-  chatMessages.push({user: user, message: message});
-  render();
-}
-
 function sendChatMessage(message) {
   lib.sendChannelMessageAll(chatLabel, message);
-  addChatMessage('Me', message);
 }
