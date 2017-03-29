@@ -11,8 +11,21 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var roomName = '';
+var debug = false;
 
+var csObject;
+window.onload = function() {
+  // make sure everything is loaded, otherwise this fails
+  console.log('create callstats');
+  csObject = new callstats(); // eslint-disable-line new-cap
+
+  render();
+};
+
+/*
+ * React
+ */
+// A video element
 function Video(props) {
   var muted = false;
   if (props.name === 'local') {
@@ -34,38 +47,40 @@ Video.propTypes = {
   stream: React.PropTypes.string,
 };
 
+// Popup asking for the room name
 class Popup extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      inputText: roomName,
+      inputText: props.roomName,
     };
   }
-  updateInputText(e) {
-    this.setState({
-      inputText: e.target.value
-    });
-  }
-  closeModal() {
-    var temp = this.state.inputText;
-    if (temp !== '') {
-      console.log('room:', temp);
-      roomName = temp;
-      this.props.onRoomSet();
-    }
-  }
+
   render() {
     return (
       <div id="popup" className="modal" style={{display: this.props.show}}>
         <div className="modal-content">
           Room: <input id="roomInput" type="text"
                   value={this.state.inputText}
-                  onChange={this.updateInputText.bind(this)}/>
+                  onChange={this.onUpdateInputText.bind(this)}/>
           <button id="popupCloseButton"
-            onClick={this.closeModal.bind(this)}>OK</button>
+            onClick={this.handleCloseModal.bind(this)}>OK</button>
         </div>
       </div>
     );
+  }
+
+  onUpdateInputText(e) {
+    this.setState({
+      inputText: e.target.value
+    });
+  }
+  handleCloseModal() {
+    var temp = this.state.inputText;
+    if (temp !== '') {
+      console.log('room:', temp);
+      this.props.onRoomSet(temp);
+    }
   }
 }
 Popup.propTypes = {
@@ -73,6 +88,7 @@ Popup.propTypes = {
   show: React.PropTypes.string,
 };
 
+// Chat window
 class Chat extends React.Component {
   constructor(props) {
     super();
@@ -80,18 +96,7 @@ class Chat extends React.Component {
       inputText: '',
     };
   }
-  onInputChange(e) {
-    this.setState({
-      inputText: e.target.value
-    });
-  }
-  onSendClick() {
-    var msg = this.state.inputText;
-    this.props.onNewMessage(msg);
-    this.setState({
-      inputText: ''
-    });
-  }
+
   render() {
     var left = '0px';
     if (this.props.show) {
@@ -112,16 +117,31 @@ class Chat extends React.Component {
       </div>
     );
   }
+
+  onInputChange(e) {
+    this.setState({
+      inputText: e.target.value
+    });
+  }
+  onSendClick() {
+    var msg = this.state.inputText;
+    this.props.onNewMessage(msg);
+    this.setState({
+      inputText: ''
+    });
+  }
 }
 Chat.propTypes = {
   onNewMessage: React.PropTypes.func,
   show: React.PropTypes.bool,
 };
 
+// Main react object that renders everything and keeps state
 class Display extends React.Component {
   constructor(props) {
     super();
     this.state = {
+      roomName: props.roomName,
       showChat: false,
       showPopup: 'block',
       messagesCount: 0,
@@ -133,6 +153,7 @@ class Display extends React.Component {
       chatText: '',
     };
 
+    // video
     document.addEventListener('addRemoteVideo',
         function(e) {
           var stream = e.detail.stream;
@@ -163,15 +184,36 @@ class Display extends React.Component {
             this.addChatMessage(userId, message);
           }
         }.bind(this), false);
-  }
-  addChatMessage(userId, message) {
-    var temp = this.state.chatMessages;
-    temp.push({user: userId, message: message});
-    var temp2 = this.state.chatText + '\n' + userId + ': ' + message;
-    this.setState({
-      chatMessages: temp,
-      chatText: temp2,
-    });
+  } // end constructor
+
+  render() {
+    var cbColor = 'black';
+    if ((this.state.messagesCount < this.state.chatMessages.length)
+        && (!this.state.showChat)) {
+      cbColor = 'red';
+    }
+    return (
+      <div>
+        <div style={{padding: '5px'}}>
+          <button id="callButton"
+              onClick={this.onClickCall.bind(this)}
+              disabled={!this.state.enableCall}>Call</button>
+          <button id="hangupButton"
+              onClick={this.onClickHangup.bind(this)}
+              disabled={!this.state.enableHangup}>Hangup</button>
+          <button id="toggleChat" style={{color: cbColor, float: 'right'}}
+              onClick={this.onClickChat.bind(this)}
+              disabled={!this.state.enableChat}>Chat</button>
+        </div>
+        <div>{this.renderLocalVideo()}</div>
+        <div>{this.renderRemoteVideos()}</div>
+        <Popup onRoomSet={this.onRoomSet.bind(this)}
+            show={this.state.showPopup} roomName={this.state.roomName}/>
+        <Chat onNewMessage={this.onNewMessage.bind(this)}
+            chatText={this.state.chatText}
+            show={this.state.showChat}/>
+      </div>
+    );
   }
 
   renderLocalVideo() {
@@ -189,12 +231,24 @@ class Display extends React.Component {
     });
     return ret;
   }
-  onRoomSet() {
+
+  addChatMessage(userId, message) {
+    var temp = this.state.chatMessages;
+    temp.push({user: userId, message: message});
+    var temp2 = this.state.chatText + '\n' + userId + ': ' + message;
+    this.setState({
+      chatMessages: temp,
+      chatText: temp2,
+    });
+  }
+
+  onRoomSet(roomName) {
     this.setState({
       showPopup: 'none',
       enableCall: true,
+      roomName: roomName,
     });
-    this.props.onRoomSet();
+    this.props.onRoomSet(roomName);
   }
   onClickCall() {
     this.setState({
@@ -229,36 +283,6 @@ class Display extends React.Component {
     this.addChatMessage('Me', msg);
     this.props.onNewMessage(msg);
   }
-
-  render() {
-    var cbColor = 'black';
-    if ((this.state.messagesCount < this.state.chatMessages.length)
-        && (!this.state.showChat)) {
-      cbColor = 'red';
-    }
-    return (
-      <div>
-        <div style={{padding: '5px'}}>
-          <button id="callButton"
-              onClick={this.onClickCall.bind(this)}
-              disabled={!this.state.enableCall}>Call</button>
-          <button id="hangupButton"
-              onClick={this.onClickHangup.bind(this)}
-              disabled={!this.state.enableHangup}>Hangup</button>
-          <button id="toggleChat" style={{color: cbColor, float: 'right'}}
-              onClick={this.onClickChat.bind(this)}
-              disabled={!this.state.enableChat}>Chat</button>
-        </div>
-        <div>{this.renderLocalVideo()}</div>
-        <div>{this.renderRemoteVideos()}</div>
-        <Popup onRoomSet={this.onRoomSet.bind(this)}
-            show={this.state.showPopup}/>
-        <Chat onNewMessage={this.onNewMessage.bind(this)}
-            chatText={this.state.chatText}
-            show={this.state.showChat}/>
-      </div>
-    );
-  }
 }
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
@@ -267,30 +291,36 @@ Display.propTypes = {
   onNewMessage: React.PropTypes.func,
 };
 
+// init the React rendering
+// may also be called if something changes (e.g. the local video)
 function render() {
   ReactDOM.render(
     <Display
         onRoomSet={onRoomSet}
         onClickCall={onClickCall}
         onClickHangup={onClickHangup}
-        onNewMessage={sendChatMessage}/>,
+        onNewMessage={onNewChatMessage}
+        roomName={roomName}/>,
     document.getElementById('container')
   );
 }
 
-function onClickCall() {
-  lib.call(roomName);
+/*
+ * Room name
+ */
+var roomName = '';
+
+// init from URL
+var urlRoom = window.location.pathname.split('/')[1];
+if (urlRoom !== '') {
+  roomName = decodeURIComponent(urlRoom);
 }
 
-function onClickHangup() {
-  lib.hangup();
-  stopLocalMedia();
-}
-
-// library
+// roomName from user input
 var lib;
 var chatLabel = 'chat';
-function onRoomSet() {
+function onRoomSet(room) {
+  roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
@@ -300,26 +330,25 @@ function onRoomSet() {
   lib = new CsioWebrtcApp(datachannels);
 }
 
-// parse URL for room name
-var urlRoom = window.location.pathname.split('/')[1];
-if (urlRoom !== '') {
-  roomName = decodeURIComponent(urlRoom);
+/*
+ * webRTC library
+ */
+function onClickCall() {
+  lib.call(roomName);
 }
 
-var debug = false;
-// callstats
-var csObject;
-window.onload = init;
-function init() {
-  console.log('create callstats');
-  csObject = new callstats(); // eslint-disable-line new-cap
-  render();
+function onClickHangup() {
+  lib.hangup();
+  stopLocalMedia();
 }
 
-var AppID = '@@APPID';
-var AppSecret = '@@APPSECRET';
-var localUserId = '';
+function onNewChatMessage(message) {
+  lib.sendChannelMessageAll(chatLabel, message);
+}
 
+/*
+ * callstats.js
+ */
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
   if (csError === 'success') {
@@ -346,24 +375,30 @@ var csStatsCallback = function(stats) {
     }
   }
 };
+
+// The following events are triggered by CsioWebrtcApp
+
+// local userId is available
 var configParams = {
   disableBeforeUnloadHandler: false,
   applicationVersion: 'v1.0'
 };
-
-// This event is triggered by CsioWebrtcApp when the name is available
-// from the server
 document.addEventListener('localName',
     function(e) {
-      localUserId = e.detail.localname;
+      var AppID = '@@APPID';
+      var AppSecret = '@@APPSECRET';
+      var localUserId = e.detail.localname;
       console.log('Initialize callstats', localUserId);
       csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
           csStatsCallback, configParams);
     },
     false);
 
+// new peer connection is created for an incoming user
 function pcCallback(err, msg) {
-  console.log('Monitoring status: '+ err + ' msg: ' + msg);
+  if (debug) {
+    console.log('Monitoring status: '+ err + ' msg: ' + msg);
+  }
 }
 document.addEventListener('newPeerConnection',
     function(e) {
@@ -375,6 +410,7 @@ document.addEventListener('newPeerConnection',
     },
     false);
 
+// a peer connection is closed due to a user leaving
 document.addEventListener('closePeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
@@ -383,6 +419,7 @@ document.addEventListener('closePeerConnection',
     },
     false);
 
+// an error occurred from webRTC
 document.addEventListener('webrtcError', handleWebrtcError, false);
 function handleWebrtcError(e) {
   var pcObject = e.detail.pc;
@@ -415,7 +452,7 @@ function handleWebrtcError(e) {
   csObject.reportError(pcObject, roomName, csioType, err);
 }
 
-// handle video add/remove provided by library
+// a new video stream is incoming, associate MST
 document.addEventListener('addRemoteVideo',
     function(e) {
       var pc = e.detail.pc;
@@ -445,7 +482,9 @@ document.addEventListener('addRemoteVideo',
     },
     false);
 
-// Initialize (local media)
+/*
+ * Local media
+ */
 function initLocalMedia() {
   console.log('Requesting local stream');
   navigator.mediaDevices.getUserMedia({
@@ -475,8 +514,4 @@ function stopLocalMedia() {
   window.localStream = null;
   window.localStreamUrl = null;
   render();
-}
-
-function sendChatMessage(message) {
-  lib.sendChannelMessageAll(chatLabel, message);
 }
