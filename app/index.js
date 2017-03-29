@@ -182,11 +182,12 @@ class Display extends React.Component {
     return null;
   }
   renderRemoteVideos() {
-    var ret = [];
-    for (var u in this.state.remoteVideos) {
-      ret.push(<Video key={u} name={u} stream={this.state.remoteVideos[u]} />);
-    }
-    return <div>{ret}</div>;
+    var ret = Object.entries(this.state.remoteVideos).map(([key,value])=>{
+      return (
+          <Video key={key} name={key} stream={value} />
+      );
+    });
+    return ret;
   }
   onRoomSet() {
     this.setState({
