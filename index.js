@@ -4,6 +4,11 @@ var https = require('https');
 var fs = require('fs');
 var path = require('path');
 var socketIO = require('socket.io');
+var browserify = require('browserify');
+var react = require('react');
+var jsx = require('node-jsx');
+var jwt = require('jsonwebtoken');
+var crypto = require('crypto');
 
 // variables
 var app = express();
@@ -14,6 +19,10 @@ var fileDefault = 'index.html';
 
 var dir = path.join(__dirname, fileDir);
 var def = path.join(dir, fileDefault);
+
+fs.exists = fs.exists || require('path').exists;
+var privKey = null;
+privKey = fs.readFileSync('ecpriv.key');
 
 // offered files
 app.use(express.static(dir));
@@ -63,6 +72,37 @@ io.sockets.on('connection', function(socket) {
   socket.on('message', function(to, message) {
     var from = socket.id;
     socket.to(to).emit('message', from, message);
+  });
+
+  socket.on('generateToken', function (data, callback) {
+    var userName = data;
+    // First generate the JWTID
+    crypto.randomBytes(48, function(err, buffer) {
+      if (err) {
+        return callback(err);
+      }
+      var tokenid = buffer.toString('hex');
+      var token = null;
+      try {
+        // Try to sign teh token
+        token = jwt.sign(
+          {
+            userID: userName,
+            appID: process.env.APPID,
+            keyID: process.env.KEYID
+          }, privKey,
+          {
+            algorithm: "ES256",
+            jwtid: tokenid,
+            expiresIn: 300, //5 minutes
+            notBefore: -300 //-5 minutes
+          });
+      } catch (error) {
+        console.log(error);
+        return callback(error);
+      }
+      callback(null, token);
+    });
   });
 });
 
