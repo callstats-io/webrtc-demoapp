@@ -97,7 +97,7 @@ function call(room) {
 }
 
 function generateToken(userId, callback) {
-  signalling.generateToken(userId, callback)
+  signalling.generateToken(userId, callback);
 }
 
 /**
@@ -118,8 +118,7 @@ function hangup() {
 
 // public functions
 function CsioWebrtcApp(labels) {
-  datachannels = (typeof labels === 'undefined')
-      ? [] : labels;
+  datachannels = (typeof labels === 'undefined')? [] : labels;
 
   signalling = new modSignalling.CsioSignalling();
 }

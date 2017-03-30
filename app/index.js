@@ -376,29 +376,25 @@ var csStatsCallback = function(stats) {
   }
 };
 
-var createTokenGeneratorTimer;
-createTokenGeneratorTimer = function (forcenew, callback) {
-   return setTimeout(function () { console.log("calling tokenGenerator"); tokenGenerator(forcenew, callback);}, 100);
+var createTokenGeneratorTimer = function(forcenew, callback) {
+  return setTimeout(function() {
+    console.log('calling tokenGenerator');
+    tokenGenerator(forcenew, callback);
+  },100);
 };
 
 
-var tokenGenerator = (function () {
-  var cached = null;
-  return function(forcenew, callback) {
-    if (!forcenew && cached !== null) {
-      return callback(null, cached);
+var tokenGenerator = function(forcenew, callback) {
+  lib.generateToken(localUserId, function(err, token) {
+    if (err) {
+      console.log('Token generation failed: try again');
+      return createTokenGeneratorTimer(forcenew, callback);
     }
-    lib.generateToken(localUserId, function (err, token) {
-      if (err) {
-        console.log('Token generation failed');
-        console.log("try again");
-        return createTokenGeneratorTimer(forcenew, callback);
-      }
-      console.log("got token",token);
-      callback(null, token);
-    });
-  };
-})();
+    console.log('Received Token');
+    callback(null, token);
+  });
+};
+
 
 // The following events are triggered by CsioWebrtcApp
 
@@ -410,7 +406,6 @@ var configParams = {
 document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
-      var AppSecret = '@@APPSECRET';
       localUserId = e.detail.localname;
       console.log('Initialize callstats', localUserId);
       csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
