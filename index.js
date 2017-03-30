@@ -17,6 +17,7 @@ var def = path.join(dir, fileDefault);
 
 // offered files
 app.use(express.static(dir));
+
 // not found in static files, so default to index.html
 app.use((req, res) => res.sendFile(def));
 

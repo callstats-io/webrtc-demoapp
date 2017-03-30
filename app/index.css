@@ -19,5 +19,23 @@
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 300px;
+}
+
+#slideout {
+  padding: 10px;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,.3);
+  color: #333;
+  position: fixed;
+  top: 100px;
+  left: 100%;
+  width: 300px;
+  transition-duration: 0.3s;
+}
+#slideout textarea {
+  display:block;
+  height: 400px;
+  margin-bottom: 6px;
+  width: 100%;
 }

@@ -13,20 +13,27 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
+    "node-jsx": "^0.13.3",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "reactify": "^1.1.1",
     "socket.io": "^1.3.7"
   },
   "private": true,
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.23.0",
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
     "eslint": "^3.17.1",
     "eslint-config-webrtc": "^1.0.0",
+    "eslint-plugin-react": "^6.10.3",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-config": "^1.0.0",
     "grunt-contrib-uglify": "^2.2.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-env": "^0.4.4",
     "grunt-eslint": "^19.0.0",
     "grunt-replace": "^1.0.1"
   }

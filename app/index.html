@@ -31,14 +31,14 @@
     <link rel="shortcut icon" href="//www.callstats.io/static/favicon.ico" type="image/x-icon" />
 
     <title>WebRTC Demo App &mdash; callstats.io</title>
-
-    <script src="@@CSJS"></script>
   </head>
 
   <body>
-    <div id="wrap">
-      <footer class="text-center">
-        <div class="container">
+    <div id="wrap" style="margin: 0 auto 0; padding: 0 0 0;
+    position:relative;
+    min-height: calc(100% - 120px);">
+      <footer class="text-center" style="padding-top: 10px;">
+        <div class="container" style="width: 100%; padding-left: 20px; padding-right: 20px;">
           <div style="float: left">
             <img height="25px" src="//dashboard.callstats.io/static/minimal-logo.png">
           </div>
@@ -51,33 +51,7 @@
       <!--
       CONTENT START
       -->
-      <div id="container" style="float: left">
-        <div>
-          <button id="callButton">Call</button>
-          <button id="hangupButton">Hang Up</button>
-        </div>
-
-        <div>
-          <video id="localVideo" width="320" height="240"
-              style="transform: scaleX(-1)"; autoplay muted></video>
-          <div id="remoteVideos"></div>
-        </div>
-      </div>
-      <div style="float: right; width: 300px; height: 400px">
-        <textarea id="chatBox" style="width: 100%; height: 100%" readonly></textarea>
-        <div>
-          <input id="chatInput" style="width: 80%;" type="text" value="">
-          <button id="chatButton">Send</button>
-        </div>
-      </div>
-
-      <div id="popup" class="modal">
-        <!-- Modal content -->
-        <div class="modal-content">
-          Room: <input id="roomInput" type="text" value="Room">
-          <button id="popupCloseButton">OK</button>
-          <p id=popupError></p>
-        </div>
+      <div id="container">
       </div>
 
       <!-- style for modal -->
@@ -88,14 +62,15 @@
       <script src="csio-webrtc-app.min.js"></script>
 
       <!-- library to fill the HTML -->
-      <script src="index.js"></script>
+      <script src="index.min.js"></script>
+      <script src="@@CSJS"></script>
       <!--
       CONTENT END
       -->
 
     </div>
 
-    <footer class="text-center">
+    <footer class="text-center" style="height:120px; margin: 0; clear: both; width:100%; position: relative;">
       <div class="container">
         <p> <span class="made-in-hel">Made by hand in HELSINKI</span> &copy; 2013 - 2017 CALLSTATS I/O Oy </p>
         <ul >
