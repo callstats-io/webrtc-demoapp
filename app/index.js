@@ -309,7 +309,6 @@ function render() {
  * Room name
  */
 var roomName = '';
-var localUserId;
 // init from URL
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
@@ -375,6 +374,8 @@ var csStatsCallback = function(stats) {
     }
   }
 };
+
+var localUserId;
 
 var createTokenGeneratorTimer = function(forcenew, callback) {
   return setTimeout(function() {
