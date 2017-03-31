@@ -375,16 +375,14 @@ var csStatsCallback = function(stats) {
   }
 };
 
+// JWT authentication
 var localUserId;
-
 var createTokenGeneratorTimer = function(forcenew, callback) {
   return setTimeout(function() {
     console.log('calling tokenGenerator');
     tokenGenerator(forcenew, callback);
   },100);
 };
-
-
 var tokenGenerator = function(forcenew, callback) {
   lib.generateToken(localUserId, function(err, token) {
     if (err) {
@@ -395,7 +393,6 @@ var tokenGenerator = function(forcenew, callback) {
     callback(null, token);
   });
 };
-
 
 // The following events are triggered by CsioWebrtcApp
 

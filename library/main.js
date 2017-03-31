@@ -131,8 +131,6 @@ CsioWebrtcApp.prototype.hangup = function() {
 CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
   generateToken(userId, callback);
 };
-
-
 CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   for (var i in pcs) {
     pcs[i].sendChannelMessage(label, message);

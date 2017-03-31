@@ -49,9 +49,6 @@ class CsioSignalling {
     this.socket.emit('join', room);
   }
 
-  generateToken(userId, callback) {
-    this.socket.emit('generateToken', userId, callback);
-  }
   /**
    * Leaving, tell others
    */
@@ -64,6 +61,13 @@ class CsioSignalling {
    */
   send(to, msg) {
     this.socket.emit('message', to, msg);
+  }
+
+  /**
+   * Ask server for a JWT token
+   */
+  generateToken(userId, callback) {
+    this.socket.emit('generateToken', userId, callback);
   }
 }
 
