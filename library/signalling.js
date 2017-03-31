@@ -62,6 +62,13 @@ class CsioSignalling {
   send(to, msg) {
     this.socket.emit('message', to, msg);
   }
+
+  /**
+   * Ask server for a JWT token
+   */
+  generateToken(userId, callback) {
+    this.socket.emit('generateToken', userId, callback);
+  }
 }
 
 module.exports.CsioSignalling = CsioSignalling;

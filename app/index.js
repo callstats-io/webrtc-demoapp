@@ -309,7 +309,6 @@ function render() {
  * Room name
  */
 var roomName = '';
-
 // init from URL
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
@@ -376,6 +375,25 @@ var csStatsCallback = function(stats) {
   }
 };
 
+// JWT authentication
+var localUserId;
+var createTokenGeneratorTimer = function(forcenew, callback) {
+  return setTimeout(function() {
+    console.log('calling tokenGenerator');
+    tokenGenerator(forcenew, callback);
+  },100);
+};
+var tokenGenerator = function(forcenew, callback) {
+  lib.generateToken(localUserId, function(err, token) {
+    if (err) {
+      console.log('Token generation failed: try again');
+      return createTokenGeneratorTimer(forcenew, callback);
+    }
+    console.log('Received Token');
+    callback(null, token);
+  });
+};
+
 // The following events are triggered by CsioWebrtcApp
 
 // local userId is available
@@ -387,10 +405,16 @@ document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
       var AppSecret = '@@APPSECRET';
-      var localUserId = e.detail.localname;
-      console.log('Initialize callstats', localUserId);
-      csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
-          csStatsCallback, configParams);
+      var JWT = '@@JWT';
+      localUserId = e.detail.localname;
+      console.log('Initialize callstats', localUserId, JWT);
+      if (JWT === 'true') {
+        csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
+            csStatsCallback, configParams);
+      } else {
+        csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
+            csStatsCallback, configParams);
+      }
     },
     false);
 

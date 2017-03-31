@@ -96,6 +96,10 @@ function call(room) {
   signalling.start(room);
 }
 
+function generateToken(userId, callback) {
+  signalling.generateToken(userId, callback);
+}
+
 /**
  * Turn down the webRTC context
  */
@@ -114,8 +118,7 @@ function hangup() {
 
 // public functions
 function CsioWebrtcApp(labels) {
-  datachannels = (typeof labels === 'undefined')
-      ? [] : labels;
+  datachannels = (typeof labels === 'undefined')? [] : labels;
 
   signalling = new modSignalling.CsioSignalling();
 }
@@ -125,7 +128,9 @@ CsioWebrtcApp.prototype.call = function(room) {
 CsioWebrtcApp.prototype.hangup = function() {
   hangup();
 };
-
+CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
+  generateToken(userId, callback);
+};
 CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   for (var i in pcs) {
     pcs[i].sendChannelMessage(label, message);
