@@ -19,6 +19,8 @@ portSSL=4040
 SSL=true
 APPID=callstatsAppId
 APPSECRET=callstatsAppSecret
+KEYID=callstatsKeyID
+JWT=true
 ```
 4. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (ca.crt, server.crt, server.key)
 5. Run the app
@@ -26,3 +28,12 @@ APPSECRET=callstatsAppSecret
 $ npm start
 ```
   Try the app locally by opening https://localhost:4440/.
+
+
+Key generation for JWT authentication
+
+# Generate EC key
+openssl ecparam -name prime256v1 -genkey > ecpriv.key
+
+# Generate a public key from private key
+openssl ec -in ecpriv.key -pubout -out ecpubkey.pem

@@ -19,7 +19,7 @@ var def = path.join(dir, fileDefault);
 
 fs.exists = fs.exists || require('path').exists;
 var privKey = null;
-privKey = fs.readFileSync('ecpriv.key');
+privKey = fs.readFileSync('ssl/ecpriv.key');
 
 // offered files
 app.use(express.static(dir));

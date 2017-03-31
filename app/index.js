@@ -404,10 +404,17 @@ var configParams = {
 document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
+      var AppSecret = '@@APPSECRET';
+      var JWT = '@@JWT';
       localUserId = e.detail.localname;
-      console.log('Initialize callstats', localUserId);
-      csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
-          csStatsCallback, configParams);
+      console.log('Initialize callstats', localUserId, JWT);
+      if (JWT === 'true') {
+        csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
+            csStatsCallback, configParams);
+      } else {
+        csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
+            csStatsCallback, configParams);
+      }
     },
     false);
 

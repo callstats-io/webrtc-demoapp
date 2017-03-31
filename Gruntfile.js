@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   var envTarget = process.env.TARGET || 'production';
   var appid = process.env.APPID || '';
   var appsecret = process.env.APPSECRET || '';
+  var jwt = process.env.JWT || 'false';
   grunt.initConfig({
     env: {
       dev: {
@@ -14,7 +15,8 @@ module.exports = function(grunt) {
           variables: {
             csjs: 'http://192.168.99.100:3000/static/callstats.js',
             appid: appid,
-            appsecret: appsecret
+            appsecret: appsecret,
+            jwt: jwt
           }
         }
       },
@@ -23,7 +25,8 @@ module.exports = function(grunt) {
           variables: {
             csjs: 'https://api.callstats.io/static/callstats.min.js',
             appid: appid,
-            appsecret: appsecret
+            appsecret: appsecret,
+            jwt: jwt
           }
         }
       }
@@ -39,6 +42,10 @@ module.exports = function(grunt) {
             {
               match: 'APPSECRET',
               replacement: '<%= grunt.config.get("appsecret") %>'
+            },
+            {
+              match: 'JWT',
+              replacement: '<%= grunt.config.get("jwt") %>'
             }
           ]
         },
