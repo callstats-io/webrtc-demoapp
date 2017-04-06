@@ -338,7 +338,10 @@ function onClickCall() {
 
 function onClickHangup() {
   lib.hangup();
-  stopLocalMedia();
+  lib.stopLocalMedia().then(function() {
+    window.localStreamUrl = null;
+    render();
+  });
 }
 
 function onNewChatMessage(message) {
@@ -351,7 +354,14 @@ function onNewChatMessage(message) {
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
   if (csError === 'success') {
-    initLocalMedia();
+    lib.initLocalMedia().then(function(stream) {
+      window.localStreamUrl = window.URL.createObjectURL(stream);
+      render();
+    }, function(e) {
+      var details = {'type': 'getUserMedia',
+        'userId': localUserId, 'pc': null, 'error': e};
+      handleWebrtcError(details);
+    });
   }
 }
 var reportType = {
@@ -505,37 +515,3 @@ document.addEventListener('addRemoteVideo',
       }
     },
     false);
-
-/*
- * Local media
- */
-function initLocalMedia() {
-  console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
-  .then(function(stream) {
-    console.log('Received local stream');
-    window.localStream = stream;
-    window.localStreamUrl = window.URL.createObjectURL(stream);
-
-    render();
-  },
-  function(e) {
-    console.log('getUserMedia() error: ', e);
-
-    var detail = {'type': 'getUserMedia', 'pc': null, 'error': e};
-    handleWebrtcError({'detail': detail});
-  });
-}
-
-function stopLocalMedia() {
-  console.log('Stopping local stream');
-  for (var i in window.localStream.getTracks()) {
-    window.localStream.getTracks()[i].stop();
-  }
-  window.localStream = null;
-  window.localStreamUrl = null;
-  render();
-}

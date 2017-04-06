@@ -22,6 +22,7 @@ var modPeerconnection = require('./peerconnection');
 
 var pcs = {};
 var datachannels = [];
+var localStream;
 
 // TODO events are in document. create own event domain?
 var signalling;
@@ -115,6 +116,38 @@ function hangup() {
   console.log('PCs:', pcs);
 }
 
+/*
+ * Local media
+ */
+function initLocalMedia() {
+  console.log('Requesting local stream');
+  return new Promise(function(resolve, reject) {
+    navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true
+    })
+    .then(function(stream) {
+      console.log('Received local stream');
+      localStream = stream;
+      resolve(localStream);
+    },
+    function(e) {
+      console.log('getUserMedia() error: ', e);
+      reject(e);
+    });
+  });
+}
+
+function stopLocalMedia() {
+  console.log('Stopping local stream');
+  return new Promise(function(resolve, reject) {
+    for (var i in localStream.getTracks()) {
+      localStream.getTracks()[i].stop();
+    }
+    localStream = null;
+    resolve();
+  });
+}
 
 // public functions
 function CsioWebrtcApp(labels) {
@@ -122,15 +155,11 @@ function CsioWebrtcApp(labels) {
 
   signalling = new modSignalling.CsioSignalling();
 }
-CsioWebrtcApp.prototype.call = function(room) {
-  call(room);
-};
-CsioWebrtcApp.prototype.hangup = function() {
-  hangup();
-};
-CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
-  generateToken(userId, callback);
-};
+CsioWebrtcApp.prototype.call = call;
+CsioWebrtcApp.prototype.hangup = hangup;
+CsioWebrtcApp.prototype.generateToken = generateToken;
+CsioWebrtcApp.prototype.initLocalMedia = initLocalMedia;
+CsioWebrtcApp.prototype.stopLocalMedia = stopLocalMedia;
 CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   for (var i in pcs) {
     pcs[i].sendChannelMessage(label, message);
