@@ -51,9 +51,9 @@ class CsioPeerConnection {
     for (var label in this.datachannels) {
       this.datachannels[label].close();
     }
-    this.pc.close();
     modCommon.triggerEvent('closePeerConnection',
         {'userId': this.userId, 'pc': this.pc});
+    this.pc.close();
   }
 
   addIceCandidate(ic) {
