@@ -339,7 +339,7 @@ function initLocalMedia() {
   }, function(e) {
     var details = {'type': 'getUserMedia',
       'userId': localUserId, 'pc': null, 'error': e};
-    handleWebrtcError(details);
+    handleWebrtcError({detail: details});
   });
 }
 
@@ -408,6 +408,7 @@ var configParams = {
   disableBeforeUnloadHandler: false,
   applicationVersion: 'v1.0'
 };
+var csjsIsInitialized = false;
 document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
@@ -422,6 +423,8 @@ document.addEventListener('localName',
         csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
             csStatsCallback, configParams);
       }
+      csjsIsInitialized = true;
+      sendOutstandingErrors();
     },
     false);
 
@@ -452,7 +455,19 @@ document.addEventListener('closePeerConnection',
 
 // an error occurred from webRTC
 document.addEventListener('webrtcError', handleWebrtcError, false);
+var outstandingErrors = [];
+function sendOutstandingErrors() {
+  for (var e in outstandingErrors) {
+    console.log('Send outstanding error:', e);
+    handleWebrtcError(e);
+  }
+}
 function handleWebrtcError(e) {
+  if (!csjsIsInitialized) {
+    outstandingErrors.append(e);
+    return;
+  }
+
   var pcObject = e.detail.pc;
   var err = e.detail.error;
   var type = e.detail.type;
