@@ -22,7 +22,11 @@ var iceServers = [turnServer, turnServerTls];
 var servers = {'iceTransports': 'all','iceServers': iceServers};
 
 class CsioPeerConnection {
-  constructor(userId) {
+  constructor(userId, localStream) {
+    if (localStream === null) {
+      console.log('No local stream. was initLocalMedia() called?');
+    }
+
     this.userId = userId;
 
     this.pc = new RTCPeerConnection(servers);
@@ -36,7 +40,7 @@ class CsioPeerConnection {
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
 
     // FIXME addStream, onAddStream deprecated, use tracks
-    this.pc.addStream(window.localStream);
+    this.pc.addStream(localStream);
     console.log(userId, 'added local stream');
 
     this.pc.onaddstream = this.onRemoteStream.bind(this);

@@ -1,7 +1,5 @@
 /**
  * Main file for the library.
- * Requirement:
- *    window.localStream
  * Arguments:
  *    array of datachannel labels (optional)
  * Provides functions:
@@ -47,7 +45,7 @@ document.addEventListener('userMessage',
  */
 function handleUserJoin(userId) {
   // init webRTC
-  var pc = new modPeerconnection.CsioPeerConnection(userId);
+  var pc = new modPeerconnection.CsioPeerConnection(userId, localStream);
   for (var i in datachannels) {
     pc.createChannel(datachannels[i]);
   }
@@ -76,7 +74,7 @@ function handleUserMessage(userId, message) {
   if (pcs[userId]) {
     pc = pcs[userId];
   } else {
-    pc = new modPeerconnection.CsioPeerConnection(userId);
+    pc = new modPeerconnection.CsioPeerConnection(userId, localStream);
     pcs[userId] = pc;
   }
 
