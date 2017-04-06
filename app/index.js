@@ -1,9 +1,11 @@
 /*
  * Sequence of initialization:
- *  show popup for room name
- *  popup OK -> init CsioWebrtcApp
- *  CsioWebrtcApp emit localName -> init callstats
- *  callstats callback csInitCallback -> initLocalMedia
+ *  page load:
+ *    - create callstats.js, CsioWebrtcApp
+ *    - init local media
+ *    - show popup for room name
+ *  room name available (modal) -> join room (CsioWebrtcApp)
+ *  localName available (CsioWebrtcApp) -> init callstats
  */
 
 'use strict';
@@ -18,6 +20,8 @@ window.onload = function() {
   // make sure everything is loaded, otherwise this fails
   console.log('create callstats');
   csObject = new callstats(); // eslint-disable-line new-cap
+
+  initWebrtcApp();
 
   render();
 };
@@ -145,7 +149,6 @@ class Display extends React.Component {
       showChat: false,
       showPopup: 'block',
       messagesCount: 0,
-      enableCall: false,
       enableHangup: false,
       enableChat: false,
       remoteVideos: {},
@@ -195,9 +198,6 @@ class Display extends React.Component {
     return (
       <div>
         <div style={{padding: '5px'}}>
-          <button id="callButton"
-              onClick={this.onClickCall.bind(this)}
-              disabled={!this.state.enableCall}>Call</button>
           <button id="hangupButton"
               onClick={this.onClickHangup.bind(this)}
               disabled={!this.state.enableHangup}>Hangup</button>
@@ -217,9 +217,9 @@ class Display extends React.Component {
   }
 
   renderLocalVideo() {
-    if (window.localStreamUrl) {
+    if (this.props.localStream) {
       return <Video key={'local'} name={'local'}
-          stream={window.localStreamUrl} />;
+          stream={window.URL.createObjectURL(this.props.localStream)}/>;
     }
     return null;
   }
@@ -245,18 +245,11 @@ class Display extends React.Component {
   onRoomSet(roomName) {
     this.setState({
       showPopup: 'none',
-      enableCall: true,
       roomName: roomName,
-    });
-    this.props.onRoomSet(roomName);
-  }
-  onClickCall() {
-    this.setState({
-      enableCall: false,
       enableHangup: true,
       enableChat: true,
     });
-    this.props.onClickCall();
+    this.props.onRoomSet(roomName);
   }
   onClickHangup() {
     this.setState({
@@ -286,7 +279,6 @@ class Display extends React.Component {
 }
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
-  onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
 };
@@ -297,10 +289,10 @@ function render() {
   ReactDOM.render(
     <Display
         onRoomSet={onRoomSet}
-        onClickCall={onClickCall}
         onClickHangup={onClickHangup}
         onNewMessage={onNewChatMessage}
-        roomName={roomName}/>,
+        roomName={roomName}
+        localStream={localStream}/>,
     document.getElementById('container')
   );
 }
@@ -316,30 +308,45 @@ if (urlRoom !== '') {
 }
 
 // roomName from user input
-var lib;
-var chatLabel = 'chat';
 function onRoomSet(room) {
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
 
-  var datachannels = [chatLabel];
-  console.log('init webRTC app, datachannels:', datachannels);
-  lib = new CsioWebrtcApp(datachannels);
+  // this might theoretically be called before lib is created
+  // if user clicks super fast
+  lib.call(roomName);
 }
 
 /*
  * webRTC library
  */
-function onClickCall() {
-  lib.call(roomName);
+var lib;
+var chatLabel = 'chat';
+var datachannels = [chatLabel];
+function initWebrtcApp() {
+  console.log('init webRTC app, datachannels:', datachannels);
+  lib = new CsioWebrtcApp(datachannels);
+  initLocalMedia();
+}
+
+var localStream;
+function initLocalMedia() {
+  lib.initLocalMedia().then(function(stream) {
+    localStream = stream;
+    render();
+  }, function(e) {
+    var details = {'type': 'getUserMedia',
+      'userId': localUserId, 'pc': null, 'error': e};
+    handleWebrtcError(details);
+  });
 }
 
 function onClickHangup() {
   lib.hangup();
   lib.stopLocalMedia().then(function() {
-    window.localStreamUrl = null;
+    localStream = null;
     render();
   });
 }
@@ -353,16 +360,6 @@ function onNewChatMessage(message) {
  */
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  if (csError === 'success') {
-    lib.initLocalMedia().then(function(stream) {
-      window.localStreamUrl = window.URL.createObjectURL(stream);
-      render();
-    }, function(e) {
-      var details = {'type': 'getUserMedia',
-        'userId': localUserId, 'pc': null, 'error': e};
-      handleWebrtcError(details);
-    });
-  }
 }
 var reportType = {
   inbound: 'inbound',
