@@ -15,8 +15,14 @@ var ReactDOM = require('react-dom');
 
 var debug = false;
 
+var roomName = '';
 var csObject;
 window.onload = function() {
+// init from URL
+  var urlRoom = window.location.pathname.split('/')[1];
+  if (urlRoom !== '') {
+    roomName = decodeURIComponent(urlRoom);
+  }
   // make sure everything is loaded, otherwise this fails
   console.log('create callstats');
   csObject = new callstats(); // eslint-disable-line new-cap
@@ -154,6 +160,7 @@ class Display extends React.Component {
       remoteVideos: {},
       chatMessages: [],
       chatText: '',
+      initDone: false,
     };
 
     // video
@@ -190,6 +197,14 @@ class Display extends React.Component {
   } // end constructor
 
   render() {
+    if (!this.state.initDone) {
+      if (this.state.roomName !== '') {
+        this.onRoomSet(this.state.roomName);
+      }
+      this.setState({
+        initDone: true
+      });
+    }
     var cbColor = 'black';
     if ((this.state.messagesCount < this.state.chatMessages.length)
         && (!this.state.showChat)) {
@@ -217,9 +232,9 @@ class Display extends React.Component {
   }
 
   renderLocalVideo() {
-    if (this.props.localStream) {
+    if (this.props.localStreamUrl) {
       return <Video key={'local'} name={'local'}
-          stream={window.URL.createObjectURL(this.props.localStream)}/>;
+          stream={this.props.localStreamUrl}/>;
     }
     return null;
   }
@@ -242,14 +257,14 @@ class Display extends React.Component {
     });
   }
 
-  onRoomSet(roomName) {
+  onRoomSet(rn) {
     this.setState({
       showPopup: 'none',
-      roomName: roomName,
+      roomName: rn,
       enableHangup: true,
       enableChat: true,
     });
-    this.props.onRoomSet(roomName);
+    this.props.onRoomSet(rn);
   }
   onClickHangup() {
     this.setState({
@@ -281,6 +296,8 @@ Display.propTypes = {
   onRoomSet: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
+  roomName: React.PropTypes.string,
+  localStreamUrl: React.PropTypes.string,
 };
 
 // init the React rendering
@@ -292,7 +309,7 @@ function render() {
         onClickHangup={onClickHangup}
         onNewMessage={onNewChatMessage}
         roomName={roomName}
-        localStream={localStream}/>,
+        localStreamUrl={localStreamUrl}/>,
     document.getElementById('container')
   );
 }
@@ -300,12 +317,6 @@ function render() {
 /*
  * Room name
  */
-var roomName = '';
-// init from URL
-var urlRoom = window.location.pathname.split('/')[1];
-if (urlRoom !== '') {
-  roomName = decodeURIComponent(urlRoom);
-}
 
 // roomName from user input
 function onRoomSet(room) {
@@ -314,8 +325,6 @@ function onRoomSet(room) {
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
 
-  // this might theoretically be called before lib is created
-  // if user clicks super fast
   lib.call(roomName);
 }
 
@@ -331,10 +340,10 @@ function initWebrtcApp() {
   initLocalMedia();
 }
 
-var localStream;
+var localStreamUrl;
 function initLocalMedia() {
   lib.initLocalMedia().then(function(stream) {
-    localStream = stream;
+    localStreamUrl = window.URL.createObjectURL(stream);
     render();
   }, function(e) {
     var details = {'type': 'getUserMedia',
@@ -345,10 +354,10 @@ function initLocalMedia() {
 
 function onClickHangup() {
   lib.hangup();
-  lib.stopLocalMedia().then(function() {
-    localStream = null;
+  /* lib.stopLocalMedia().then(function() {
+    localStreamUrl = null;
     render();
-  });
+  });*/
 }
 
 function onNewChatMessage(message) {
@@ -406,7 +415,7 @@ var tokenGenerator = function(forcenew, callback) {
 // local userId is available
 var configParams = {
   disableBeforeUnloadHandler: false,
-  applicationVersion: 'v1.0'
+  applicationVersion: 'v1.0',
 };
 var csjsIsInitialized = false;
 document.addEventListener('localName',
