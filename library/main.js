@@ -22,6 +22,7 @@ var modPeerconnection = require('./peerconnection');
 
 var pcs = {};
 var datachannels = [];
+var iceConfig = null;
 
 // TODO events are in document. create own event domain?
 var signalling;
@@ -46,7 +47,9 @@ document.addEventListener('userMessage',
  */
 function handleUserJoin(userId) {
   // init webRTC
-  var pc = new modPeerconnection.CsioPeerConnection(userId);
+  var pc = new modPeerconnection.CsioPeerConnection(
+      userId,
+      iceConfig);
   for (var i in datachannels) {
     pc.createChannel(datachannels[i]);
   }
@@ -75,7 +78,9 @@ function handleUserMessage(userId, message) {
   if (pcs[userId]) {
     pc = pcs[userId];
   } else {
-    pc = new modPeerconnection.CsioPeerConnection(userId);
+    pc = new modPeerconnection.CsioPeerConnection(
+        userId,
+        iceConfig);
     pcs[userId] = pc;
   }
 
@@ -115,6 +120,9 @@ function hangup() {
   console.log('PCs:', pcs);
 }
 
+function setIceConfig(_iceConfig) {
+  iceConfig = _iceConfig;
+}
 
 // public functions
 function CsioWebrtcApp(labels) {
@@ -136,5 +144,6 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
     pcs[i].sendChannelMessage(label, message);
   }
 };
+CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
 
 module.exports = CsioWebrtcApp;

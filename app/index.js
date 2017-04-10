@@ -318,6 +318,22 @@ if (urlRoom !== '') {
 // roomName from user input
 var lib;
 var chatLabel = 'chat';
+
+var turnServer = {
+  url: 'turn:turn-server-1.dialogue.io:3478',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var turnServerTls = {
+  url: 'turn:turn-server-1.dialogue.io:5349',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var iceServers = [turnServer, turnServerTls];
+var servers = {'iceTransports': 'all','iceServers': iceServers};
+
 function onRoomSet(room) {
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
@@ -327,6 +343,7 @@ function onRoomSet(room) {
   var datachannels = [chatLabel];
   console.log('init webRTC app, datachannels:', datachannels);
   lib = new CsioWebrtcApp(datachannels);
+  lib.setIceConfig(servers);
 }
 
 /*
