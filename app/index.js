@@ -416,8 +416,12 @@ var tokenGenerator = function(forcenew, callback) {
 // local userId is available
 var configParams = {
   disableBeforeUnloadHandler: false,
-  applicationVersion: 'v1.0'
+  applicationVersion: 'v1.0',
+  configServiceCallback: configServiceCallback,
 };
+function configServiceCallback(config) {
+  console.log('ConfigService, returned config:', config);
+}
 document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
