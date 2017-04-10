@@ -365,10 +365,11 @@ function onNewChatMessage(message) {
 /*
  * callstats.js
  */
+var mediaConstraints = {audio: true, video: true};
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
   if (csError === 'success') {
-    initLocalMedia();
+    initLocalMedia(mediaConstraints);
   }
 }
 var reportType = {
@@ -530,12 +531,9 @@ document.addEventListener('addRemoteVideo',
 /*
  * Local media
  */
-function initLocalMedia() {
+function initLocalMedia(constraints) {
   console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
+  navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
