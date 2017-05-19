@@ -10,6 +10,7 @@ class CsioPeerConnection {
   constructor(userId, iceConfig) {
     this.userId = userId;
 
+    // TODO is there any error when the TURN servers are not responding o.s.?
     this.pc = new RTCPeerConnection(iceConfig);
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});

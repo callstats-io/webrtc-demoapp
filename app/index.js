@@ -19,6 +19,9 @@ window.onload = function() {
   console.log('create callstats');
   csObject = new callstats(); // eslint-disable-line new-cap
 
+  csObject.on('configService', configServiceCallback);
+  // csObject.on('stats', csStatsCallback);
+
   render();
 };
 
@@ -316,24 +319,9 @@ if (urlRoom !== '') {
 }
 
 // roomName from user input
-var lib;
+var lib = null;
+var libInitialized = false;
 var chatLabel = 'chat';
-
-var turnServer = {
-  url: 'turn:turn-server-1.dialogue.io:3478',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var turnServerTls = {
-  url: 'turn:turn-server-1.dialogue.io:5349',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var iceServers = [turnServer, turnServerTls];
-var servers = {'iceTransports': 'all','iceServers': iceServers};
-
 function onRoomSet(room) {
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
@@ -343,7 +331,10 @@ function onRoomSet(room) {
   var datachannels = [chatLabel];
   console.log('init webRTC app, datachannels:', datachannels);
   lib = new CsioWebrtcApp(datachannels);
-  lib.setIceConfig(servers);
+  libInitialized = true;
+  if (iceConfig !== null) {
+    lib.setIceConfig(iceConfig);
+  }
 }
 
 /*
@@ -365,12 +356,8 @@ function onNewChatMessage(message) {
 /*
  * callstats.js
  */
-var mediaConstraints = {audio: true, video: true};
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  if (csError === 'success') {
-    initLocalMedia(mediaConstraints);
-  }
 }
 var reportType = {
   inbound: 'inbound',
@@ -378,6 +365,7 @@ var reportType = {
 };
 var csStatsCallback = function(stats) {
   if (!debug) {
+    console.log('stats callback');
     return;
   }
   var ssrc;
@@ -418,10 +406,42 @@ var tokenGenerator = function(forcenew, callback) {
 var configParams = {
   disableBeforeUnloadHandler: false,
   applicationVersion: 'v1.0',
-  configServiceCallback: configServiceCallback,
 };
+/*
+var turnServer = {
+  url: 'turn:turn-server-1.dialogue.io:3478',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var turnServerTls = {
+  url: 'turn:turn-server-1.dialogue.io:5349',
+  username: 'test',
+  credential: '1234',
+  realm: 'reTurn'
+};
+var defaultIceServers = [turnServer, turnServerTls];
+var defaultIceTransports = 'all';
+var defaultMediaConstraints = {audio: true, video: true};
+*/
+// TODO we probably need the default settings if we are not on Pro plan,
+// what's the behavior then?
+var iceConfig = null;
 function configServiceCallback(config) {
   console.log('ConfigService, returned config:', config);
+
+  var mediaConstraints = config.default.mediaConstraints;
+  console.log('Media constraints:', mediaConstraints);
+  initLocalMedia(mediaConstraints);
+
+  iceConfig = {
+    'iceTransports': 'all',
+    'iceServers': config.default.iceServers
+  };
+  console.log('ICE settings:', iceConfig);
+  if (libInitialized) {
+    lib.setIceConfig(iceConfig);
+  }
 }
 document.addEventListener('localName',
     function(e) {
