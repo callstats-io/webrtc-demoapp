@@ -3,6 +3,8 @@ module.exports = function(grunt) {
   var appid = process.env.APPID || '';
   var appsecret = process.env.APPSECRET || '';
   var jwt = process.env.JWT || 'false';
+  var csjsURL = process.env.CSJSURL || '';
+
   grunt.initConfig({
     env: {
       dev: {
@@ -13,7 +15,7 @@ module.exports = function(grunt) {
       local: {
         options: {
           variables: {
-            csjs: 'http://192.168.99.100:3000/static/callstats.js',
+            csjs: csjsURL, // 'http://192.168.99.100:3000/static/callstats.js',
             appid: appid,
             appsecret: appsecret,
             jwt: jwt
@@ -23,7 +25,7 @@ module.exports = function(grunt) {
       production: {
         options: {
           variables: {
-            csjs: 'https://api.callstats.io/static/callstats.min.js',
+            csjs: csjsURL, // 'https://api.callstats.io/static/callstats.min.js',
             appid: appid,
             appsecret: appsecret,
             jwt: jwt
