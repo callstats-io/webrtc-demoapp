@@ -39,7 +39,7 @@ CSJSURL=http://127.0.0.1:3000/static/callstats.min.js
 ```
 $ npm start
 ```
-  Try the app locally by opening https://localhost:4440/.
+  Try the app locally by opening https://localhost:4040/.
 
 ### SSL
 Needs ca.crt, server.crt, server.key:
