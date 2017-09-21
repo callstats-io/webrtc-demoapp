@@ -15,10 +15,11 @@ $ npm install
   - port: server port if no SSL is used
   - portSSL: server port if SSL is used
   - SSL: boolean if SSL should be enabled
-  - APPID: callstats app ID from your dashboard 
+  - APPID: callstats app ID from your dashboard
   - APPSECRET: callstats secret key from your dashboard, necessary if no JWT is used ([see here](https://callstats.io/api/#step-2-initialize-with-appsecret))
   - KEYID: callstats key ID for JWT authentication ([see here](https://callstats.io/api/#third-party-authentication))
   - JWT: boolean if JWT authentication should be used
+  - CSJSURL: callstats.js URL
 
 Example:
 ```
@@ -29,6 +30,8 @@ APPID=callstatsAppId
 APPSECRET=callstatsAppSecret
 KEYID=callstatsKeyID
 JWT=true
+CSJSURL=http://127.0.0.1:3000/static/callstats.min.js
+
 ```
 4. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (see below)
 5. If you want to use JWT authentication, generate EC key to webrtc-demoapp/ssl/ (see below)
@@ -36,7 +39,7 @@ JWT=true
 ```
 $ npm start
 ```
-  Try the app locally by opening https://localhost:4440/.
+  Try the app locally by opening https://localhost:4040/.
 
 ### SSL
 Needs ca.crt, server.crt, server.key:

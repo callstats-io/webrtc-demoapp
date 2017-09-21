@@ -529,7 +529,7 @@ document.addEventListener('addRemoteVideo',
         }
       });
       for (var ssrc in ssrcs) {
-        csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrc,
+        csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrcs[ssrc],
             'camera', /* video element id */remoteUserId);
       }
     },
