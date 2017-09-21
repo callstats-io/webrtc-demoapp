@@ -97,6 +97,10 @@ function handleUserMessage(userId, message) {
  * Start the webRTC context
  */
 function call(room) {
+  if (room === null || room === '') {
+    console.error('Room name not set!');
+    return;
+  }
   console.log('Starting call');
   signalling.start(room);
 }

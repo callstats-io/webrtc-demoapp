@@ -8,6 +8,11 @@ var modCommon = require('./common');
 
 class CsioPeerConnection {
   constructor(userId, iceConfig) {
+    if (!iceConfig || !window.localStream || !userId || userId === '') {
+      console.error('Necessary parameter missing:',
+          iceConfig, window.localStream, userId);
+      return;
+    }
     this.userId = userId;
 
     // TODO is there any error when the TURN servers are not responding o.s.?
