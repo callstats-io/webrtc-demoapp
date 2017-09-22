@@ -26,6 +26,7 @@ function createCsjs() {
   console.log('create callstats');
   csObject = new callstats(); // eslint-disable-line new-cap
 
+  initLocalMedia({audio: true});
   csObject.on('defaultConfig', defaultConfigCallback);
   csObject.on('recommendedConfig', recommendedConfigCallback);
   // csObject.on('stats', csStatsCallback);
