@@ -8,9 +8,9 @@ var modCommon = require('./common');
 
 class CsioPeerConnection {
   constructor(userId, iceConfig) {
-    if (!iceConfig || !window.localStream || !userId || userId === '') {
+    if (!window.localStream || !userId || userId === '') {
       console.error('Necessary parameter missing:',
-          iceConfig, window.localStream, userId);
+          window.localStream, userId);
       return;
     }
     this.userId = userId;
