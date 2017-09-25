@@ -6,26 +6,17 @@
 
 var modCommon = require('./common');
 
-var turnServer = {
-  url: 'turn:turn-server-1.dialogue.io:3478',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var turnServerTls = {
-  url: 'turn:turn-server-1.dialogue.io:5349',
-  username: 'test',
-  credential: '1234',
-  realm: 'reTurn'
-};
-var iceServers = [turnServer, turnServerTls];
-var servers = {'iceTransports': 'all','iceServers': iceServers};
-
 class CsioPeerConnection {
-  constructor(userId) {
+  constructor(userId, iceConfig) {
+    if (!window.localStream || !userId || userId === '') {
+      console.error('Necessary parameter missing:',
+          window.localStream, userId);
+      return;
+    }
     this.userId = userId;
 
-    this.pc = new RTCPeerConnection(servers);
+    // TODO is there any error when the TURN servers are not responding o.s.?
+    this.pc = new RTCPeerConnection(iceConfig);
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});
 

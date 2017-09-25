@@ -3,7 +3,7 @@
  *  show popup for room name
  *  popup OK -> init CsioWebrtcApp
  *  CsioWebrtcApp emit localName -> init callstats
- *  callstats callback csInitCallback -> initLocalMedia
+ *  callstats callback configService -> initLocalMedia
  */
 
 'use strict';
@@ -14,13 +14,31 @@ var ReactDOM = require('react-dom');
 var debug = false;
 
 var csObject;
+var lib;
 window.onload = function() {
-  // make sure everything is loaded, otherwise this fails
-  console.log('create callstats');
-  csObject = new callstats(); // eslint-disable-line new-cap
+  createCsjs();
+  createLib();
 
   render();
 };
+
+function createCsjs() {
+  console.log('create callstats');
+  csObject = new callstats(); // eslint-disable-line new-cap
+
+  initLocalMedia({audio: true});
+  csObject.on('defaultConfig', defaultConfigCallback);
+  csObject.on('recommendedConfig', recommendedConfigCallback);
+  // csObject.on('stats', csStatsCallback);
+}
+
+var chatLabel;
+function createLib() {
+  chatLabel = 'chat';
+  var datachannels = [chatLabel];
+  console.log('init webRTC app, datachannels:', datachannels);
+  lib = new CsioWebrtcApp(datachannels);
+}
 
 /*
  * React
@@ -243,6 +261,9 @@ class Display extends React.Component {
   }
 
   onRoomSet(roomName) {
+    /* NOTE to be super sure that we get info from config service before
+      starting a call, enableCall should only be true if both roomName and
+      iceConfig are available */
     this.setState({
       showPopup: 'none',
       enableCall: true,
@@ -316,17 +337,11 @@ if (urlRoom !== '') {
 }
 
 // roomName from user input
-var lib;
-var chatLabel = 'chat';
 function onRoomSet(room) {
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
-
-  var datachannels = [chatLabel];
-  console.log('init webRTC app, datachannels:', datachannels);
-  lib = new CsioWebrtcApp(datachannels);
 }
 
 /*
@@ -350,9 +365,6 @@ function onNewChatMessage(message) {
  */
 function csInitCallback(csError, csErrMsg) {
   console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
-  if (csError === 'success') {
-    initLocalMedia();
-  }
 }
 var reportType = {
   inbound: 'inbound',
@@ -360,6 +372,7 @@ var reportType = {
 };
 var csStatsCallback = function(stats) {
   if (!debug) {
+    console.log('stats callback');
     return;
   }
   var ssrc;
@@ -394,13 +407,30 @@ var tokenGenerator = function(forcenew, callback) {
   });
 };
 
-// The following events are triggered by CsioWebrtcApp
 
-// local userId is available
+// config service callback
+function defaultConfigCallback(config) {
+  console.log('ConfigService, default config:', config);
+
+  console.log('Media constraints:', config.media);
+  initLocalMedia(config.media);
+
+  console.log('ICE settings:', config.peerConnection);
+  lib.setIceConfig(config.peerConnection);
+}
+
+function recommendedConfigCallback(config) {
+  console.log('ConfigService, recommended config:', config);
+  if (config.peerConnection) {
+    lib.setIceConfig(config.peerConnection);
+  }
+}
+
 var configParams = {
   disableBeforeUnloadHandler: false,
-  applicationVersion: 'v1.0'
+  applicationVersion: 'v1.0',
 };
+// local userId is available
 document.addEventListener('localName',
     function(e) {
       var AppID = '@@APPID';
@@ -509,12 +539,9 @@ document.addEventListener('addRemoteVideo',
 /*
  * Local media
  */
-function initLocalMedia() {
+function initLocalMedia(constraints) {
   console.log('Requesting local stream');
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true
-  })
+  navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
