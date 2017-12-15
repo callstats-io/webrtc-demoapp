@@ -4,7 +4,7 @@
   "description": "webrtc sample app written from scratch",
   "main": "index.js",
   "scripts": {
-    "start": "grunt build; node index.js"
+    "start": "grunt build && node index.js"
   },
   "keywords": [
     "webrtc"
