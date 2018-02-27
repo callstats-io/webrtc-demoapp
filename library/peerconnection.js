@@ -26,6 +26,14 @@ class CsioPeerConnection {
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
 
+    this.pc.oniceconnectionstatechange = function(e) {
+      console.log('ICE connection state:', this.pc.iceConnectionState);
+      if (this.pc.iceConnectionState === 'failed' ||
+          this.pc.iceConnectionState === 'disconnected') {
+        this.createOffer(true);
+      }
+    }.bind(this);
+
     // FIXME addStream, onAddStream deprecated, use tracks
     this.pc.addStream(window.localStream);
     console.log(userId, 'added local stream');
@@ -55,12 +63,18 @@ class CsioPeerConnection {
     );
   }
 
-  createOffer() {
+  createOffer(iceRestart = false) {
     this.opener = true;
-    this.pc.createOffer({
+    let offerOptions = {
       offerToReceiveAudio: 1,
-      offerToReceiveVideo: 1
-    }).then(
+      offerToReceiveVideo: 1,
+      iceRestart: iceRestart
+    };
+    console.log('Signaling state:', this.pc.signalingState);
+    if (this.pc.signalingState !== 'stable') {
+      return;
+    }
+    this.pc.createOffer(offerOptions).then(
       function(e) {
         console.log(this.userId, 'send offer');
         this.onCreateOfferSuccess(e);
