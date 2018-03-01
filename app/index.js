@@ -461,6 +461,11 @@ document.addEventListener('newPeerConnection',
       var usage = csObject.fabricUsage.multiplex;
       csObject.addNewFabric(pcObject, remoteUserID, usage,
           roomName, pcCallback);
+
+      if (e.detail.id > 0) {
+        var fabricEvent = csObject.fabricEvent.fabricHold;
+        csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+      }
     },
     false);
 
@@ -545,6 +550,7 @@ function initLocalMedia(constraints) {
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
+    lib.setLocalStream(stream);
     window.localStreamUrl = window.URL.createObjectURL(stream);
 
     render();
@@ -563,6 +569,7 @@ function stopLocalMedia() {
     window.localStream.getTracks()[i].stop();
   }
   window.localStream = null;
+  lib.setLocalStream(null);
   window.localStreamUrl = null;
   render();
 }

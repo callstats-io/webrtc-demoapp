@@ -2,14 +2,11 @@
 This library abstracts the whole process of signaling and WebRTC.
 A call can be started and left easily, and events inform about what is happening.
 
-### Requirement:
-  ```window.localStream``` - has to be set to the local media (e.g. with getUserMedia API)
-
 ### Usage
 #### Create
   * ```var lib = new CsioWebrtcApp()```
   * optional parameter: array of datachannel labels
-  
+
 #### Functions
   * ```call(room)``` - initiate the call to a room (room from UI) (room is also conferenceId for cs.js).
                        All users in a room communicate with each other.

@@ -7,18 +7,19 @@
 var modCommon = require('./common');
 
 class CsioPeerConnection {
-  constructor(userId, iceConfig) {
-    if (!window.localStream || !userId || userId === '') {
+  constructor(userId, iceConfig, localStream, id) {
+    if (!userId || userId === '') {
       console.error('Necessary parameter missing:',
-          window.localStream, userId);
+          userId);
       return;
     }
     this.userId = userId;
+    this.id = id;
 
     // TODO is there any error when the TURN servers are not responding o.s.?
     this.pc = new RTCPeerConnection(iceConfig);
     modCommon.triggerEvent('newPeerConnection',
-        {'userId': userId, 'pc': this.pc});
+        {'userId': userId, 'pc': this.pc, 'id': this.id});
 
     this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
@@ -35,8 +36,10 @@ class CsioPeerConnection {
     }.bind(this);
 
     // FIXME addStream, onAddStream deprecated, use tracks
-    this.pc.addStream(window.localStream);
-    console.log(userId, 'added local stream');
+    if (localStream) {
+      this.pc.addStream(localStream);
+      console.log(userId, 'added local stream');
+    }
 
     this.pc.onaddstream = this.onRemoteStream.bind(this);
     this.pc.ontrack = this.onTrack.bind(this);
@@ -141,7 +144,7 @@ class CsioPeerConnection {
   onIceCandidate(e) {
     if (e.candidate) {
       // send ICE candidate
-      var json = {'ice': e.candidate};
+      var json = {'ice': e.candidate, 'id': this.id};
       var str = JSON.stringify(json);
       console.log(this.userId, 'sending ICE');
       modCommon.triggerEvent('sendMessage',
@@ -154,7 +157,7 @@ class CsioPeerConnection {
     .then(
       function() {
         // send offer
-        var json = {'offer': e};
+        var json = {'offer': e, 'id': this.id};
         var str = JSON.stringify(json);
         modCommon.triggerEvent('sendMessage',
             {'userId': this.userId, 'message': str});

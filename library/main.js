@@ -1,7 +1,5 @@
 /**
  * Main file for the library.
- * Requirement:
- *    window.localStream
  * Arguments:
  *    array of datachannel labels (optional)
  * Provides functions:
@@ -23,12 +21,14 @@ var modPeerconnection = require('./peerconnection');
 var pcs = {};
 var datachannels = [];
 var iceConfig = null;
+var localStream = null;
 
 // TODO events are in document. create own event domain?
 var signalling;
 document.addEventListener('userJoin',
     function(e) {
-      handleUserJoin(e.detail.userId);
+      handleUserJoin(e.detail.userId, localStream, 0);
+      handleUserJoin(e.detail.userId, null, 1);
     },
     false);
 document.addEventListener('userLeave',
@@ -45,16 +45,21 @@ document.addEventListener('userMessage',
 /**
  * A new user joins, establish connection
  */
-function handleUserJoin(userId) {
+function handleUserJoin(userId, _localStream, id) {
   // init webRTC
   var pc = new modPeerconnection.CsioPeerConnection(
       userId,
-      iceConfig);
+      iceConfig,
+      _localStream,
+      id);
   for (var i in datachannels) {
     pc.createChannel(datachannels[i]);
   }
 
-  pcs[userId] = pc;
+  if (!pcs[userId]) {
+    pcs[userId] = [];
+  }
+  pcs[userId].push(pc);
   pc.createOffer();
 }
 
@@ -65,8 +70,10 @@ function handleUserLeave(userId) {
   modCommon.triggerEvent('removeRemoteVideo', {'userId': userId});
 
   if (pcs[userId]) {
-    pcs[userId].close();
-    delete pcs[userId];
+    for (var i in pcs[userId]) {
+      pcs[userId][i].close();
+      delete pcs[userId][i];
+    }
   }
 }
 
@@ -74,17 +81,37 @@ function handleUserLeave(userId) {
  * Receive details from another user
  */
 function handleUserMessage(userId, message) {
-  var pc;
+  var json = JSON.parse(message);
+
+  var id = json.id;
+
+  var pc = null;
   if (pcs[userId]) {
-    pc = pcs[userId];
-  } else {
-    pc = new modPeerconnection.CsioPeerConnection(
-        userId,
-        iceConfig);
-    pcs[userId] = pc;
+    for (var i in pcs[userId]) {
+      if (pcs[userId][i].id === id) {
+        pc = pcs[userId][i];
+      }
+    }
   }
 
-  var json = JSON.parse(message);
+  if (pc === null) {
+    var _localStream = localStream;
+    if (pcs[userId] && pcs[userId].length > 0) {
+      _localStream = null;
+    }
+    pc = new modPeerconnection.CsioPeerConnection(
+        userId,
+        iceConfig,
+        _localStream,
+        id);
+    if (!pcs[userId]) {
+      pcs[userId] = [];
+    }
+    pcs[userId].push(pc);
+    console.warn('PC for '+id+' not found, creating new.'+
+      ' len(pcs)=='+pcs[userId].length);
+  }
+
   if (json.ice) {
     pc.addIceCandidate(json.ice);
   }
@@ -128,6 +155,10 @@ function setIceConfig(_iceConfig) {
   iceConfig = _iceConfig;
 }
 
+function setLocalStream(_localStream) {
+  localStream = _localStream;
+}
+
 // public functions
 function CsioWebrtcApp(labels) {
   datachannels = (typeof labels === 'undefined')? [] : labels;
@@ -145,9 +176,12 @@ CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
 };
 CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   for (var i in pcs) {
-    pcs[i].sendChannelMessage(label, message);
+    if (pcs[i].length > 0) {
+      pcs[i][0].sendChannelMessage(label, message);
+    }
   }
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
+CsioWebrtcApp.prototype.setLocalStream = setLocalStream;
 
 module.exports = CsioWebrtcApp;
