@@ -473,6 +473,16 @@ document.addEventListener('closePeerConnection',
     },
     false);
 
+// an important event from webRTC
+document.addEventListener('webrtcEvent',handleWebrtcEvent,false);
+function handleWebrtcEvent(e) {
+  var pcObject = e.detail.pc;
+  var confID = roomName;
+  var applicationLog = e.detail.eventLog;
+  var csioType = csObject.webRTCFunctions.applicationLog;
+  csObject.reportError(pcObject, confID, csioType, applicationLog);
+}
+
 // an error occurred from webRTC
 document.addEventListener('webrtcError', handleWebrtcError, false);
 function handleWebrtcError(e) {
