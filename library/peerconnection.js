@@ -42,10 +42,13 @@ class CsioPeerConnection {
       }
     }.bind(this);
 
-    // FIXME addStream, onAddStream deprecated, use tracks
-    this.pc.addStream(window.localStream);
-    console.log(userId, 'added local stream');
-
+    // FIXME onAddStream deprecated, use tracks
+    window.localStream.getTracks().forEach(function(track) {
+      if (typeof this.pc.addTrack === 'function') {
+        this.pc.addTrack(track, window.localStream);
+        console.log(userId, 'added local stream with kind',track.kind);
+      }
+    },this);
     this.pc.onaddstream = this.onRemoteStream.bind(this);
     this.pc.ontrack = this.onTrack.bind(this);
   }
