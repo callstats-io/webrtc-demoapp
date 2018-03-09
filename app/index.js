@@ -174,11 +174,11 @@ class Display extends React.Component {
     // video
     document.addEventListener('addRemoteVideo',
         function(e) {
-          var stream = e.detail.stream;
+          var streams = e.detail.streams;
           var remoteUserId = e.detail.userId;
 
           var temp = this.state.remoteVideos;
-          temp[remoteUserId] = window.URL.createObjectURL(stream);
+          temp[remoteUserId] = window.URL.createObjectURL(streams[0]);
           this.setState({
             remoteVideos: temp,
           });
