@@ -20,6 +20,9 @@ class CsioPeerConnection {
     modCommon.triggerEvent('newPeerConnection',
         {'userId': userId, 'pc': this.pc});
 
+    modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc, 'eventLog': 'PeerConnection created for '+this.userId});
+
     this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
 
@@ -31,6 +34,11 @@ class CsioPeerConnection {
       if (this.pc.iceConnectionState === 'failed' ||
           this.pc.iceConnectionState === 'disconnected') {
         this.createOffer(true);
+      } else if (this.pc.iceConnectionState === 'completed' ||
+        this.pc.iceConnectionState === 'closed') {
+        modCommon.triggerEvent('applicationLogEvent',
+          {'pc': this.pc, 'eventLog': 'ICE connection '
+              +this.pc.iceConnectionState+' for '+this.userId});
       }
     }.bind(this);
 
@@ -53,6 +61,8 @@ class CsioPeerConnection {
     this.pc.close();
     modCommon.triggerEvent('closePeerConnection',
         {'userId': this.userId, 'pc': this.pc});
+    modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc, 'eventLog': 'PeerConnection closed for '+this.userId});
   }
 
   addIceCandidate(ic) {
@@ -123,6 +133,8 @@ class CsioPeerConnection {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
         {'pc': this.pc, 'userId': this.userId, 'stream': e.stream});
+    modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc, 'eventLog': 'Remote stream received for '+this.userId});
   }
 
   onAddIceCandidateSuccess() {
@@ -174,15 +186,24 @@ class CsioPeerConnection {
     console.log('Channel creating:', label);
     this.datachannels[label] = this.pc.createDataChannel(label);
     this.setChannelCallbacks(label);
+    modCommon.triggerEvent('applicationLogEvent',
+      {'pc': this.pc, 'eventLog': 'DataChannel '+label+' created for '
+          +this.userId});
   }
 
   setChannelCallbacks(label) {
     this.datachannels[label].onmessage = this.handleChannelMessage.bind(this);
     this.datachannels[label].onopen = function(e) {
       console.log('Channel opened:', label);
+      modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc, 'eventLog': 'DataChannel '+label+' opened for '
+          +this.userId});
     }.bind(this);
     this.datachannels[label].onclose = function(e) {
       console.log('Channel closed:', label);
+      modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc, 'eventLog': 'DataChannel '+label+' closed for '
+          +this.userId});
     }.bind(this);
   }
 

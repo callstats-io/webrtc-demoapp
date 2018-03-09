@@ -27,4 +27,5 @@ A call can be started and left easily, and events inform about what is happening
   * ```localName({'localname'})``` - the local user name is available
   * ```newPeerConnection({'userId', 'pc'})``` - a new PeerConnection was created
   * ```closePeerConnection({'userId', 'pc'})``` - a PeerConnection was closed
-  * ```webrtcError({'type', 'userId', 'pc', 'error'})``` - a webRTC error occured
+  * ```webrtcError({'type', 'userId', 'pc', 'error'})``` - a webRTC error occurred
+  * ```applicationLogEvent({'pc', 'eventLog'})``` - a webRTC event occurred
