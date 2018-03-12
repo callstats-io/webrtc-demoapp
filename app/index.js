@@ -326,6 +326,8 @@ class Display extends React.Component {
     this.setState({
       enableHangup: false,
       enableChat: false,
+      videoPaused: false,
+      audioMuted: false,
       enableVideoToggle: false,
       enableAudioToggle: false,
       showPopup: 'block',
