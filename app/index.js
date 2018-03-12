@@ -43,27 +43,42 @@ function createLib() {
 /*
  * React
  */
-// A video element
-function Video(props) {
-  var muted = false;
-  if (props.name === 'local') {
-    muted = true;
+// A video element class taken from
+// https://github.com/facebook/react/pull/9146
+class Video extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.muted = false;
+    if (this.props.name === 'local') {
+      this.muted = true;
+    }
   }
-
-  // TODO hopefully this supports srcObject soon ..
-  // https://github.com/facebook/react/pull/9146
-  return (
-    <video id={props.name} width="320" height="240"
-        style={{transform: 'scaleX(-1)'}}
-        autoPlay='true' muted={muted}
-        src={props.stream}>
+  componentDidMount() {
+    console.log('component did mount', this.props.name);
+    this.video.srcObject = this.props.stream;
+  }
+  shouldComponentUpdate(props) {
+    console.log('component should update',
+      this.props.name, this.props.stream !== props.stream);
+    return this.props.stream !== props.stream;
+  }
+  componentDidUpdate() {
+    console.log('component did update', this.props.name);
+    this.video.srcObject = this.props.stream;
+  }
+  render() {
+    return (
+      <video id={this.props.name} width="320" height="240"
+                  style={{transform: 'scaleX(-1)'}}
+                  autoPlay='true' muted={this.muted}
+                  ref={(video) => {
+                    this.video = video;
+                  }}>
     </video>
-  );
+    );
+  }
 }
-Video.propTypes = {
-  name: React.PropTypes.string,
-  stream: React.PropTypes.string,
-};
 
 // Popup asking for the room name
 class Popup extends React.Component {
@@ -178,7 +193,7 @@ class Display extends React.Component {
           var remoteUserId = e.detail.userId;
 
           var temp = this.state.remoteVideos;
-          temp[remoteUserId] = window.URL.createObjectURL(streams[0]);
+          temp[remoteUserId] = streams[0];
           this.setState({
             remoteVideos: temp,
           });
@@ -235,9 +250,9 @@ class Display extends React.Component {
   }
 
   renderLocalVideo() {
-    if (window.localStreamUrl) {
+    if (window.localStream) {
       return <Video key={'local'} name={'local'}
-          stream={window.localStreamUrl} />;
+          stream={window.localStream} />;
     }
     return null;
   }
@@ -554,8 +569,6 @@ function initLocalMedia(constraints) {
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
-    window.localStreamUrl = window.URL.createObjectURL(stream);
-
     render();
   },
   function(e) {
@@ -572,6 +585,5 @@ function stopLocalMedia() {
     window.localStream.getTracks()[i].stop();
   }
   window.localStream = null;
-  window.localStreamUrl = null;
   render();
 }
