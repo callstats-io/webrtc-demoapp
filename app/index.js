@@ -180,6 +180,10 @@ class Display extends React.Component {
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
+      enableAudioToggle: false,
+      enableVideoToggle: false,
+      audioMuted: false,
+      videoPaused: false,
       enableChat: false,
       remoteVideos: {},
       chatMessages: [],
@@ -234,6 +238,14 @@ class Display extends React.Component {
           <button id="hangupButton"
               onClick={this.onClickHangup.bind(this)}
               disabled={!this.state.enableHangup}>Hangup</button>
+          <button id="toggleAudio"
+              onClick={this.onClickAudioCtrl.bind(this)}
+              disabled={!this.state.enableAudioToggle}>
+            {this.state.audioMuted ? 'Unmute': 'Mute'} Audio</button>
+          <button id="toggleVideo"
+              onClick={this.onClickVideoCtrl.bind(this)}
+              disabled={!this.state.enableVideoToggle}>
+            {this.state.videoPaused ? 'Play': 'Pause'} Video</button>
           <button id="toggleChat" style={{color: cbColor, float: 'right'}}
               onClick={this.onClickChat.bind(this)}
               disabled={!this.state.enableChat}>Chat</button>
@@ -290,14 +302,32 @@ class Display extends React.Component {
     this.setState({
       enableCall: false,
       enableHangup: true,
+      enableAudioToggle: true,
+      enableVideoToggle: true,
+      audioMuted: false,
+      videoPaused: false,
       enableChat: true,
     });
     this.props.onClickCall();
+  }
+  onClickAudioCtrl() {
+    console.log('->','audio control');
+    this.setState({
+      audioMuted: !this.state.audioMuted,
+    });
+  }
+  onClickVideoCtrl() {
+    console.log('->','video control ');
+    this.setState({
+      videoPaused: !this.state.videoPaused,
+    });
   }
   onClickHangup() {
     this.setState({
       enableHangup: false,
       enableChat: false,
+      enableVideoToggle: false,
+      enableAudioToggle: false,
       showPopup: 'block',
       showChat: false,
       chatMessages: [],
