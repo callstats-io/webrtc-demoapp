@@ -184,6 +184,8 @@ class Display extends React.Component {
       enableVideoToggle: false,
       audioMuted: false,
       videoPaused: false,
+      enableScreenShare: false,
+      screenShared: false,
       enableChat: false,
       remoteVideos: {},
       chatMessages: [],
@@ -249,6 +251,12 @@ class Display extends React.Component {
           <button id="toggleChat" style={{color: cbColor, float: 'right'}}
               onClick={this.onClickChat.bind(this)}
               disabled={!this.state.enableChat}>Chat</button>
+          <button id="toggleScreenShare"
+              style={{color: cbColor, float: 'right'}}
+              onClick={this.onClickScreenShare.bind(this)}
+              disabled={!this.state.enableScreenShare}>
+            {!this.state.screenShared ? 'Start ':'Stop '}
+            Screen Share</button>
         </div>
         <div>{this.renderLocalVideo()}</div>
         <div>{this.renderRemoteVideos()}</div>
@@ -306,6 +314,8 @@ class Display extends React.Component {
       enableVideoToggle: true,
       audioMuted: false,
       videoPaused: false,
+      enableScreenShare: true,
+      screenShared: false,
       enableChat: true,
     });
     this.props.onClickCall();
@@ -328,6 +338,8 @@ class Display extends React.Component {
     this.setState({
       enableHangup: false,
       enableChat: false,
+      enableScreenShare: false,
+      screenShared: false,
       videoPaused: false,
       audioMuted: false,
       enableVideoToggle: false,
@@ -337,6 +349,13 @@ class Display extends React.Component {
       chatMessages: [],
     });
     this.props.onClickHangup();
+  }
+  onClickScreenShare() {
+    var toState = !this.state.screenShared;
+    this.setState({
+      screenShared: !this.state.screenShared,
+    });
+    this.props.onClickScreenShare(toState);
   }
   onClickChat() {
     var temp = !(this.state.showChat);
@@ -359,6 +378,7 @@ Display.propTypes = {
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onClickAVCtrl: React.PropTypes.func,
+  onClickScreenShare: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
 };
 
@@ -371,6 +391,7 @@ function render() {
         onClickCall={onClickCall}
         onClickHangup={onClickHangup}
         onClickAVCtrl={onClickAVCtrl}
+        onClickScreenShare={onClickScreenShare}
         onNewMessage={onNewChatMessage}
         roomName={roomName}/>,
     document.getElementById('container')
@@ -426,6 +447,10 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
   }
 
   // handleApplicationLogs({'pc': this.pc, 'eventLog': logMsg});
+}
+
+function onClickScreenShare(enableScreenShare) {
+  console.log('->','enable screen share',enableScreenShare);
 }
 
 function onNewChatMessage(message) {
