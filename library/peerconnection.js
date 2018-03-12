@@ -127,7 +127,7 @@ class CsioPeerConnection {
 
   // callback functions
   onTrack(e) {
-    console.log(this.userId, 'received remote stream',e);
+    console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
         {'pc': this.pc, 'userId': this.userId, 'streams': e.streams});
     modCommon.triggerEvent('applicationLogEvent',
