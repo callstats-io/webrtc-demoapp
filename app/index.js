@@ -408,16 +408,24 @@ function onClickHangup() {
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
-  console.log(isAudio?'audio muted':'video paused', isMuteOrPaused);
+  var logMsg = 'Audio is '
+    +(!isMuteOrPaused?'muted':'unmuted')+' for '+localUserId;
+  if (isAudio === false ) {
+    logMsg = 'Video is '
+      +(!isMuteOrPaused?'paused':'resumed')+' for '+localUserId;
+  }
+  console.log(logMsg);
   var mediaTracks = isAudio ?
     window.localStream.getAudioTracks() : window.localStream.getVideoTracks();
   if (mediaTracks.length === 0) {
-    console.warn('No local ',isAudio?'audio':'video','available.');
+    console.warn('No local ',isAudio ? 'audio':'video','available.');
     return;
   }
   for (var i = 0; i < mediaTracks.length; i+=1) {
     mediaTracks[i].enabled = isMuteOrPaused;
   }
+
+  // handleApplicationLogs({'pc': this.pc, 'eventLog': logMsg});
 }
 
 function onNewChatMessage(message) {
