@@ -311,16 +311,18 @@ class Display extends React.Component {
     this.props.onClickCall();
   }
   onClickAudioCtrl() {
-    console.log('->','audio control');
+    var toState = this.state.audioMuted;
     this.setState({
       audioMuted: !this.state.audioMuted,
     });
+    this.props.onClickAVCtrl(toState,true);
   }
   onClickVideoCtrl() {
-    console.log('->','video control ');
+    var toState = this.state.videoPaused;
     this.setState({
       videoPaused: !this.state.videoPaused,
     });
+    this.props.onClickAVCtrl(toState,false);
   }
   onClickHangup() {
     this.setState({
@@ -356,6 +358,7 @@ Display.propTypes = {
   onRoomSet: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
+  onClickAVCtrl: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
 };
 
@@ -367,6 +370,7 @@ function render() {
         onRoomSet={onRoomSet}
         onClickCall={onClickCall}
         onClickHangup={onClickHangup}
+        onClickAVCtrl={onClickAVCtrl}
         onNewMessage={onNewChatMessage}
         roomName={roomName}/>,
     document.getElementById('container')
@@ -401,6 +405,19 @@ function onClickCall() {
 function onClickHangup() {
   lib.hangup();
   stopLocalMedia();
+}
+
+function onClickAVCtrl(isMuteOrPaused, isAudio) {
+  console.log(isAudio?'audio muted':'video paused', isMuteOrPaused);
+  var mediaTracks = isAudio ?
+    window.localStream.getAudioTracks() : window.localStream.getVideoTracks();
+  if (mediaTracks.length === 0) {
+    console.warn('No local ',isAudio?'audio':'video','available.');
+    return;
+  }
+  for (var i = 0; i < mediaTracks.length; i+=1) {
+    mediaTracks[i].enabled = isMuteOrPaused;
+  }
 }
 
 function onNewChatMessage(message) {
