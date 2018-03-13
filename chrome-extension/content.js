@@ -6,9 +6,9 @@ port.onMessage.addListener( (message) => {
   window.postMessage(message, '*');
 });
 
-window.addEventListener('screenShareEvent', (event)=> {
-  if( event.data === 'addonInstalled' ) {
-    window.postMessage( 'addonInstalled', '*' );
+window.addEventListener('message', (event) => {
+  if( event.data === 'csioCheckAddonInstalled' ) {
+    window.postMessage( 'csioAddonInstalled', '*' );
   } else if (event.source === window) {
     port.postMessage( event.data );
   }

@@ -1,22 +1,23 @@
 'use strict';
 
 chrome.runtime.onConnect.addListener( (port) => {
-  function onResponse( sourceId ) {
+  const onScreenSourceID = (sourceId) => {
     if(!sourceId || !sourceId.length) {
       port.postMessage('PermissionDeniedError');
     } else {
-      port.postMessage( {sourceId: sourceId} );
+      port.postMessage( {csioSourceId: sourceId} );
     }
-  }
+  };
 
-  port.onMessage.addListener( (evt, sender) => {
-    if( evt !== 'requestScreenSourceId' ) {
+  const onCSIORequest = (evt) => {
+    if( evt !== 'csioRequestScreenSourceId' ) {
       return;
     }
     chrome.desktopCapture.chooseDesktopMedia(
       ['screen', 'window'],
-      sender.tab,
-      onResponse
+      port.sender.tab,
+      onScreenSourceID
     );
-  }, port.sender);
+  };
+  port.onMessage.addListener(onCSIORequest );
 });

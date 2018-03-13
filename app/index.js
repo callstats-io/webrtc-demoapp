@@ -458,6 +458,7 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
 
 function onClickScreenShare(enableScreenShare) {
   console.log('->','enable screen share',enableScreenShare);
+  window.postMessage('csioRequestScreenSourceId', '*' );
 }
 
 function onNewChatMessage(message) {
@@ -577,6 +578,21 @@ document.addEventListener('closePeerConnection',
     },
     false);
 
+window.addEventListener('message',
+  function(msg) {
+    console.log('->','screen share',msg);
+    if( !msg.data ) {
+      return;
+    } else if ( msg.data.csioSourceId ) {
+      console.log('->','try to get screen share with source id',
+        msg.data.csioSourceId);
+      // getScreen( msg.data.sourceId );
+    } else if( msg.data.csioAddonInstalled ) {
+      console.log('->','addons is installed');
+    }
+  },
+  false);
+
 // an important event from webRTC
 document.addEventListener('applicationLogEvent',handleApplicationLogs,false);
 function handleApplicationLogs(e) {
@@ -654,6 +670,9 @@ document.addEventListener('addRemoteVideo',
  */
 function initLocalMedia(constraints) {
   console.log('Requesting local stream');
+  // Check if screen share addon is installed
+  window.postMessage( 'csioCheckAddonInstalled', '*' );
+
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
