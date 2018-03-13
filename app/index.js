@@ -430,12 +430,11 @@ function onClickHangup() {
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
   var logMsg = 'Audio is '
-    +(!isMuteOrPaused?'muted':'unmuted')+' for '+localUserId;
+    +(!isMuteOrPaused?'muted':'unmuted')+' for ';
   if (isAudio === false ) {
     logMsg = 'Video is '
-      +(!isMuteOrPaused?'paused':'resumed')+' for '+localUserId;
+      +(!isMuteOrPaused?'paused':'resumed')+' for ';
   }
-  console.log(logMsg);
   var mediaTracks = isAudio ?
     window.localStream.getAudioTracks() : window.localStream.getVideoTracks();
   if (mediaTracks.length === 0) {
@@ -445,8 +444,16 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
   for (var i = 0; i < mediaTracks.length; i+=1) {
     mediaTracks[i].enabled = isMuteOrPaused;
   }
-
-  // handleApplicationLogs({'pc': this.pc, 'eventLog': logMsg});
+  const pcs = lib.getPCObjects();
+  for(const key in pcs) {
+    if (pcs.hasOwnProperty(key) && pcs[key]) {
+      console.log(logMsg + pcs[key].userId);
+      handleApplicationLogs(
+        {'detail': {'pc': pcs[key].pc,
+          'eventLog': logMsg + pcs[key].userId}
+        });
+    }
+  }
 }
 
 function onClickScreenShare(enableScreenShare) {

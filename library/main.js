@@ -128,6 +128,13 @@ function setIceConfig(_iceConfig) {
   iceConfig = _iceConfig;
 }
 
+/**
+ * Get a list of peer connections in the context
+ */
+function getPCObjects() {
+  return pcs;
+}
+
 // public functions
 function CsioWebrtcApp(labels) {
   datachannels = (typeof labels === 'undefined')? [] : labels;
@@ -149,5 +156,8 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   }
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
+CsioWebrtcApp.prototype.getPCObjects = function() {
+  return getPCObjects();
+};
 
 module.exports = CsioWebrtcApp;
