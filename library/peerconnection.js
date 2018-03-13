@@ -41,16 +41,13 @@ class CsioPeerConnection {
               +this.pc.iceConnectionState+' for '+this.userId});
       }
     }.bind(this);
-
-    // FIXME addStream, onAddStream deprecated, use tracks
-    this.pc.addStream(window.localStream);
-    console.log(userId, 'added local stream');
-
-    this.pc.onaddstream = this.onRemoteStream.bind(this);
+    window.localStream.getTracks().forEach(function(track) {
+      if (typeof this.pc.addTrack === 'function') {
+        this.pc.addTrack(track, window.localStream);
+        console.log(userId, 'added local stream with kind',track.kind);
+      }
+    },this);
     this.pc.ontrack = this.onTrack.bind(this);
-  }
-
-  onTrack(event) {
   }
 
   // callable functions
@@ -129,10 +126,10 @@ class CsioPeerConnection {
   }
 
   // callback functions
-  onRemoteStream(e) {
+  onTrack(e) {
     console.log(this.userId, 'received remote stream');
     modCommon.triggerEvent('addRemoteVideo',
-        {'pc': this.pc, 'userId': this.userId, 'stream': e.stream});
+        {'pc': this.pc, 'userId': this.userId, 'streams': e.streams});
     modCommon.triggerEvent('applicationLogEvent',
         {'pc': this.pc, 'eventLog': 'Remote stream received for '+this.userId});
   }
