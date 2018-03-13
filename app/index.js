@@ -458,7 +458,8 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
 
 function onClickScreenShare(enableScreenShare) {
   console.log('->','enable screen share',enableScreenShare);
-  window.postMessage('csioRequestScreenSourceId', '*' );
+  // Check if screen share addon is installed
+  window.postMessage( 'csioCheckAddonInstalled', '*' );
 }
 
 function onNewChatMessage(message) {
@@ -580,15 +581,25 @@ document.addEventListener('closePeerConnection',
 
 window.addEventListener('message',
   function(msg) {
-    console.log('->','screen share',msg);
     if( !msg.data ) {
       return;
-    } else if ( msg.data.csioSourceId ) {
+    } else if ( msg.data.evt === 'onCsioSourceId' ) {
       console.log('->','try to get screen share with source id',
         msg.data.csioSourceId);
-      // getScreen( msg.data.sourceId );
-    } else if( msg.data.csioAddonInstalled ) {
-      console.log('->','addons is installed');
+      const constraints = {
+        'mandatory': {
+          'chromeMediaSource': 'desktop',
+          'maxWidth': screen.width > 1920 ? screen.width : 1920,
+          'maxHeight': screen.height > 1080 ? screen.height : 1080,
+          'chromeMediaSourceId': msg.data.csioSourceId
+        },
+        'optional': [
+          {googTemporalLayeredScreencast: true}
+        ]
+      };
+      initLocalMedia( {'video': constraints} );
+    } else if( msg.data === 'csioAddonInstalled' ) {
+      window.postMessage('csioRequestScreenSourceId', '*' );
     }
   },
   false);
@@ -669,10 +680,7 @@ document.addEventListener('addRemoteVideo',
  * Local media
  */
 function initLocalMedia(constraints) {
-  console.log('Requesting local stream');
-  // Check if screen share addon is installed
-  window.postMessage( 'csioCheckAddonInstalled', '*' );
-
+  console.log('Requesting local stream',constraints);
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');

@@ -5,7 +5,8 @@ chrome.runtime.onConnect.addListener( (port) => {
     if(!sourceId || !sourceId.length) {
       port.postMessage('PermissionDeniedError');
     } else {
-      port.postMessage( {csioSourceId: sourceId} );
+      port.postMessage( {'csioSourceId': sourceId,
+        'evt': 'onCsioSourceId'} );
     }
   };
 
