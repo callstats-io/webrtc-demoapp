@@ -457,9 +457,15 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
 }
 
 function onClickScreenShare(enableScreenShare) {
-  console.log('->','enable screen share',enableScreenShare);
-  // Check if screen share addon is installed
-  window.postMessage( 'csioCheckAddonInstalled', '*' );
+  console.log('screen share is ',(enableScreenShare?'enabled':'disabled'),
+    'for',localUserId);
+  lib.addRemoveTracks(false);
+  stopLocalMedia();
+  if ( enableScreenShare ) {
+    window.postMessage('csioCheckAddonInstalled', '*');
+  } else {
+    initLocalMedia({'audio': true, 'video': true}, true);
+  }
 }
 
 function onNewChatMessage(message) {
@@ -584,20 +590,18 @@ window.addEventListener('message',
     if( !msg.data ) {
       return;
     } else if ( msg.data.evt === 'onCsioSourceId' ) {
-      console.log('->','try to get screen share with source id',
-        msg.data.csioSourceId);
       const constraints = {
         'mandatory': {
           'chromeMediaSource': 'desktop',
-          'maxWidth': screen.width > 1920 ? screen.width : 1920,
-          'maxHeight': screen.height > 1080 ? screen.height : 1080,
+          'maxWidth': Math.min(screen.width, 1920),
+          'maxHeight': Math.min(screen.height, 1080),
           'chromeMediaSourceId': msg.data.csioSourceId
         },
         'optional': [
           {googTemporalLayeredScreencast: true}
         ]
       };
-      initLocalMedia( {'video': constraints} );
+      initLocalMedia( {'video': constraints}, true );
     } else if( msg.data === 'csioAddonInstalled' ) {
       window.postMessage('csioRequestScreenSourceId', '*' );
     }
@@ -679,12 +683,16 @@ document.addEventListener('addRemoteVideo',
 /*
  * Local media
  */
-function initLocalMedia(constraints) {
+function initLocalMedia(constraints,isScreenShared) {
   console.log('Requesting local stream',constraints);
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
+    if (isScreenShared) {
+      lib.addRemoveTracks(true);
+      lib.tryReNegotiate();
+    }
     render();
   },
   function(e) {

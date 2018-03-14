@@ -221,6 +221,22 @@ class CsioPeerConnection {
   sendChannelMessage(label, message) {
     this.datachannels[label].send(message);
   }
+
+  removeTrackInternals() {
+    this.pc.getSenders().forEach((sender)=>{
+      this.pc.removeTrack(sender);
+      console.log(this.userId, 'remove local stream with kind',sender);
+    },this);
+  }
+
+  addTrackInternals() {
+    window.localStream.getTracks().forEach(function(track) {
+      if (typeof this.pc.addTrack === 'function') {
+        this.pc.addTrack(track, window.localStream);
+        console.log(this.userId, 'added local stream with kind',track.kind);
+      }
+    },this);
+  }
 }
 
 module.exports.CsioPeerConnection = CsioPeerConnection;

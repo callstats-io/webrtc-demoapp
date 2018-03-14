@@ -159,5 +159,23 @@ CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
 CsioWebrtcApp.prototype.getPCObjects = function() {
   return getPCObjects();
 };
+CsioWebrtcApp.prototype.addRemoveTracks = function(isAdd) {
+  for(const key in pcs) {
+    if (pcs.hasOwnProperty(key) && pcs[key]) {
+      if (isAdd) {
+        pcs[key].addTrackInternals();
+      } else {
+        pcs[key].removeTrackInternals();
+      }
+    }
+  }
+};
+CsioWebrtcApp.prototype.tryReNegotiate = function() {
+  for(const key in pcs) {
+    if (pcs.hasOwnProperty(key) && pcs[key]) {
+      pcs[key].createOffer();
+    }
+  }
+};
 
 module.exports = CsioWebrtcApp;
