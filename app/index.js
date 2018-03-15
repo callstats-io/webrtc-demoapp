@@ -431,6 +431,15 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
         {'detail': {'pc': pcs[key].pc,
           'eventLog': logMsg + pcs[key].userId}
         });
+
+      const pcObject = pcs[key].pc;
+      let fabricEvent = (!isMuteOrPaused ? csObject.fabricEvent.audioMute:
+        csObject.fabricEvent.audioUnmute);
+      if (isAudio === false ) {
+        fabricEvent = (!isMuteOrPaused ? csObject.fabricEvent.videoPause:
+          csObject.fabricEvent.videoResume);
+      }
+      csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     }
   }
 }
