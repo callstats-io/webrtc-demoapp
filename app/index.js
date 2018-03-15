@@ -473,6 +473,7 @@ function onClickScreenShare(enableScreenShare) {
   if ( enableScreenShare ) {
     // If firefox
     if ( navigator.mozGetUserMedia ) {
+      // TODO will need an UI to select screen share options
       const constraints = {
         // 'mediaSource': 'screen', // whole screen sharing
         'mediaSource': 'window', // choose a window to share
