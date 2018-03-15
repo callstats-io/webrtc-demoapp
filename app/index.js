@@ -692,13 +692,13 @@ document.addEventListener('addRemoteVideo',
 /*
  * Local media
  */
-function initLocalMedia(constraints,isScreenShared) {
+function initLocalMedia(constraints,needRenegotiate) {
   console.log('Requesting local stream',constraints);
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
-    if (isScreenShared) {
+    if (needRenegotiate) {
       lib.addRemoveTracks(true);
       lib.tryReNegotiate();
     }
