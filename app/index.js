@@ -471,7 +471,20 @@ function onClickScreenShare(enableScreenShare) {
   lib.addRemoveTracks(false);
   stopLocalMedia();
   if ( enableScreenShare ) {
-    window.postMessage('csioCheckAddonInstalled', '*');
+    // If firefox
+    if ( navigator.mozGetUserMedia ) {
+      const constraints = {
+        // 'mediaSource': 'screen', // whole screen sharing
+        'mediaSource': 'window', // choose a window to share
+        // 'mediaSource': 'application', // choose a window to share
+        'width': {max: '1920'},
+        'height': {max: '1080'},
+        'frameRate': {max: '10'}
+      };
+      initLocalMedia( {'video': constraints}, true );
+    } else {
+      window.postMessage('csioCheckAddonInstalled', '*');
+    }
   } else {
     initLocalMedia({'audio': true, 'video': true}, true);
   }
