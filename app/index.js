@@ -121,6 +121,36 @@ Popup.propTypes = {
   show: React.PropTypes.string,
 };
 
+
+// PopupFF asking for tab selection for firefox
+class PopupFF extends React.Component {
+  constructor(props) {
+    super();
+  }
+
+  render() {
+    return (
+      <div id="popup" className="modal" style={{display: this.props.show}}>
+        <div className="modal-content" style={{'text-align': 'center'}}>
+          <button onClick={this.handleCloseModal.bind(this,'screen')}>
+            Screen</button>
+          <button onClick={this.handleCloseModal.bind(this,'window')}>
+            Window</button>
+          <button onClick={this.handleCloseModal.bind(this,'application')}>
+            Application</button>
+        </div>
+      </div>
+    );
+  }
+  handleCloseModal(val) {
+    this.props.onOptionSelected(val);
+  }
+}
+Popup.propTypes = {
+  onOptionSelected: React.PropTypes.func,
+  show: React.PropTypes.string,
+};
+
 // Chat window
 class Chat extends React.Component {
   constructor(props) {
@@ -177,6 +207,7 @@ class Display extends React.Component {
       roomName: props.roomName,
       showChat: false,
       showPopup: 'block',
+      showPopupFF: 'none',
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
@@ -262,6 +293,8 @@ class Display extends React.Component {
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
             show={this.state.showPopup} roomName={this.state.roomName}/>
+        <PopupFF onOptionSelected={this.onOptionSelected.bind(this)}
+            show={this.state.showPopupFF}/>
         <Chat onNewMessage={this.onNewMessage.bind(this)}
             chatText={this.state.chatText}
             show={this.state.showChat}/>
@@ -306,6 +339,12 @@ class Display extends React.Component {
     });
     this.props.onRoomSet(roomName);
   }
+  onOptionSelected(val) {
+    this.setState({
+      showPopupFF: 'none',
+    });
+    this.props.onClickScreenShare(true,val);
+  }
   onClickCall() {
     this.setState({
       enableCall: false,
@@ -345,6 +384,7 @@ class Display extends React.Component {
       enableVideoToggle: false,
       enableAudioToggle: false,
       showPopup: 'block',
+      showPopupFF: 'none',
       showChat: false,
       chatMessages: [],
     });
@@ -353,9 +393,16 @@ class Display extends React.Component {
   onClickScreenShare() {
     var toState = !this.state.screenShared;
     this.setState({
-      screenShared: !this.state.screenShared,
+      screenShared: toState,
+
     });
-    this.props.onClickScreenShare(toState);
+    if (navigator.mozGetUserMedia && toState===true) {
+      this.setState({
+        showPopupFF: toState ? 'block' : 'none',
+      });
+    } else {
+      this.props.onClickScreenShare(toState);
+    }
   }
   onClickChat() {
     var temp = !(this.state.showChat);
@@ -375,6 +422,7 @@ class Display extends React.Component {
 }
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
+  onOptionSelected: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onClickAVCtrl: React.PropTypes.func,
@@ -465,18 +513,19 @@ function onClickAVCtrl(isMuteOrPaused, isAudio) {
   }
 }
 
-function onClickScreenShare(enableScreenShare) {
+function onClickScreenShare(enableScreenShare,mediaSource) {
   console.log('screen share is ',(enableScreenShare?'enabled':'disabled'),
     'for',localUserId);
   lib.addRemoveTracks(false);
   stopLocalMedia();
   if ( enableScreenShare ) {
     // If firefox
-    if ( navigator.mozGetUserMedia ) {
+    if ( mediaSource ) {
       // TODO will need an UI to select screen share options
       const constraints = {
+        'mediaSource': mediaSource,
         // 'mediaSource': 'screen', // whole screen sharing
-        'mediaSource': 'window', // choose a window to share
+        // 'mediaSource': 'window', // choose a window to share
         // 'mediaSource': 'application', // choose a window to share
         'width': {max: '1920'},
         'height': {max: '1080'},
