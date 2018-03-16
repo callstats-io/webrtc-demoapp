@@ -160,7 +160,7 @@ CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
 CsioWebrtcApp.prototype.notifyScreenShare = function(enableScreenShare) {
   for(const key in pcs) {
     if (pcs.hasOwnProperty(key) && pcs[key]) {
-
+      pcs[key].notifyScreenShare(enableScreenShare);
     }
   }
 };

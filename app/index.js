@@ -643,6 +643,12 @@ document.addEventListener('toggleAVStates',
       case 'videoResumed':
         fabricEvent = csObject.fabricEvent.videoResume;
         break;
+      case 'screenShareEnabled':
+        fabricEvent = csObject.fabricEvent.screenShareStart;
+        break;
+      case 'screenShareDisabled':
+        fabricEvent = csObject.fabricEvent.screenShareStop;
+        break;
       default:
         console.log('Error', type, 'not handled!');
         return;

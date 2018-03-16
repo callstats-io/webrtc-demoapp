@@ -263,6 +263,17 @@ class CsioPeerConnection {
       }
     },this);
   }
+
+  notifyScreenShare(enableScreenShare) {
+    const logMsg = 'Screen share is '+(enableScreenShare?'enabled':'disabled')+
+    'for'+this.userId;
+    const febType = enableScreenShare ?
+      'screenShareEnabled' : 'screenShareDisabled';
+    modCommon.triggerEvent('applicationLogEvent',
+      {'pc': this.pc, 'eventLog': logMsg});
+    modCommon.triggerEvent('toggleAVStates',
+      {'userId': this.userId, 'pc': this.pc, 'type': febType});
+  }
 }
 
 module.exports.CsioPeerConnection = CsioPeerConnection;
