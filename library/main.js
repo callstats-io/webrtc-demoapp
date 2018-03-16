@@ -129,13 +129,6 @@ function setIceConfig(_iceConfig) {
   iceConfig = _iceConfig;
 }
 
-/**
- * Get a list of peer connections in the context
- */
-function getPCObjects() {
-  return pcs;
-}
-
 // public functions
 function CsioWebrtcApp(labels) {
   datachannels = (typeof labels === 'undefined')? [] : labels;
