@@ -477,7 +477,7 @@ function onClickHangup() {
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
-  lib.toggleAVStates(isMuteOrPaused, isAudio);
+  lib.toggleMediaStates(isMuteOrPaused, isAudio);
 }
 
 function onClickScreenShare(enableScreenShare,mediaSource) {
@@ -624,8 +624,8 @@ document.addEventListener('closePeerConnection',
       csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);
-// audio, or video track is mute/unmuted, or paused/resumed
-document.addEventListener('toggleAVStates',
+// audio, video, or screen share is mute/unmuted, or paused/resumed
+document.addEventListener('toggleMediaStates',
     function(e) {
       var pcObject = e.detail.pc;
       var type = e.detail.type;
