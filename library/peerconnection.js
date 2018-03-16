@@ -62,6 +62,32 @@ class CsioPeerConnection {
         {'pc': this.pc, 'eventLog': 'PeerConnection closed for '+this.userId});
   }
 
+  // toggle av states
+  toggleAVStates(isMuteOrPaused, mediaStream, isAudio) {
+    let mediaTracks = isAudio ?
+      mediaStream.getAudioTracks() : mediaStream.getVideoTracks();
+    if (mediaTracks.length === 0) {
+      console.warn('No local ', isAudio ? 'audio' : 'video', 'available.');
+      return;
+    }
+    let febType = !isMuteOrPaused ? 'audioMuted' : 'audioUnmuted';
+    let logMsg = 'Audio is '
+      +(!isMuteOrPaused?'muted':'unmuted')+' for '+this.userId;
+    if (isAudio === false ) {
+      febType = !isMuteOrPaused ? 'videoPaused': 'videoResumed';
+      logMsg = 'Video is '
+        +(!isMuteOrPaused?'paused':'resumed')+' for '+this.userId;
+    }
+    for(const i in mediaTracks) {
+      if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
+        mediaTracks[i].enabled = isMuteOrPaused;
+      }
+    }
+    modCommon.triggerEvent('applicationLogEvent',
+      {'pc': this.pc, 'eventLog': logMsg});
+    modCommon.triggerEvent('toggleAVStates',
+      {'userId': this.userId, 'pc': this.pc, 'type': febType});
+  }
   addIceCandidate(ic) {
     this.pc.addIceCandidate(new RTCIceCandidate(ic))
     .then(
