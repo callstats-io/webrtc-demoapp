@@ -164,8 +164,5 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   }
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
-CsioWebrtcApp.prototype.getPCObjects = function() {
-  return getPCObjects();
-};
 
 module.exports = CsioWebrtcApp;
