@@ -68,7 +68,7 @@ class CsioPeerConnection {
     let logMsg;
     if(mediaType === 'screen') {
       logMsg = 'Screen share is '+(isMuteOrPaused?'enabled':'disabled')+
-        'for'+this.userId;
+        ' for '+this.userId;
       febType = isMuteOrPaused ?
         'screenShareEnabled' : 'screenShareDisabled';
     } else {
