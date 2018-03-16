@@ -408,40 +408,7 @@ function onClickHangup() {
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
-  var logMsg = 'Audio is '
-    +(!isMuteOrPaused?'muted':'unmuted')+' for ';
-  if (isAudio === false ) {
-    logMsg = 'Video is '
-      +(!isMuteOrPaused?'paused':'resumed')+' for ';
-  }
-  var mediaTracks = isAudio ?
-    window.localStream.getAudioTracks() : window.localStream.getVideoTracks();
-  if (mediaTracks.length === 0) {
-    console.warn('No local ',isAudio ? 'audio':'video','available.');
-    return;
-  }
-  for (var i = 0; i < mediaTracks.length; i+=1) {
-    mediaTracks[i].enabled = isMuteOrPaused;
-  }
-  const pcs = lib.getPCObjects();
-  for(const key in pcs) {
-    if (pcs.hasOwnProperty(key) && pcs[key]) {
-      console.log(logMsg + pcs[key].userId);
-      handleApplicationLogs(
-        {'detail': {'pc': pcs[key].pc,
-          'eventLog': logMsg + pcs[key].userId}
-        });
-
-      const pcObject = pcs[key].pc;
-      let fabricEvent = (!isMuteOrPaused ? csObject.fabricEvent.audioMute:
-        csObject.fabricEvent.audioUnmute);
-      if (isAudio === false ) {
-        fabricEvent = (!isMuteOrPaused ? csObject.fabricEvent.videoPause:
-          csObject.fabricEvent.videoResume);
-      }
-      csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
-    }
-  }
+  lib.toggleAVStates(isMuteOrPaused, isAudio);
 }
 
 function onNewChatMessage(message) {
@@ -557,6 +524,32 @@ document.addEventListener('closePeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
       var fabricEvent = csObject.fabricEvent.fabricTerminated;
+      csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+    },
+    false);
+// audio, or video track is mute/unmuted, or paused/resumed
+document.addEventListener('toggleAVStates',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var type = e.detail.type;
+      var fabricEvent;
+      switch (type) {
+      case 'audioMuted':
+        fabricEvent = csObject.fabricEvent.audioMute;
+        break;
+      case 'audioUnmuted':
+        fabricEvent = csObject.fabricEvent.audioUnmute;
+        break;
+      case 'videoPaused':
+        fabricEvent = csObject.fabricEvent.videoPause;
+        break;
+      case 'videoResumed':
+        fabricEvent = csObject.fabricEvent.videoResume;
+        break;
+      default:
+        console.log('Error', type, 'not handled!');
+        return;
+      }
       csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);
