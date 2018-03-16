@@ -757,7 +757,7 @@ document.addEventListener('addRemoteVideo',
  * Local media
  */
 function initLocalMedia(constraints,needRenegotiate) {
-  console.log('Requesting local stream',constraints);
+  console.log('Requesting local stream');
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
