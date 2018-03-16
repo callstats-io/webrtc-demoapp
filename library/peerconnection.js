@@ -63,24 +63,33 @@ class CsioPeerConnection {
   }
 
   // toggle media states
-  toggleMediaStates(isMuteOrPaused, mediaStream, isAudio) {
-    let mediaTracks = isAudio ?
-      mediaStream.getAudioTracks() : mediaStream.getVideoTracks();
-    if (mediaTracks.length === 0) {
-      console.warn('No local ', isAudio ? 'audio' : 'video', 'available.');
-      return;
-    }
-    let febType = !isMuteOrPaused ? 'audioMuted' : 'audioUnmuted';
-    let logMsg = 'Audio is '
-      +(!isMuteOrPaused?'muted':'unmuted')+' for '+this.userId;
-    if (isAudio === false ) {
-      febType = !isMuteOrPaused ? 'videoPaused': 'videoResumed';
-      logMsg = 'Video is '
-        +(!isMuteOrPaused?'paused':'resumed')+' for '+this.userId;
-    }
-    for(const i in mediaTracks) {
-      if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
-        mediaTracks[i].enabled = isMuteOrPaused;
+  toggleMediaStates(isMuteOrPaused, mediaStream, mediaType) {
+    let febType;
+    let logMsg;
+    if(mediaType === 'screen') {
+      logMsg = 'Screen share is '+(isMuteOrPaused?'enabled':'disabled')+
+        'for'+this.userId;
+      febType = isMuteOrPaused ?
+        'screenShareEnabled' : 'screenShareDisabled';
+    } else {
+      febType = !isMuteOrPaused ? 'audioMuted' : 'audioUnmuted';
+      logMsg = 'Audio is '
+        +(!isMuteOrPaused?'muted':'unmuted')+' for '+this.userId;
+      if (mediaType !== 'audio' ) {
+        febType = !isMuteOrPaused ? 'videoPaused': 'videoResumed';
+        logMsg = 'Video is '
+          +(!isMuteOrPaused?'paused':'resumed')+' for '+this.userId;
+      }
+      let mediaTracks = mediaType === 'audio' ?
+        mediaStream.getAudioTracks() : mediaStream.getVideoTracks();
+      if (mediaTracks.length === 0) {
+        console.warn('No local ', mediaType, 'track available.');
+        return;
+      }
+      for(const i in mediaTracks) {
+        if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
+          mediaTracks[i].enabled = isMuteOrPaused;
+        }
       }
     }
     modCommon.triggerEvent('applicationLogEvent',
@@ -262,17 +271,6 @@ class CsioPeerConnection {
         console.log(this.userId, 'added local stream with kind',track.kind);
       }
     },this);
-  }
-
-  notifyScreenShare(enableScreenShare) {
-    const logMsg = 'Screen share is '+(enableScreenShare?'enabled':'disabled')+
-    'for'+this.userId;
-    const febType = enableScreenShare ?
-      'screenShareEnabled' : 'screenShareDisabled';
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc, 'eventLog': logMsg});
-    modCommon.triggerEvent('toggleAVStates',
-      {'userId': this.userId, 'pc': this.pc, 'type': febType});
   }
 }
 

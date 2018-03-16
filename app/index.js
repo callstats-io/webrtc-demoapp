@@ -477,7 +477,7 @@ function onClickHangup() {
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
-  lib.toggleMediaStates(isMuteOrPaused, isAudio);
+  lib.toggleMediaStates(isMuteOrPaused, isAudio ? 'audio':'video');
 }
 
 function onClickScreenShare(enableScreenShare,mediaSource) {
@@ -505,7 +505,8 @@ function onClickScreenShare(enableScreenShare,mediaSource) {
   } else {
     initLocalMedia({'audio': true, 'video': true}, true);
   }
-  lib.notifyScreenShare(enableScreenShare);
+  // third parameter is for screen share flag
+  lib.toggleMediaStates(enableScreenShare, 'screen');
 }
 
 function onNewChatMessage(message) {

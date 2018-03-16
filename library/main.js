@@ -7,7 +7,7 @@
  * Provides functions:
  *    call(room)
  *    hangup()
- *    toggleMediaStates(isMuteOrPaused, isAudio)
+ *    toggleMediaStates(isMuteOrPaused, mediaType)
  * Emits events:
  *    addRemoteVideo({'userId', 'stream'})
  *    removeRemoteVideo({'userId'})
@@ -141,13 +141,16 @@ CsioWebrtcApp.prototype.call = function(room) {
 CsioWebrtcApp.prototype.hangup = function() {
   hangup();
 };
-CsioWebrtcApp.prototype.toggleMediaStates = function(isMuteOrPaused, isAudio) {
-  for(const key in pcs) {
-    if (pcs.hasOwnProperty(key) && pcs[key]) {
-      pcs[key].toggleMediaStates(isMuteOrPaused, window.localStream, isAudio);
+CsioWebrtcApp.prototype.toggleMediaStates =
+  function(isMuteOrPaused, mediaType) {
+    for(const key in pcs) {
+      if (pcs.hasOwnProperty(key) && pcs[key]) {
+        pcs[key].toggleMediaStates(isMuteOrPaused,
+          window.localStream, mediaType);
+      }
     }
-  }
-};
+  };
+
 CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
   generateToken(userId, callback);
 };
@@ -157,13 +160,6 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   }
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
-CsioWebrtcApp.prototype.notifyScreenShare = function(enableScreenShare) {
-  for(const key in pcs) {
-    if (pcs.hasOwnProperty(key) && pcs[key]) {
-      pcs[key].notifyScreenShare(enableScreenShare);
-    }
-  }
-};
 CsioWebrtcApp.prototype.addRemoveTracks = function(isAdd) {
   for(const key in pcs) {
     if (pcs.hasOwnProperty(key) && pcs[key]) {
