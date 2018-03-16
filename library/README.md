@@ -14,6 +14,8 @@ A call can be started and left easily, and events inform about what is happening
   * ```call(room)``` - initiate the call to a room (room from UI) (room is also conferenceId for cs.js).
                        All users in a room communicate with each other.
   * ```hangup()``` - leave the call
+  * ```toggleMediaStates(isMuteOrPaused, isAudio)``` - Toggle audio,video states.Is muted or paused defines the
+                       States of media stream states, and isAudio defines where it is an audio, or video stream
   * ```sendChannelMessageAll(label, message)``` - send a message to all users in the room
                        (over one of the datachannel labels given during object creation)
   * ```generateToken(userId, callback)``` - for JWT authentication
@@ -27,5 +29,6 @@ A call can be started and left easily, and events inform about what is happening
   * ```localName({'localname'})``` - the local user name is available
   * ```newPeerConnection({'userId', 'pc'})``` - a new PeerConnection was created
   * ```closePeerConnection({'userId', 'pc'})``` - a PeerConnection was closed
+  * ```toggleMediaStates({'userId', 'pc','type'})``` - Audio,video state was changed
   * ```webrtcError({'type', 'userId', 'pc', 'error'})``` - a webRTC error occurred
   * ```applicationLogEvent({'pc', 'eventLog'})``` - a webRTC event occurred

@@ -180,6 +180,10 @@ class Display extends React.Component {
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
+      enableAudioToggle: false,
+      enableVideoToggle: false,
+      audioMuted: false,
+      videoPaused: false,
       enableChat: false,
       remoteVideos: {},
       chatMessages: [],
@@ -234,6 +238,14 @@ class Display extends React.Component {
           <button id="hangupButton"
               onClick={this.onClickHangup.bind(this)}
               disabled={!this.state.enableHangup}>Hangup</button>
+          <button id="toggleAudio"
+              onClick={this.onClickAudioCtrl.bind(this)}
+              disabled={!this.state.enableAudioToggle}>
+            {this.state.audioMuted ? 'Unmute': 'Mute'} Audio</button>
+          <button id="toggleVideo"
+              onClick={this.onClickVideoCtrl.bind(this)}
+              disabled={!this.state.enableVideoToggle}>
+            {this.state.videoPaused ? 'Play': 'Pause'} Video</button>
           <button id="toggleChat" style={{color: cbColor, float: 'right'}}
               onClick={this.onClickChat.bind(this)}
               disabled={!this.state.enableChat}>Chat</button>
@@ -290,14 +302,36 @@ class Display extends React.Component {
     this.setState({
       enableCall: false,
       enableHangup: true,
+      enableAudioToggle: true,
+      enableVideoToggle: true,
+      audioMuted: false,
+      videoPaused: false,
       enableChat: true,
     });
     this.props.onClickCall();
+  }
+  onClickAudioCtrl() {
+    var toState = this.state.audioMuted;
+    this.setState({
+      audioMuted: !this.state.audioMuted,
+    });
+    this.props.onClickAVCtrl(toState,true);
+  }
+  onClickVideoCtrl() {
+    var toState = this.state.videoPaused;
+    this.setState({
+      videoPaused: !this.state.videoPaused,
+    });
+    this.props.onClickAVCtrl(toState,false);
   }
   onClickHangup() {
     this.setState({
       enableHangup: false,
       enableChat: false,
+      videoPaused: false,
+      audioMuted: false,
+      enableVideoToggle: false,
+      enableAudioToggle: false,
       showPopup: 'block',
       showChat: false,
       chatMessages: [],
@@ -324,6 +358,7 @@ Display.propTypes = {
   onRoomSet: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
+  onClickAVCtrl: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
 };
 
@@ -335,6 +370,7 @@ function render() {
         onRoomSet={onRoomSet}
         onClickCall={onClickCall}
         onClickHangup={onClickHangup}
+        onClickAVCtrl={onClickAVCtrl}
         onNewMessage={onNewChatMessage}
         roomName={roomName}/>,
     document.getElementById('container')
@@ -369,6 +405,10 @@ function onClickCall() {
 function onClickHangup() {
   lib.hangup();
   stopLocalMedia();
+}
+
+function onClickAVCtrl(isMuteOrPaused, isAudio) {
+  lib.toggleMediaStates(isMuteOrPaused, isAudio);
 }
 
 function onNewChatMessage(message) {
@@ -484,6 +524,32 @@ document.addEventListener('closePeerConnection',
     function(e) {
       var pcObject = e.detail.pc;
       var fabricEvent = csObject.fabricEvent.fabricTerminated;
+      csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+    },
+    false);
+// audio, video, or screen share is mute/unmuted, or paused/resumed
+document.addEventListener('toggleMediaStates',
+    function(e) {
+      var pcObject = e.detail.pc;
+      var type = e.detail.type;
+      var fabricEvent;
+      switch (type) {
+      case 'audioMuted':
+        fabricEvent = csObject.fabricEvent.audioMute;
+        break;
+      case 'audioUnmuted':
+        fabricEvent = csObject.fabricEvent.audioUnmute;
+        break;
+      case 'videoPaused':
+        fabricEvent = csObject.fabricEvent.videoPause;
+        break;
+      case 'videoResumed':
+        fabricEvent = csObject.fabricEvent.videoResume;
+        break;
+      default:
+        console.log('Error', type, 'not handled!');
+        return;
+      }
       csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);

@@ -7,6 +7,7 @@
  * Provides functions:
  *    call(room)
  *    hangup()
+ *    toggleMediaStates(isMuteOrPaused, isAudio)
  * Emits events:
  *    addRemoteVideo({'userId', 'stream'})
  *    removeRemoteVideo({'userId'})
@@ -139,6 +140,13 @@ CsioWebrtcApp.prototype.call = function(room) {
 };
 CsioWebrtcApp.prototype.hangup = function() {
   hangup();
+};
+CsioWebrtcApp.prototype.toggleMediaStates = function(isMuteOrPaused, isAudio) {
+  for(const key in pcs) {
+    if (pcs.hasOwnProperty(key) && pcs[key]) {
+      pcs[key].toggleMediaStates(isMuteOrPaused, window.localStream, isAudio);
+    }
+  }
 };
 CsioWebrtcApp.prototype.generateToken = function(userId, callback) {
   generateToken(userId, callback);
