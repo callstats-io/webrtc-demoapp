@@ -14,7 +14,7 @@ A call can be started and left easily, and events inform about what is happening
   * ```call(room)``` - initiate the call to a room (room from UI) (room is also conferenceId for cs.js).
                        All users in a room communicate with each other.
   * ```hangup()``` - leave the call
-  * ```toggleMediaStates(isMuteOrPaused, mediaType, )``` - Toggle audio,video states.Is muted or paused defines the
+  * ```toggleMediaStates(isMuteOrPaused, mediaType)``` - Toggle audio,video states.Is muted or paused defines the
                        States of media stream states, and isAudio defines where it is an audio, or video stream
   * ```sendChannelMessageAll(label, message)``` - send a message to all users in the room
                        (over one of the datachannel labels given during object creation)
