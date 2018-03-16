@@ -164,8 +164,12 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
   }
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
-CsioWebrtcApp.prototype.getPCObjects = function() {
-  return getPCObjects();
+CsioWebrtcApp.prototype.notifyScreenShare = function(enableScreenShare) {
+  for(const key in pcs) {
+    if (pcs.hasOwnProperty(key) && pcs[key]) {
+
+    }
+  }
 };
 CsioWebrtcApp.prototype.addRemoveTracks = function(isAdd) {
   for(const key in pcs) {

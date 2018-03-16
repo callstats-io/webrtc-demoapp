@@ -505,6 +505,7 @@ function onClickScreenShare(enableScreenShare,mediaSource) {
   } else {
     initLocalMedia({'audio': true, 'video': true}, true);
   }
+  lib.notifyScreenShare(enableScreenShare);
 }
 
 function onNewChatMessage(message) {
