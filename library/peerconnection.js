@@ -62,8 +62,8 @@ class CsioPeerConnection {
         {'pc': this.pc, 'eventLog': 'PeerConnection closed for '+this.userId});
   }
 
-  // toggle av states
-  toggleAVStates(isMuteOrPaused, mediaStream, isAudio) {
+  // toggle media states
+  toggleMediaStates(isMuteOrPaused, mediaStream, isAudio) {
     let mediaTracks = isAudio ?
       mediaStream.getAudioTracks() : mediaStream.getVideoTracks();
     if (mediaTracks.length === 0) {
@@ -85,7 +85,7 @@ class CsioPeerConnection {
     }
     modCommon.triggerEvent('applicationLogEvent',
       {'pc': this.pc, 'eventLog': logMsg});
-    modCommon.triggerEvent('toggleAVStates',
+    modCommon.triggerEvent('toggleMediaStates',
       {'userId': this.userId, 'pc': this.pc, 'type': febType});
   }
   addIceCandidate(ic) {
