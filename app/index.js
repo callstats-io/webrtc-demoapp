@@ -151,6 +151,92 @@ Popup.propTypes = {
   show: React.PropTypes.string,
 };
 
+// Hangup popup asking for end of call feedback
+class PopupUserFB extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      meetingFeedback: 5,
+      audioFeedback: 5,
+      videoFeedback: 5,
+      screenshareFeedback: 5,
+    };
+  }
+
+  render() {
+    return (
+      <div id="popup" className="modal" style={{display: this.props.show}}>
+        <div className="modal-content">
+          Meeting: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.meetingFeedback}
+                       onChange={this.onUpdateInputText.bind(this,1)}/>
+          <br/>
+          Audio: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.audioFeedback}
+                       onChange={this.onUpdateInputText.bind(this,2)}/>
+          <br/>
+          Video: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.videoFeedback}
+                       onChange={this.onUpdateInputText.bind(this,3)}/>
+          <br/>
+          ScreenShare : <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.screenshareFeedback}
+                       onChange={this.onUpdateInputText.bind(this,4)}/>
+          <br/>
+          <button id="popupCloseButton"
+                  onClick={this.handleCloseModal.bind(this)}>
+            Submit Feedback</button>
+        </div>
+      </div>
+    );
+  }
+  onUpdateInputText(e,kind) {
+    switch(kind) {
+    case 1:
+      this.setState({
+        meetingFeedback: e.target.value
+      });
+      break;
+    case 2:
+      this.setState({
+        audioFeedback: e.target.value
+      });
+      break;
+    case 3:
+      this.setState({
+        videoFeedback: e.target.value
+      });
+      break;
+    case 4:
+      this.setState({
+        screenshareFeedback: e.target.value
+      });
+      break;
+    default:
+      console.error('unknown kind',kind);
+      break;
+    }
+    console.log('->',e.target.value);
+  }
+  handleCloseModal() {
+    const userExperienceFeedback = {
+      'meetingFeedback': Math.min(this.state.meetingFeedback,5),
+      'audioFeedback': Math.min(this.state.audioFeedback,5),
+      'videoFeedback': Math.min(this.state.videoFeedback,5),
+      'screenshareFeedback': Math.min(this.state.screenshareFeedback,5)
+    };
+    this.props.onFeedbackProvided(userExperienceFeedback);
+  }
+}
+Popup.propTypes = {
+  onFeedbackProvided: React.PropTypes.func,
+  show: React.PropTypes.string,
+};
+
 // Chat window
 class Chat extends React.Component {
   constructor(props) {
@@ -208,6 +294,7 @@ class Display extends React.Component {
       showChat: false,
       showPopup: 'block',
       showPopupFF: 'none',
+      showPopupUF: 'none',
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
@@ -295,6 +382,8 @@ class Display extends React.Component {
             show={this.state.showPopup} roomName={this.state.roomName}/>
         <PopupFF onOptionSelected={this.onOptionSelected.bind(this)}
             show={this.state.showPopupFF}/>
+        <PopupUserFB onFeedbackProvided={this.onFeedbackProvided.bind(this)}
+            show={this.state.showPopupUF}/>
         <Chat onNewMessage={this.onNewMessage.bind(this)}
             chatText={this.state.chatText}
             show={this.state.showChat}/>
@@ -345,6 +434,25 @@ class Display extends React.Component {
     });
     this.props.onClickScreenShare(true,val);
   }
+  onFeedbackProvided(val) {
+    console.log('->','feedback provided',val);
+    this.setState({
+      enableHangup: false,
+      enableChat: false,
+      enableScreenShare: false,
+      screenShared: false,
+      videoPaused: false,
+      audioMuted: false,
+      enableVideoToggle: false,
+      enableAudioToggle: false,
+      showPopup: 'block',
+      showPopupFF: 'none',
+      showPopupUF: 'none',
+      showChat: false,
+      chatMessages: [],
+    });
+    this.props.onClickHangup();
+  }
   onClickCall() {
     this.setState({
       enableCall: false,
@@ -375,26 +483,13 @@ class Display extends React.Component {
   }
   onClickHangup() {
     this.setState({
-      enableHangup: false,
-      enableChat: false,
-      enableScreenShare: false,
-      screenShared: false,
-      videoPaused: false,
-      audioMuted: false,
-      enableVideoToggle: false,
-      enableAudioToggle: false,
-      showPopup: 'block',
-      showPopupFF: 'none',
-      showChat: false,
-      chatMessages: [],
+      showPopupUF: 'block',
     });
-    this.props.onClickHangup();
   }
   onClickScreenShare() {
     var toState = !this.state.screenShared;
     this.setState({
       screenShared: toState,
-
     });
     if (navigator.mozGetUserMedia && toState===true) {
       this.setState({
@@ -423,6 +518,7 @@ class Display extends React.Component {
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
   onOptionSelected: React.PropTypes.func,
+  onFeedbackProvided: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onClickAVCtrl: React.PropTypes.func,
