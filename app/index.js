@@ -86,6 +86,7 @@ class Popup extends React.Component {
     super();
     this.state = {
       inputText: props.roomName,
+      userName: props.userName,
     };
   }
 
@@ -93,6 +94,10 @@ class Popup extends React.Component {
     return (
       <div id="popup" className="modal" style={{display: this.props.show}}>
         <div className="modal-content">
+          User Name: <input id="roomInput" type="text"
+                            value={this.state.userName}
+                            onChange={this.onUpdateUserName.bind(this)}/>
+          <br/>
           Room: <input id="roomInput" type="text"
                   value={this.state.inputText}
                   onChange={this.onUpdateInputText.bind(this)}/>
@@ -103,16 +108,22 @@ class Popup extends React.Component {
     );
   }
 
+  onUpdateUserName(e) {
+    this.setState({
+      userName: e.target.value
+    });
+  }
   onUpdateInputText(e) {
     this.setState({
       inputText: e.target.value
     });
   }
   handleCloseModal() {
-    var temp = this.state.inputText;
-    if (temp !== '') {
-      console.log('room:', temp);
-      this.props.onRoomSet(temp);
+    var roomName = this.state.inputText;
+    if (roomName !== '') {
+      var userName = this.state.userName;
+      console.log('room:', roomName);
+      this.props.onRoomSet(userName, roomName);
     }
   }
 }
@@ -291,6 +302,7 @@ class Display extends React.Component {
     super();
     this.state = {
       roomName: props.roomName,
+      userName: props.userName,
       showChat: false,
       showPopup: 'block',
       showPopupFF: 'none',
@@ -379,7 +391,9 @@ class Display extends React.Component {
         <div>{this.renderLocalVideo()}</div>
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
-            show={this.state.showPopup} roomName={this.state.roomName}/>
+            show={this.state.showPopup}
+               roomName={this.state.roomName}
+               userName={this.state.userName}/>
         <PopupFF onOptionSelected={this.onOptionSelected.bind(this)}
             show={this.state.showPopupFF}/>
         <PopupUserFB onFeedbackProvided={this.onFeedbackProvided.bind(this)}
@@ -417,16 +431,17 @@ class Display extends React.Component {
     });
   }
 
-  onRoomSet(roomName) {
+  onRoomSet(userName, roomName) {
     /* NOTE to be super sure that we get info from config service before
       starting a call, enableCall should only be true if both roomName and
       iceConfig are available */
     this.setState({
       showPopup: 'none',
       enableCall: true,
+      userName: userName,
       roomName: roomName,
     });
-    this.props.onRoomSet(roomName);
+    this.props.onRoomSet(userName, roomName);
   }
   onOptionSelected(val) {
     this.setState({
@@ -536,7 +551,8 @@ function render() {
         onClickAVCtrl={onClickAVCtrl}
         onClickScreenShare={onClickScreenShare}
         onNewMessage={onNewChatMessage}
-        roomName={roomName}/>,
+        roomName={roomName}
+        userName={userName}/>,
     document.getElementById('container')
   );
 }
@@ -545,14 +561,17 @@ function render() {
  * Room name
  */
 var roomName = '';
+var userName = '';
 // init from URL
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
   roomName = decodeURIComponent(urlRoom);
 }
 
-// roomName from user input
-function onRoomSet(room) {
+// userName, and roomName from user input
+function onRoomSet(uName, room) {
+  console.log('->',uName, room);
+  userName = uName;
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
