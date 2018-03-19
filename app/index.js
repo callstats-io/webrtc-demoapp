@@ -194,7 +194,7 @@ class PopupUserFB extends React.Component {
       </div>
     );
   }
-  onUpdateInputText(e,kind) {
+  onUpdateInputText(kind,e) {
     switch(kind) {
     case 1:
       this.setState({
@@ -220,14 +220,14 @@ class PopupUserFB extends React.Component {
       console.error('unknown kind',kind);
       break;
     }
-    console.log('->',e.target.value);
   }
   handleCloseModal() {
     const userExperienceFeedback = {
       'meetingFeedback': Math.min(this.state.meetingFeedback,5),
       'audioFeedback': Math.min(this.state.audioFeedback,5),
       'videoFeedback': Math.min(this.state.videoFeedback,5),
-      'screenshareFeedback': Math.min(this.state.screenshareFeedback,5)
+      'screenshareFeedback': Math.min(this.state.screenshareFeedback,5),
+      'commentFeedback': 'sample comment.'
     };
     this.props.onFeedbackProvided(userExperienceFeedback);
   }
@@ -435,7 +435,6 @@ class Display extends React.Component {
     this.props.onClickScreenShare(true,val);
   }
   onFeedbackProvided(val) {
-    console.log('->','feedback provided',val);
     this.setState({
       enableHangup: false,
       enableChat: false,
@@ -451,7 +450,7 @@ class Display extends React.Component {
       showChat: false,
       chatMessages: [],
     });
-    this.props.onClickHangup();
+    this.props.onClickHangup(val);
   }
   onClickCall() {
     this.setState({
@@ -567,9 +566,19 @@ function onClickCall() {
   lib.call(roomName);
 }
 
-function onClickHangup() {
+function onClickHangup(userFeedback) {
   lib.hangup();
   stopLocalMedia();
+  // send user feedback
+  var feedback = {
+    'userID': localUserId,
+    'overall': userFeedback.meetingFeedback,
+    'audio': userFeedback.audioFeedback,
+    'video': userFeedback.videoFeedback,
+    'screen': userFeedback.screenshareFeedback,
+    'comment': userFeedback.commentFeedback
+  };
+  csObject.sendUserFeedback(roomName, feedback, pcCallback);
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
