@@ -17,7 +17,7 @@ var csObject;
 var lib;
 window.onload = function() {
   createCsjs();
-  createLib();
+  // createLib();
 
   render();
 };
@@ -122,7 +122,7 @@ class Popup extends React.Component {
     var roomName = this.state.inputText;
     if (roomName !== '') {
       var userName = this.state.userName;
-      console.log('room:', roomName);
+      console.log('room:', userName, roomName);
       this.props.onRoomSet(userName, roomName);
     }
   }
@@ -570,12 +570,13 @@ if (urlRoom !== '') {
 
 // userName, and roomName from user input
 function onRoomSet(uName, room) {
-  console.log('->',uName, room);
   userName = uName;
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
+
+  createLib();
 }
 
 /*
@@ -715,11 +716,15 @@ document.addEventListener('localName',
       var JWT = '@@JWT';
       localUserId = e.detail.localname;
       console.log('Initialize callstats', localUserId, JWT);
+      var userID = {
+        'userName': userName === '' ? localUserId : userName,
+        'aliasName': localUserId
+      };
       if (JWT === 'true') {
-        csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
+        csObject.initialize(AppID, tokenGenerator, userID, csInitCallback,
             csStatsCallback, configParams);
       } else {
-        csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
+        csObject.initialize(AppID, AppSecret, userID, csInitCallback,
             csStatsCallback, configParams);
       }
     },
