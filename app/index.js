@@ -121,6 +121,36 @@ Popup.propTypes = {
   show: React.PropTypes.string,
 };
 
+
+// PopupFF asking for tab selection for firefox
+class PopupFF extends React.Component {
+  constructor(props) {
+    super();
+  }
+
+  render() {
+    return (
+      <div id="popup" className="modal" style={{display: this.props.show}}>
+        <div className="modal-content" style={{'text-align': 'center'}}>
+          <button onClick={this.handleCloseModal.bind(this,'screen')}>
+            Screen</button>
+          <button onClick={this.handleCloseModal.bind(this,'window')}>
+            Window</button>
+          <button onClick={this.handleCloseModal.bind(this,'application')}>
+            Application</button>
+        </div>
+      </div>
+    );
+  }
+  handleCloseModal(val) {
+    this.props.onOptionSelected(val);
+  }
+}
+Popup.propTypes = {
+  onOptionSelected: React.PropTypes.func,
+  show: React.PropTypes.string,
+};
+
 // Chat window
 class Chat extends React.Component {
   constructor(props) {
@@ -177,6 +207,7 @@ class Display extends React.Component {
       roomName: props.roomName,
       showChat: false,
       showPopup: 'block',
+      showPopupFF: 'none',
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
@@ -184,6 +215,8 @@ class Display extends React.Component {
       enableVideoToggle: false,
       audioMuted: false,
       videoPaused: false,
+      enableScreenShare: false,
+      screenShared: false,
       enableChat: false,
       remoteVideos: {},
       chatMessages: [],
@@ -249,11 +282,19 @@ class Display extends React.Component {
           <button id="toggleChat" style={{color: cbColor, float: 'right'}}
               onClick={this.onClickChat.bind(this)}
               disabled={!this.state.enableChat}>Chat</button>
+          <button id="toggleScreenShare"
+              style={{color: cbColor, float: 'right'}}
+              onClick={this.onClickScreenShare.bind(this)}
+              disabled={!this.state.enableScreenShare}>
+            {!this.state.screenShared ? 'Start ':'Stop '}
+            Screen Share</button>
         </div>
         <div>{this.renderLocalVideo()}</div>
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
             show={this.state.showPopup} roomName={this.state.roomName}/>
+        <PopupFF onOptionSelected={this.onOptionSelected.bind(this)}
+            show={this.state.showPopupFF}/>
         <Chat onNewMessage={this.onNewMessage.bind(this)}
             chatText={this.state.chatText}
             show={this.state.showChat}/>
@@ -298,6 +339,12 @@ class Display extends React.Component {
     });
     this.props.onRoomSet(roomName);
   }
+  onOptionSelected(val) {
+    this.setState({
+      showPopupFF: 'none',
+    });
+    this.props.onClickScreenShare(true,val);
+  }
   onClickCall() {
     this.setState({
       enableCall: false,
@@ -306,6 +353,8 @@ class Display extends React.Component {
       enableVideoToggle: true,
       audioMuted: false,
       videoPaused: false,
+      enableScreenShare: true,
+      screenShared: false,
       enableChat: true,
     });
     this.props.onClickCall();
@@ -328,15 +377,32 @@ class Display extends React.Component {
     this.setState({
       enableHangup: false,
       enableChat: false,
+      enableScreenShare: false,
+      screenShared: false,
       videoPaused: false,
       audioMuted: false,
       enableVideoToggle: false,
       enableAudioToggle: false,
       showPopup: 'block',
+      showPopupFF: 'none',
       showChat: false,
       chatMessages: [],
     });
     this.props.onClickHangup();
+  }
+  onClickScreenShare() {
+    var toState = !this.state.screenShared;
+    this.setState({
+      screenShared: toState,
+
+    });
+    if (navigator.mozGetUserMedia && toState===true) {
+      this.setState({
+        showPopupFF: toState ? 'block' : 'none',
+      });
+    } else {
+      this.props.onClickScreenShare(toState);
+    }
   }
   onClickChat() {
     var temp = !(this.state.showChat);
@@ -356,9 +422,11 @@ class Display extends React.Component {
 }
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
+  onOptionSelected: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onClickAVCtrl: React.PropTypes.func,
+  onClickScreenShare: React.PropTypes.func,
   onNewMessage: React.PropTypes.func,
 };
 
@@ -371,6 +439,7 @@ function render() {
         onClickCall={onClickCall}
         onClickHangup={onClickHangup}
         onClickAVCtrl={onClickAVCtrl}
+        onClickScreenShare={onClickScreenShare}
         onNewMessage={onNewChatMessage}
         roomName={roomName}/>,
     document.getElementById('container')
@@ -408,7 +477,36 @@ function onClickHangup() {
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
-  lib.toggleMediaStates(isMuteOrPaused, isAudio);
+  lib.toggleMediaStates(isMuteOrPaused, isAudio ? 'audio':'video');
+}
+
+function onClickScreenShare(enableScreenShare,mediaSource) {
+  console.log('screen share is ',(enableScreenShare?'enabled':'disabled'),
+    'for',localUserId);
+  lib.addRemoveTracks(false);
+  stopLocalMedia();
+  if ( enableScreenShare ) {
+    // If firefox
+    if ( mediaSource ) {
+      // TODO will need an UI to select screen share options
+      const constraints = {
+        'mediaSource': mediaSource,
+        // 'mediaSource': 'screen', // whole screen sharing
+        // 'mediaSource': 'window', // choose a window to share
+        // 'mediaSource': 'application', // choose a window to share
+        'width': {max: '1920'},
+        'height': {max: '1080'},
+        'frameRate': {max: '10'}
+      };
+      initLocalMedia( {'video': constraints}, true );
+    } else {
+      window.postMessage('csioCheckAddonInstalled', '*');
+    }
+  } else {
+    initLocalMedia({'audio': true, 'video': true}, true);
+  }
+  // third parameter is for screen share flag
+  lib.toggleMediaStates(enableScreenShare, 'screen');
 }
 
 function onNewChatMessage(message) {
@@ -546,6 +644,12 @@ document.addEventListener('toggleMediaStates',
       case 'videoResumed':
         fabricEvent = csObject.fabricEvent.videoResume;
         break;
+      case 'screenShareEnabled':
+        fabricEvent = csObject.fabricEvent.screenShareStart;
+        break;
+      case 'screenShareDisabled':
+        fabricEvent = csObject.fabricEvent.screenShareStop;
+        break;
       default:
         console.log('Error', type, 'not handled!');
         return;
@@ -553,6 +657,29 @@ document.addEventListener('toggleMediaStates',
       csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
     },
     false);
+
+window.addEventListener('message',
+  function(msg) {
+    if( !msg.data ) {
+      return;
+    } else if ( msg.data.evt === 'onCsioSourceId' ) {
+      const constraints = {
+        'mandatory': {
+          'chromeMediaSource': 'desktop',
+          'maxWidth': Math.min(screen.width, 1920),
+          'maxHeight': Math.min(screen.height, 1080),
+          'chromeMediaSourceId': msg.data.csioSourceId
+        },
+        'optional': [
+          {googTemporalLayeredScreencast: true}
+        ]
+      };
+      initLocalMedia( {'video': constraints}, true );
+    } else if( msg.data === 'csioAddonInstalled' ) {
+      window.postMessage('csioRequestScreenSourceId', '*' );
+    }
+  },
+  false);
 
 // an important event from webRTC
 document.addEventListener('applicationLogEvent',handleApplicationLogs,false);
@@ -629,12 +756,16 @@ document.addEventListener('addRemoteVideo',
 /*
  * Local media
  */
-function initLocalMedia(constraints) {
+function initLocalMedia(constraints,needRenegotiate) {
   console.log('Requesting local stream');
   navigator.mediaDevices.getUserMedia(constraints)
   .then(function(stream) {
     console.log('Received local stream');
     window.localStream = stream;
+    if (needRenegotiate) {
+      lib.addRemoveTracks(true);
+      lib.tryReNegotiate();
+    }
     render();
   },
   function(e) {
