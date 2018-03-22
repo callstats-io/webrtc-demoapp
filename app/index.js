@@ -17,7 +17,7 @@ var csObject;
 var lib;
 window.onload = function() {
   createCsjs();
-  createLib();
+  // createLib();
 
   render();
 };
@@ -86,6 +86,7 @@ class Popup extends React.Component {
     super();
     this.state = {
       inputText: props.roomName,
+      userName: props.userName,
     };
   }
 
@@ -93,6 +94,10 @@ class Popup extends React.Component {
     return (
       <div id="popup" className="modal" style={{display: this.props.show}}>
         <div className="modal-content">
+          User Name: <input id="roomInput" type="text"
+                            value={this.state.userName}
+                            onChange={this.onUpdateUserName.bind(this)}/>
+          <br/>
           Room: <input id="roomInput" type="text"
                   value={this.state.inputText}
                   onChange={this.onUpdateInputText.bind(this)}/>
@@ -103,16 +108,22 @@ class Popup extends React.Component {
     );
   }
 
+  onUpdateUserName(e) {
+    this.setState({
+      userName: e.target.value
+    });
+  }
   onUpdateInputText(e) {
     this.setState({
       inputText: e.target.value
     });
   }
   handleCloseModal() {
-    var temp = this.state.inputText;
-    if (temp !== '') {
-      console.log('room:', temp);
-      this.props.onRoomSet(temp);
+    var roomName = this.state.inputText;
+    if (roomName !== '') {
+      var userName = this.state.userName;
+      console.log('room:', userName, roomName);
+      this.props.onRoomSet(userName, roomName);
     }
   }
 }
@@ -148,6 +159,92 @@ class PopupFF extends React.Component {
 }
 Popup.propTypes = {
   onOptionSelected: React.PropTypes.func,
+  show: React.PropTypes.string,
+};
+
+// Hangup popup asking for end of call feedback
+class PopupUserFB extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      meetingFeedback: 5,
+      audioFeedback: 5,
+      videoFeedback: 5,
+      screenshareFeedback: 5,
+    };
+  }
+
+  render() {
+    return (
+      <div id="popup" className="modal" style={{display: this.props.show}}>
+        <div className="modal-content">
+          Meeting: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.meetingFeedback}
+                       onChange={this.onUpdateInputText.bind(this,1)}/>
+          <br/>
+          Audio: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.audioFeedback}
+                       onChange={this.onUpdateInputText.bind(this,2)}/>
+          <br/>
+          Video: <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.videoFeedback}
+                       onChange={this.onUpdateInputText.bind(this,3)}/>
+          <br/>
+          ScreenShare : <input type="number"
+                       style={{'text-align': 'center', width: '80px'}}
+                       value={this.state.screenshareFeedback}
+                       onChange={this.onUpdateInputText.bind(this,4)}/>
+          <br/>
+          <button id="popupCloseButton"
+                  onClick={this.handleCloseModal.bind(this)}>
+            Submit Feedback</button>
+        </div>
+      </div>
+    );
+  }
+  onUpdateInputText(kind,e) {
+    switch(kind) {
+    case 1:
+      this.setState({
+        meetingFeedback: e.target.value
+      });
+      break;
+    case 2:
+      this.setState({
+        audioFeedback: e.target.value
+      });
+      break;
+    case 3:
+      this.setState({
+        videoFeedback: e.target.value
+      });
+      break;
+    case 4:
+      this.setState({
+        screenshareFeedback: e.target.value
+      });
+      break;
+    default:
+      console.error('unknown kind',kind);
+      break;
+    }
+  }
+  handleCloseModal() {
+    const userExperienceFeedback = {
+      'meetingFeedback': Math.min(this.state.meetingFeedback,5),
+      'audioFeedback': Math.min(this.state.audioFeedback,5),
+      'videoFeedback': Math.min(this.state.videoFeedback,5),
+      'screenshareFeedback': Math.min(this.state.screenshareFeedback,5),
+      'commentFeedback': 'sample comment.'
+    };
+    this.props.onFeedbackProvided(userExperienceFeedback);
+  }
+}
+Popup.propTypes = {
+  onFeedbackProvided: React.PropTypes.func,
   show: React.PropTypes.string,
 };
 
@@ -205,9 +302,11 @@ class Display extends React.Component {
     super();
     this.state = {
       roomName: props.roomName,
+      userName: props.userName,
       showChat: false,
       showPopup: 'block',
       showPopupFF: 'none',
+      showPopupUF: 'none',
       messagesCount: 0,
       enableCall: false,
       enableHangup: false,
@@ -292,9 +391,13 @@ class Display extends React.Component {
         <div>{this.renderLocalVideo()}</div>
         <div>{this.renderRemoteVideos()}</div>
         <Popup onRoomSet={this.onRoomSet.bind(this)}
-            show={this.state.showPopup} roomName={this.state.roomName}/>
+            show={this.state.showPopup}
+               roomName={this.state.roomName}
+               userName={this.state.userName}/>
         <PopupFF onOptionSelected={this.onOptionSelected.bind(this)}
             show={this.state.showPopupFF}/>
+        <PopupUserFB onFeedbackProvided={this.onFeedbackProvided.bind(this)}
+            show={this.state.showPopupUF}/>
         <Chat onNewMessage={this.onNewMessage.bind(this)}
             chatText={this.state.chatText}
             show={this.state.showChat}/>
@@ -328,22 +431,41 @@ class Display extends React.Component {
     });
   }
 
-  onRoomSet(roomName) {
+  onRoomSet(userName, roomName) {
     /* NOTE to be super sure that we get info from config service before
       starting a call, enableCall should only be true if both roomName and
       iceConfig are available */
     this.setState({
       showPopup: 'none',
       enableCall: true,
+      userName: userName,
       roomName: roomName,
     });
-    this.props.onRoomSet(roomName);
+    this.props.onRoomSet(userName, roomName);
   }
   onOptionSelected(val) {
     this.setState({
       showPopupFF: 'none',
     });
     this.props.onClickScreenShare(true,val);
+  }
+  onFeedbackProvided(val) {
+    this.setState({
+      enableHangup: false,
+      enableChat: false,
+      enableScreenShare: false,
+      screenShared: false,
+      videoPaused: false,
+      audioMuted: false,
+      enableVideoToggle: false,
+      enableAudioToggle: false,
+      showPopup: 'block',
+      showPopupFF: 'none',
+      showPopupUF: 'none',
+      showChat: false,
+      chatMessages: [],
+    });
+    this.props.onClickHangup(val);
   }
   onClickCall() {
     this.setState({
@@ -375,26 +497,13 @@ class Display extends React.Component {
   }
   onClickHangup() {
     this.setState({
-      enableHangup: false,
-      enableChat: false,
-      enableScreenShare: false,
-      screenShared: false,
-      videoPaused: false,
-      audioMuted: false,
-      enableVideoToggle: false,
-      enableAudioToggle: false,
-      showPopup: 'block',
-      showPopupFF: 'none',
-      showChat: false,
-      chatMessages: [],
+      showPopupUF: 'block',
     });
-    this.props.onClickHangup();
   }
   onClickScreenShare() {
     var toState = !this.state.screenShared;
     this.setState({
       screenShared: toState,
-
     });
     if (navigator.mozGetUserMedia && toState===true) {
       this.setState({
@@ -423,6 +532,7 @@ class Display extends React.Component {
 Display.propTypes = {
   onRoomSet: React.PropTypes.func,
   onOptionSelected: React.PropTypes.func,
+  onFeedbackProvided: React.PropTypes.func,
   onClickCall: React.PropTypes.func,
   onClickHangup: React.PropTypes.func,
   onClickAVCtrl: React.PropTypes.func,
@@ -441,7 +551,8 @@ function render() {
         onClickAVCtrl={onClickAVCtrl}
         onClickScreenShare={onClickScreenShare}
         onNewMessage={onNewChatMessage}
-        roomName={roomName}/>,
+        roomName={roomName}
+        userName={userName}/>,
     document.getElementById('container')
   );
 }
@@ -450,18 +561,22 @@ function render() {
  * Room name
  */
 var roomName = '';
+var userName = '';
 // init from URL
 var urlRoom = window.location.pathname.split('/')[1];
 if (urlRoom !== '') {
   roomName = decodeURIComponent(urlRoom);
 }
 
-// roomName from user input
-function onRoomSet(room) {
+// userName, and roomName from user input
+function onRoomSet(uName, room) {
+  userName = uName;
   roomName = room;
   history.replaceState({'room': roomName} /* state object */,
                         'Room ' + roomName /* title */,
                         encodeURIComponent(roomName) /* URL */);
+
+  createLib();
 }
 
 /*
@@ -471,9 +586,19 @@ function onClickCall() {
   lib.call(roomName);
 }
 
-function onClickHangup() {
+function onClickHangup(userFeedback) {
   lib.hangup();
   stopLocalMedia();
+  // send user feedback
+  var feedback = {
+    'userID': localUserId,
+    'overall': userFeedback.meetingFeedback,
+    'audio': userFeedback.audioFeedback,
+    'video': userFeedback.videoFeedback,
+    'screen': userFeedback.screenshareFeedback,
+    'comment': userFeedback.commentFeedback
+  };
+  csObject.sendUserFeedback(roomName, feedback, pcCallback);
 }
 
 function onClickAVCtrl(isMuteOrPaused, isAudio) {
@@ -591,11 +716,15 @@ document.addEventListener('localName',
       var JWT = '@@JWT';
       localUserId = e.detail.localname;
       console.log('Initialize callstats', localUserId, JWT);
+      var userID = {
+        'userName': userName === '' ? localUserId : userName,
+        'aliasName': localUserId
+      };
       if (JWT === 'true') {
-        csObject.initialize(AppID, tokenGenerator, localUserId, csInitCallback,
+        csObject.initialize(AppID, tokenGenerator, userID, csInitCallback,
             csStatsCallback, configParams);
       } else {
-        csObject.initialize(AppID, AppSecret, localUserId, csInitCallback,
+        csObject.initialize(AppID, AppSecret, userID, csInitCallback,
             csStatsCallback, configParams);
       }
     },
