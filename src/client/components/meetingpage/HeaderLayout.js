@@ -36,10 +36,10 @@ class HeaderRight extends React.Component {
     return (
       <ul className="nav navbar-nav navbar-right">
         <li><a href="#" style={{color: '#FFFFFF', background: 'inherit'}}>
-          <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+          <span className="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
         </a></li>
         <li><a href="#" style={{color: '#FFFFFF', background: 'inherit'}}>
-          <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+          <span className="glyphicon glyphicon-off" aria-hidden="true"></span>
         </a></li>
       </ul>
     );
