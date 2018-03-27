@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HeaderLayout from './HeaderLayour';
+import HeaderLayout from './HeaderLayout';
 import FooterLayout from './FooterLayout';
 import ContentLayout from './ContentLayout';
 export class AppLayout extends React.Component {

@@ -1,10 +1,12 @@
 import React from 'react';
 
+import HeaderLayout from './HeaderLayout';
+
 export class AppLayout extends React.Component {
   render() {
     return (
       <div className={'container-fluid'}>
-        <h2>Meeting page</h2>
+        <HeaderLayout/>
       </div>
     );
   }
