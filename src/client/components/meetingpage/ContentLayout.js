@@ -10,7 +10,6 @@ class LayoutLeft extends React.Component {
       paddingLeft: '2%'
     };
     const videoStyle = {
-      marginLeft: 'auto',
       marginRight: 'auto',
       display: 'block',
       maxWidth: '640px',
@@ -24,7 +23,7 @@ class LayoutLeft extends React.Component {
     return (
       <div className={'col-xs-8'} style={cusStyle}>
         <div className={'row'} style={rowStyle}>
-          <div className={'row'}>
+          <div className={'row'} style={rowStyle}>
             <video className="thumbnail" autoPlay loop style={videoStyle}>
               <source src="http://techslides.com/demos/sample-videos/small.mp4" type="video/mp4"/>
             </video>
