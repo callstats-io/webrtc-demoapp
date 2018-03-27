@@ -6,18 +6,26 @@ class LayoutLeft extends React.Component {
 
     };
     const rowStyle = {
-      paddingTop: '2%'
+      paddingTop: '2%',
+      paddingLeft: '2%'
+    };
+    const videoStyle = {
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      display: 'block',
+      maxWidth: '640px',
+      maxHeight: '480px'
     };
     const imgStyle = {
-      height: '180px',
+      height: '80px',
       width: '100%',
       display: 'block'
     };
     return (
       <div className={'col-xs-8'} style={cusStyle}>
         <div className={'row'} style={rowStyle}>
-          <div align="center" className="embed-responsive embed-responsive-16by9">
-            <video autoPlay loop className="embed-responsive-item">
+          <div className={'row'}>
+            <video className="thumbnail" autoPlay loop style={videoStyle}>
               <source src="http://techslides.com/demos/sample-videos/small.mp4" type="video/mp4"/>
             </video>
           </div>
