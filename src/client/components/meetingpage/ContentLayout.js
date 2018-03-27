@@ -3,7 +3,9 @@ import React from 'react';
 class LayoutLeft extends React.Component {
   render() {
     const cusStyle = {
-
+      paddingRight: '2%',
+      borderRight: '1px solid #ccc',
+      paddingBottom: '1%'
     };
     const rowStyle = {
       paddingTop: '2%',
@@ -60,6 +62,11 @@ class LayoutLeft extends React.Component {
 }
 class LayoutRight extends React.Component {
   render() {
+    const verticalSusStyle = {
+      paddingRight: '2%',
+      borderRight: '1px solid #ccc',
+      paddingBottom: '2%'
+    };
     const curStyle = {
       paddingLeft: '3%',
       color: '#442173'
@@ -110,10 +117,14 @@ class LayoutRight extends React.Component {
         <div className={'row'} style={{paddingTop: '10%'}}>
           <hr />
         </div>
+        <div className={'row'}>
+          Chat will go here
+        </div>
       </div>
     );
   }
 }
+
 class ContentLayout extends React.Component {
   render() {
     return (
