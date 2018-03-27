@@ -48,7 +48,7 @@ class HeaderRight extends React.Component {
 class HeaderLayout extends React.Component {
   render() {
     return (
-      <nav className="navbar" style={{backgroundColor: '#442173'}}>
+      <nav className="navbar" style={{backgroundColor: '#442173', marginBottom: '0px'}}>
         <div className="container-fluid">
           <BrandLRight/>
           <div id="navbar" className="navbar-collapse collapse">
