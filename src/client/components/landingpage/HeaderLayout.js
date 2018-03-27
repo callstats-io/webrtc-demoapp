@@ -1,6 +1,6 @@
 import React from 'react';
 
-class HeaderRight extends React.Component {
+class HeaderLeft extends React.Component {
   render() {
     const customStyle = {
       maxHeight: '60px'
@@ -11,7 +11,7 @@ class HeaderRight extends React.Component {
   }
 }
 
-class HeaderLeft extends React.Component {
+class HeaderRight extends React.Component {
   render() {
     const customeStyle = {
       textDecoration: 'none',
@@ -31,8 +31,8 @@ class HeaderLayout extends React.Component {
   render() {
     return (
       <div className={'header clearfix container'}>
-        <HeaderLeft/>
         <HeaderRight/>
+        <HeaderLeft/>
       </div>
     );
   }
