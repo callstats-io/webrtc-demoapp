@@ -20,16 +20,16 @@ class OtherComponentLayout extends React.Component {
         </div>
         <div className={'col-xs-8'}>
           <div className={'col-xs-3'} style={divStyle}>
-            <span className="glyphicon glyphicon-facetime-video" ariaHidden="true" style={glyStyle}></span>
-            <br/><span class="glyphicon-class">Easy video calling</span>
+            <span className="glyphicon glyphicon-facetime-video" aria-hidden="true" style={glyStyle}></span>
+            <br/><span className="glyphicon-class">Easy video calling</span>
           </div>
           <div className={'col-xs-6'} style={divStyle}>
-            <span className="glyphicon glyphicon-share" ariaHidden="true" style={glyStyle}></span>
-            <br/><span class="glyphicon-class">Share files and media with your friends</span>
+            <span className="glyphicon glyphicon-share" aria-hidden="true" style={glyStyle}></span>
+            <br/><span className="glyphicon-class">Share files and media with your friends</span>
           </div>
           <div className={'col-xs-3'} style={divStyle}>
-            <span class="glyphicon glyphicon-comment" aria-hidden="true" style={glyStyle}></span>
-            <br/><span class="glyphicon-class">Chat with anyone and everyone</span>
+            <span className="glyphicon glyphicon-comment" aria-hidden="true" style={glyStyle}></span>
+            <br/><span className="glyphicon-class">Chat with anyone and everyone</span>
           </div>
         </div>
         <div className={'col-xs-2'}>
