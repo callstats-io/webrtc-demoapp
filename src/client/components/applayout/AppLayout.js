@@ -1,8 +1,8 @@
 import React from 'react';
 
-import HeaderLayout from './HeaderLayour';
-import FooterLayout from './FooterLayout';
-import ContentLayout from './ContentLayout';
+import HeaderLayout from './header/HeaderLayour';
+import FooterLayout from './footer/FooterLayout';
+import ContentLayout from './content/ContentLayout';
 export class AppLayout extends React.Component {
   render() {
     return (

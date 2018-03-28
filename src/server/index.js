@@ -60,7 +60,7 @@ if (process.env.SSL === 'true') {
 const server = process.env.SSL === 'true' ? https.createServer(options, app)
   : http.createServer(app);
 server.listen(process.env.PORT, () => {
-  const isSSL = process.env.SSL;
+  const isSSL = process.env.SSL === 'true';
   logger.info(`${isSSL ? 'HTTPS' : 'HTTP'} server is now running on 
   ${isSSL ? 'https' : 'http'}://localhost:${process.env.PORT}`);
 });
