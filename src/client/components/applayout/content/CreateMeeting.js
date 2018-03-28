@@ -1,6 +1,31 @@
 import React from 'react';
 
 class CreateMeetingLayout extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChangeRoomName = this.handleChangeRoomName.bind(this);
+    this.handleCreateRoomButtonClick = this.handleCreateRoomButtonClick.bind(this);
+    this.state = {
+      roomName: '',
+      disableButton: true
+    };
+  }
+  handleChangeRoomName(e) {
+    const roomName = e.target.value;
+    const needDisable = roomName.length < 1;
+    this.setState({
+      roomName: roomName,
+      disableButton: needDisable
+    });
+  }
+  handleCreateRoomButtonClick(e) {
+    const roomName = this.state.roomName;
+    console.log('room name', roomName);
+    this.setState({
+      roomName: '',
+      disableButton: true
+    });
+  }
   render() {
     const customStyle = {
       backgroundColor: '#442173'
@@ -30,12 +55,17 @@ class CreateMeetingLayout extends React.Component {
             <li style={liCustomStyle}>Create your meeting by giving it a name</li>
             <li style={liCustomStyle}>
               <div className="input-group">
-                <input className="form-control" placeholder="Meeting name"/>
+                <input className="form-control"
+                  placeholder="Meeting name"
+                  value={this.state.roomName}
+                  onChange={this.handleChangeRoomName}/>
               </div>
             </li>
             <li style={liCustomStyle}>
-              <button type="button" className="btn btn-info dropdown-toggle"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" className={'btn btn-info dropdown-toggle'}
+                disabled={this.state.disableButton}
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                onClick={this.handleCreateRoomButtonClick}>
               Creating meeting</button>
             </li>
           </ul>
