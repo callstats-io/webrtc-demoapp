@@ -6,11 +6,13 @@
 'use strict';
 import io from 'socket.io-client';
 const modCommon = require('../utils/Common');
+const CsioEvents = require('../events/CsioEvents');
 
 class CsioSignalling {
   constructor() {
     this.socket = null;
-    document.addEventListener('sendMessage',
+    document.addEventListener(
+      CsioEvents.SocketIOEvents.UserEvent.SENDMESSAGE,
       function(e) {
         this.send(e.detail.userId, e.detail.message);
       }.bind(this),
@@ -21,53 +23,64 @@ class CsioSignalling {
      * leaving and incoming message
      */
     this.socket = io.connect();
-    this.socket.on('connect', function(data) {
-      console.log('onConnect', this.id);
-      modCommon.triggerEvent('localName', {'localname': this.id});
-    });
+    this.socket.on(
+      CsioEvents.SocketIOEvents.CONNECT, function(data) {
+        modCommon.triggerEvent(
+          CsioEvents.UserEvent.Signaling.LOCALNAME, {'localname': this.id});
+      });
 
     // hear from others
-    this.socket.on('join', function(userId) {
-      console.log(userId, 'user joining');
-      modCommon.triggerEvent('userJoin', {'userId': userId});
-    });
+    this.socket.on(
+      CsioEvents.SocketIOEvents.JOIN, function(userId) {
+        console.log(userId, 'user joining');
+        modCommon.triggerEvent(
+          CsioEvents.UserEvent.Signaling.USERJOIN, {'userId': userId});
+      });
 
-    this.socket.on('leave', function(userId) {
-      console.log(userId, 'user leaving');
-      modCommon.triggerEvent('userLeave', {'userId': userId});
-    });
+    this.socket.on(
+      CsioEvents.SocketIOEvents.LEAVE, function(userId) {
+        console.log(userId, 'user leaving');
+        modCommon.triggerEvent(
+          CsioEvents.UserEvent.Signaling.USERLEAVE, {'userId': userId});
+      });
 
-    this.socket.on('message', function(userId, message) {
-      modCommon.triggerEvent('userMessage',
-        {'userId': userId, 'message': message});
-    });
+    this.socket.on(
+      CsioEvents.SocketIOEvents.MESSAGE, function(userId, message) {
+        modCommon.triggerEvent(
+          CsioEvents.UserEvent.Signaling.USERMESSAGE,
+          {'userId': userId, 'message': message});
+      });
   }
 
   start(room) {
     // annouce your presence
     console.log('Joining', room);
-    this.socket.emit('join', room);
+    this.socket.emit(
+      CsioEvents.SocketIOEvents.UserEvent.JOIN, room);
   }
 
   /**
    * Leaving, tell others
    */
   stop() {
-    this.socket.emit('leave');
+    this.socket.emit(
+      CsioEvents.SocketIOEvents.UserEvent.LEAVE);
   }
 
   /**
    * Send a signalling message to another user
    */
   send(to, msg) {
-    this.socket.emit('message', to, msg);
+    this.socket.emit(
+      CsioEvents.SocketIOEvents.UserEvent.MESSAGE, to, msg);
   }
 
   /**
    * Ask server for a JWT token
    */
   generateToken(userId, callback) {
-    this.socket.emit('generateToken', userId, callback);
+    this.socket.emit(
+      CsioEvents.SocketIOEvents.UserEvent.GENERATETOKEN, userId, callback);
   }
 }
 
