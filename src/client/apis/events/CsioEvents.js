@@ -22,4 +22,4 @@ const CsioEvents = {
     }
   }
 };
-export default CsioEvents;
+export {CsioEvents};

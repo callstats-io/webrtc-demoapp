@@ -6,7 +6,7 @@
 'use strict';
 import io from 'socket.io-client';
 const modCommon = require('../utils/Common');
-const CsioEvents = require('../events/CsioEvents');
+const CsioEvents = require('../events/CsioEvents').CsioEvents;
 
 class CsioSignalling {
   constructor() {
