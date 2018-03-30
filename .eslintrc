@@ -24,6 +24,19 @@
       "node": true
   },
   "parser": "babel-eslint",
+  "globals": {
+    "adapter": true,
+    "audioContext": true,
+    "browserSupportsIPHandlingPolicy": true,
+    "browserSupportsNonProxiedUdpBoolean": true,
+    "chrome": true,
+    "ga": true,
+    "getPolicyFromBooleans": true,
+    "trace": true,
+    "io": true,
+    "CsioWebrtcApp": true,
+    "callstats": true
+  },
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true

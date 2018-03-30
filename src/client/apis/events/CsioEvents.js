@@ -15,10 +15,16 @@ const CsioEvents = {
   },
   UserEvent: {
     Signaling: {
-      LOCALNAME: 'localname',
+      CONNECT: 'localname',
       USERJOIN: 'userJoin',
       USERLEAVE: 'userLeave',
       USERMESSAGE: 'userMessage'
+    },
+    Media: {
+      LOCALMEDIA: 'localmedia',
+      REMOTEMEDIA: 'remotemedia',
+      ADDREMOTESTREAM: 'addRemoteVideo',
+      REMOVEREMOTESTREAM: 'removeRemoteVideo'
     }
   }
 };

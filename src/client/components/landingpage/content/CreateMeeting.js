@@ -1,4 +1,5 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
 
 class CreateMeetingLayout extends React.Component {
   constructor(props) {
@@ -7,7 +8,8 @@ class CreateMeetingLayout extends React.Component {
     this.handleCreateRoomButtonClick = this.handleCreateRoomButtonClick.bind(this);
     this.state = {
       roomName: '',
-      disableButton: true
+      disableButton: true,
+      redirectToReferrer: false
     };
   }
   handleChangeRoomName(e) {
@@ -19,11 +21,11 @@ class CreateMeetingLayout extends React.Component {
     });
   }
   handleCreateRoomButtonClick(e) {
+    let self = this;
     const roomName = this.state.roomName;
     console.log('room name', roomName);
-    this.setState({
-      roomName: '',
-      disableButton: true
+    self.setState({
+      redirectToReferrer: true
     });
   }
   render() {
@@ -40,6 +42,11 @@ class CreateMeetingLayout extends React.Component {
     const liCustomStyle = {
       paddingBottom: '5%'
     };
+    const redirectToReferrer = this.state.redirectToReferrer;
+    if (redirectToReferrer) {
+      const roomName = `/${this.state.roomName}`;
+      return <Redirect push to={roomName}/>;
+    }
     return (
       <div className={'row'} style={customStyle}>
         <div className={'col-xs-2'}></div>

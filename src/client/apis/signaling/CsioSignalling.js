@@ -26,7 +26,7 @@ class CsioSignalling {
     this.socket.on(
       CsioEvents.SocketIOEvents.CONNECT, function(data) {
         modCommon.triggerEvent(
-          CsioEvents.UserEvent.Signaling.LOCALNAME, {'localname': this.id});
+          CsioEvents.UserEvent.Signaling.CONNECT, {'localname': this.id});
       });
 
     // hear from others
