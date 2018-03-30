@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import Video from './VideoMain';
-const CsioEvents = require('./../../../apis/events/CsioEvents').CsioEvents;
+const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class RemoteVideo extends React.Component {
   constructor(props) {

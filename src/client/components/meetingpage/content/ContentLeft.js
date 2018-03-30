@@ -2,7 +2,7 @@
 import React from 'react';
 import Video from './VideoMain';
 import RemoteVideo from './RemoteVideo';
-const CsioEvents = require('./../../../apis/events/CsioEvents').CsioEvents;
+const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class ContentLeft extends React.Component {
   constructor(props) {

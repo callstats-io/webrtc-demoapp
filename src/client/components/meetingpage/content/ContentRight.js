@@ -2,7 +2,7 @@
 import React from 'react';
 
 import Video from './VideoSmall';
-const CsioEvents = require('./../../../apis/events/CsioEvents').CsioEvents;
+const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 class ContentRight extends React.Component {
   constructor(props) {
     super(props);

@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 // global styles
 import './style.scss';
-import CsioRTC from './apis/CsioRTC';
+import CsioRTC from './apis/csiortc/CsioRTC';
 
 // apply polyfill
 if (!window.Intl) {

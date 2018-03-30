@@ -1,32 +1,13 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 
+import CreateMetingHandler from './../../../apis/landingpage/CreateMeetingHandler';
+
 class CreateMeetingLayout extends React.Component {
   constructor(props) {
     super(props);
-    this.handleChangeRoomName = this.handleChangeRoomName.bind(this);
-    this.handleCreateRoomButtonClick = this.handleCreateRoomButtonClick.bind(this);
-    this.state = {
-      roomName: '',
-      disableButton: true,
-      redirectToReferrer: false
-    };
-  }
-  handleChangeRoomName(e) {
-    const roomName = e.target.value;
-    const needDisable = roomName.length < 1;
-    this.setState({
-      roomName: roomName,
-      disableButton: needDisable
-    });
-  }
-  handleCreateRoomButtonClick(e) {
-    let self = this;
-    const roomName = this.state.roomName;
-    console.log('room name', roomName);
-    self.setState({
-      redirectToReferrer: true
-    });
+    this.meetingHandler = new CreateMetingHandler();
+    this.state = this.meetingHandler.getState();
   }
   render() {
     const customStyle = {
@@ -42,8 +23,8 @@ class CreateMeetingLayout extends React.Component {
     const liCustomStyle = {
       paddingBottom: '5%'
     };
-    const redirectToReferrer = this.state.redirectToReferrer;
-    if (redirectToReferrer) {
+    const shouldRedirectToMeetingPage = this.state.shouldRedirectToMeetingPage;
+    if (shouldRedirectToMeetingPage) {
       const roomName = `/${this.state.roomName}`;
       return <Redirect push to={roomName}/>;
     }
@@ -65,14 +46,14 @@ class CreateMeetingLayout extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.handleChangeRoomName}/>
+                  onChange={this.meetingHandler.handleInputChange.bind(this)}/>
               </div>
             </li>
             <li style={liCustomStyle}>
               <button type="button" className={'btn btn-info dropdown-toggle'}
-                disabled={this.state.disableButton}
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                onClick={this.handleCreateRoomButtonClick}>
+                disabled={!this.state.createRoomButtonEnabled}
+                onClick={this.meetingHandler.handleCreateRoomClick.bind(this)}>
               Creating meeting</button>
             </li>
           </ul>
