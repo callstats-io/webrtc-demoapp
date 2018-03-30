@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-
 import Video from './VideoSmall';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 class ContentRight extends React.Component {
@@ -9,7 +8,10 @@ class ContentRight extends React.Component {
     this.state = {
       mediaStream: null
     };
-    document.addEventListener(CsioEvents.UserEvent.Media.LOCALMEDIA, this.onLocalVideoStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.UserEvent.Media.LOCALMEDIA,
+      this.onLocalVideoStream.bind(this),
+      false);
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;

@@ -10,7 +10,9 @@ class ContentLeft extends React.Component {
     this.state = {
       mediaStream: null
     };
-    document.addEventListener(CsioEvents.UserEvent.Media.LOCALMEDIA, this.onLocalVideoStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.UserEvent.Media.LOCALMEDIA,
+      this.onLocalVideoStream.bind(this), false);
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;

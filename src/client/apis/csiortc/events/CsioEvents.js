@@ -28,7 +28,12 @@ const CsioEvents = {
     }
   },
   UIEvent: {
-    JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick'
+    JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick',
+    MEETING_PAGE_LOADED: 'meetingpageloaded'
   }
 };
-export {CsioEvents};
+const triggerEvent = (name, detail) => {
+  const newEvent = new CustomEvent(name, {'detail': detail});
+  document.dispatchEvent(newEvent);
+};
+export {CsioEvents, triggerEvent};
