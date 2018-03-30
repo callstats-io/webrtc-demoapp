@@ -26,6 +26,9 @@ const CsioEvents = {
       ADDREMOTESTREAM: 'addRemoteVideo',
       REMOVEREMOTESTREAM: 'removeRemoteVideo'
     }
+  },
+  UIEvent: {
+    JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick'
   }
 };
 export {CsioEvents};

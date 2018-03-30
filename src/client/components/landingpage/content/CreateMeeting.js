@@ -1,6 +1,5 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
-
 import CreateMetingHandler from './../../../apis/landingpage/CreateMeetingHandler';
 
 class CreateMeetingLayout extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-class HeaderRight extends React.Component {
+class CompanyDetails extends React.Component {
   render() {
     const customStyle = {
       maxHeight: '60px'
@@ -11,4 +11,4 @@ class HeaderRight extends React.Component {
   }
 }
 
-export default HeaderRight;
+export default CompanyDetails;

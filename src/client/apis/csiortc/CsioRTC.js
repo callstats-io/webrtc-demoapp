@@ -17,9 +17,9 @@ class CsioRTC {
     this.localStream = undefined;
     this.remoteStreams = {};
     this.pcs = {};
-    this.csObject = new callstats();
-    this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
-    this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
+    // this.csObject = new callstats();
+    // this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
+    // this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
 
     document.addEventListener(CsioEvents.UserEvent.Signaling.CONNECT, this.onConnect.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERJOIN, this.onUserJoin.bind(this), false);
@@ -39,8 +39,8 @@ class CsioRTC {
       disableBeforeUnloadHandler: false,
       applicationVersion: 'v1.0'
     };
-    this.csObject.initialize('619077833', 'RwAYI/480Qen:zi4TsKz/XW/AfINdX90EyCwSmlYqN0HKt0Lb6uFG1D4=',
-      userID, this.csInitCallback, this.csStatsCallback, configParams);
+    /*this.csObject.initialize('619077833', 'RwAYI/480Qen:zi4TsKz/XW/AfINdX90EyCwSmlYqN0HKt0Lb6uFG1D4=',
+      userID, this.csInitCallback, this.csStatsCallback, configParams);*/
   }
   onUserJoin(e) {
     const userId = e.detail.userId;

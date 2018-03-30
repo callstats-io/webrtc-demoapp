@@ -1,14 +1,14 @@
 import React from 'react';
 
-import HeaderLeft from './HeaderLeft';
-import HeaderRight from './HeaderRight';
+import CompanyDetails from './CompanyDetails';
+import JoinMeeting from './JoinMeeting';
 
 class HeaderLayout extends React.Component {
   render() {
     return (
       <div className={'header clearfix container'}>
-        <HeaderLeft/>
-        <HeaderRight/>
+        <CompanyDetails/>
+        <JoinMeeting/>
       </div>
     );
   }
