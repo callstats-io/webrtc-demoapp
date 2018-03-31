@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Video from './VideoSmall';
+import Video from './Video';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 class ContentRight extends React.Component {
   constructor(props) {
@@ -15,9 +15,12 @@ class ContentRight extends React.Component {
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;
-    this.setState({
-      media: media
-    });
+    const from = e.detail.from;
+    if (from === 'getUserMedia') {
+      this.setState({
+        media: media
+      });
+    }
   }
   render() {
     const curStyle = {

@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
-import Video from './VideoMain';
-import RemoteVideo from './RemoteVideo';
+import Video from './Video';
+import RemoteVideos from './RemoteVideos';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class ContentLeft extends React.Component {
@@ -16,6 +16,8 @@ class ContentLeft extends React.Component {
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;
+    const from = e.detail.from;
+    console.log('->', from, media);
     this.setState({
       media: media
     });
@@ -41,7 +43,7 @@ class ContentLeft extends React.Component {
         </div>
         <div className={'row'} style={rowStyle}>8 participants in call</div>
         <div className={'row'} style={rowStyle}>
-          <RemoteVideo/>
+          <RemoteVideos/>
         </div>
       </div>
     );

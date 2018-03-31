@@ -24,12 +24,13 @@ const CsioEvents = {
     Media: {
       LOCALMEDIA: 'localmedia',
       REMOTEMEDIA: 'remotemedia',
-      ADDREMOTESTREAM: 'addRemoteVideo',
+      ADDREMOTESTREAM: 'addRemoteVideo'
     }
   },
   UIEvent: {
     JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick',
-    MEETING_PAGE_LOADED: 'meetingpageloaded'
+    MEETING_PAGE_LOADED: 'meetingpageloaded',
+    VIDEO_FOCUS_CHANGE: 'videofocuschange'
   }
 };
 const triggerEvent = (name, detail) => {

@@ -1,33 +1,25 @@
 'use strict';
 import React from 'react';
-import Video from './VideoMain';
+import Video from './Video';
+import RemoteVideosHandler from './../../../apis/meetingpage/RemoteVideosHandler';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class RemoteVideo extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      remoteVideos: {}
-    };
+    this.remoteVideoHandler = new RemoteVideosHandler();
+    this.state = this.remoteVideoHandler.getState();
     document.addEventListener(
       CsioEvents.UserEvent.Media.REMOTEMEDIA,
-      this.onRemoteVideos.bind(this),
+      this.remoteVideoHandler.onRemoteVideos.bind(this),
       false);
   }
-  onRemoteVideos(e) {
-    const media = e.detail.media;
-    this.setState({
-      remoteVideos: media
-    });
-    console.log('got remote media', media);
-  };
   render() {
     const remoteVideos = this.state.remoteVideos;
     const listItems = Object.entries(remoteVideos).map(([key, value]) =>
       <div className="col-xs-3" key={key}>
         <div align="center" className="embed-responsive embed-responsive-16by9" key={{key}}>
-          <Video key={key} name={key}
-            stream={value}/>
+          <Video key={key} name={key} stream={value}/>
         </div>
       </div>
     );

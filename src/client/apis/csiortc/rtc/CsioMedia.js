@@ -15,12 +15,18 @@ class CsioMediaCtrl {
     document.addEventListener(
       CsioEvents.UserEvent.Media.ADDREMOTESTREAM,
       this.onRemoteStream.bind(this), false);
+
+    document.addEventListener(
+      CsioEvents.UIEvent.VIDEO_FOCUS_CHANGE,
+      this.onVideoFocusChanged.bind(this),
+      false);
   }
   getUserMedia(constraints) {
     navigator.mediaDevices.getUserMedia(constraints)
       .then(function(stream) {
         const detail = {
-          media: stream
+          media: stream,
+          from: 'getUserMedia'
         };
         modCommon.triggerEvent(
           CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
@@ -31,9 +37,12 @@ class CsioMediaCtrl {
   }
   onLocalStream(e) {
     const stream = e.detail.media;
-    this.localStream = stream;
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, {});
+    const from = e.detail.from;
+    if (from === 'getUserMedia') {
+      this.localStream = stream;
+      modCommon.triggerEvent(
+        CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, {});
+    }
   }
   onRemoteStream(e) {
     const streams = e.detail.streams;
@@ -71,6 +80,16 @@ class CsioMediaCtrl {
       modCommon.triggerEvent(
         CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
     }
+  }
+  // UI related stream change handler
+  onVideoFocusChanged(e) {
+    const userId = e.detail.userId;
+    const detail = {
+      media: this.remoteStreams[userId] ? this.remoteStreams[userId] : this.localStream,
+      from: 'videoFocusChanged'
+    };
+    modCommon.triggerEvent(
+      CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
   }
 }
 
