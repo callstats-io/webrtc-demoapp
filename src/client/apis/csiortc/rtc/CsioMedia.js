@@ -5,6 +5,7 @@ const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents
 
 class CsioMediaCtrl {
   constructor() {
+    this.previouslySelectedUserId = undefined;
     this.remoteStreams = {};
     this.localStream = {};
     // event listeners
@@ -49,7 +50,7 @@ class CsioMediaCtrl {
     const userId = e.detail.userId;
     this.remoteStreams[userId] = streams[0];
     modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
+      CsioEvents.UserEvent.Media.REMOTEMEDIA, {media: this.remoteStreams, userId: userId});
   }
   addStream(stream, ctx) {
     stream.getTracks().forEach(function(mediaTrack) {
@@ -78,16 +79,28 @@ class CsioMediaCtrl {
     } else {
       delete this.remoteStreams[userId];
       modCommon.triggerEvent(
-        CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
+        CsioEvents.UserEvent.Media.REMOTEMEDIA, {media: this.remoteStreams, userId: userId});
     }
   }
   // UI related stream change handler
   onVideoFocusChanged(e) {
     const userId = e.detail.userId;
-    const detail = {
-      media: this.remoteStreams[userId] ? this.remoteStreams[userId] : this.localStream,
+    const from = e.detail.from;
+    let detail = {
+      media: this.localStream,
       from: 'videoFocusChanged'
     };
+    // if from click handler must need a change
+    if (from === 'onClickHandler') {
+      detail.media = this.remoteStreams[userId];
+    } else {
+      if (this.remoteStreams[this.previouslySelectedUserId]) {
+        detail.media = this.remoteStreams[this.previouslySelectedUserId];
+      } else if (this.remoteStreams[userId]) {
+        detail.media = this.remoteStreams[userId];
+      }
+    }
+    this.previouslySelectedUserId = userId;
     modCommon.triggerEvent(
       CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
   }

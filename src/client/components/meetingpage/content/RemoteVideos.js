@@ -7,14 +7,18 @@ const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents
 class RemoteVideo extends React.Component {
   constructor(props) {
     super(props);
-    this.remoteVideoHandler = new RemoteVideosHandler();
-    this.state = this.remoteVideoHandler.getState();
+    this.remoteVideosHandler = new RemoteVideosHandler();
+    this.state = this.remoteVideosHandler.getState();
     document.addEventListener(
       CsioEvents.UserEvent.Media.REMOTEMEDIA,
-      this.remoteVideoHandler.onRemoteVideos.bind(this),
+      this.remoteVideosHandler.onRemoteVideos.bind(this),
       false);
   }
   render() {
+    const rowStyle = {
+      paddingTop: '2%',
+      paddingLeft: '2%'
+    };
     const remoteVideos = this.state.remoteVideos;
     const listItems = Object.entries(remoteVideos).map(([key, value]) =>
       <div className="col-xs-3" key={key}>
@@ -23,9 +27,17 @@ class RemoteVideo extends React.Component {
         </div>
       </div>
     );
+    let participants = this.state.participantCount < 1
+      ? '' : `${this.state.participantCount} 
+      participant${this.state.participantCount > 1 ? 's' : ''} in call`;
     return (
-      <div className="row">
-        {listItems}
+      <div>
+        <div className={'row'} style={rowStyle}>{participants}</div>
+        <div className={'row'} style={rowStyle}>
+          <div className="row">
+            {listItems}
+          </div>
+        </div>
       </div>
     );
   }

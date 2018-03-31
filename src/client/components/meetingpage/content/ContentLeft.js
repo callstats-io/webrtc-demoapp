@@ -2,25 +2,17 @@
 import React from 'react';
 import Video from './Video';
 import RemoteVideos from './RemoteVideos';
+import ContentLeftHandler from './../../../apis/meetingpage/ContentLeftHandler';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class ContentLeft extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mediaStream: null
-    };
+    this.contentLeftHandler = new ContentLeftHandler();
+    this.state = this.contentLeftHandler.getState();
     document.addEventListener(
       CsioEvents.UserEvent.Media.LOCALMEDIA,
-      this.onLocalVideoStream.bind(this), false);
-  }
-  onLocalVideoStream(e) {
-    const media = e.detail.media;
-    const from = e.detail.from;
-    console.log('->', from, media);
-    this.setState({
-      media: media
-    });
+      this.contentLeftHandler.onLocalVideoStream.bind(this), false);
   }
   render() {
     const cusStyle = {
@@ -41,10 +33,7 @@ class ContentLeft extends React.Component {
               stream={this.state.media}/>
           </div>
         </div>
-        <div className={'row'} style={rowStyle}>8 participants in call</div>
-        <div className={'row'} style={rowStyle}>
-          <RemoteVideos/>
-        </div>
+        <RemoteVideos/>
       </div>
     );
   }

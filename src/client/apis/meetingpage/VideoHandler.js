@@ -26,9 +26,13 @@ class VideoHandler {
     e.preventDefault();
     // name is actually user's user id
     const userId = this.props.name;
+    const detail = {
+      userId: userId,
+      from: 'onClickHandler'
+    };
     triggerEvent(
       CsioEvents.UIEvent.VIDEO_FOCUS_CHANGE,
-      {'userId': userId});
+      detail);
   }
 }
 
