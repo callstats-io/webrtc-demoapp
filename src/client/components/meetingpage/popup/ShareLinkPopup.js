@@ -27,7 +27,7 @@ class JoinRoomPopup extends React.Component {
             <div className="modal-body">
               <div className="input-group col-lg-offset-4"
                 style={customStyle}>
-                <a href={this.state.meetingRoomURL}>{this.state.meetingRoomURL}</a>
+                <a href={this.state.meetingRoomURL} target="_blank">{this.state.meetingRoomURL}</a>
               </div>
             </div>
             <div className="modal-footer">
