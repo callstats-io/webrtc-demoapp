@@ -22,6 +22,7 @@ class CsioRTC {
     this.csoiMedia = new CsioMedia();
     // ui related events
     document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
+    document.addEventListener(CsioEvents.UIEvent.TOGGLE_MEDIA_STATE, this.onToggleMediaState.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, this.onSetLocalMedia.bind(this), false);
     // signaling specific events
     // 1. connection with socket io success
@@ -38,6 +39,11 @@ class CsioRTC {
     this.roomName = roomName;
     // initialize media
     this.mayBeInitializeMedia();
+  }
+  onToggleMediaState(e) {
+    const mediaType = e.detail.mediaType;
+    const isEnable = e.detail.isEnable;
+    this.csoiMedia.toggleMediaStates(isEnable, mediaType);
   }
   // when we have local media we are ready to join the room
   onSetLocalMedia(roomName) {

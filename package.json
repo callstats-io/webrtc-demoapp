@@ -79,6 +79,7 @@
     "babel-polyfill": "6.26.0",
     "body-parser": "1.18.2",
     "compression": "1.7.2",
+    "docker-names": "^1.0.3",
     "express": "4.16.3",
     "immutable": "3.8.2",
     "intl": "1.2.5",

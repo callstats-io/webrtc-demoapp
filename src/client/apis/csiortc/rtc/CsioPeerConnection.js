@@ -36,41 +36,6 @@ class CsioPeerConnection {
       {'pc': this.pc, 'eventLog': 'PeerConnection closed for ' + this.userId});
   }
 
-  // toggle media states
-  toggleMediaStates(isMuteOrPaused, mediaStream, mediaType) {
-    let febType;
-    let logMsg;
-    if (mediaType === 'screen') {
-      logMsg = 'Screen share is ' + (isMuteOrPaused ? 'enabled' : 'disabled') +
-        ' for ' + this.userId;
-      febType = isMuteOrPaused
-        ? 'screenShareEnabled' : 'screenShareDisabled';
-    } else {
-      febType = !isMuteOrPaused ? 'audioMuted' : 'audioUnmuted';
-      logMsg = 'Audio is ' +
-        (!isMuteOrPaused ? 'muted' : 'unmuted') + ' for ' + this.userId;
-      if (mediaType !== 'audio') {
-        febType = !isMuteOrPaused ? 'videoPaused' : 'videoResumed';
-        logMsg = 'Video is ' +
-          (!isMuteOrPaused ? 'paused' : 'resumed') + ' for ' + this.userId;
-      }
-      let mediaTracks = mediaType === 'audio'
-        ? mediaStream.getAudioTracks() : mediaStream.getVideoTracks();
-      if (mediaTracks.length === 0) {
-        console.warn('No local ', mediaType, 'track available.');
-        return;
-      }
-      for (const i in mediaTracks) {
-        if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
-          mediaTracks[i].enabled = isMuteOrPaused;
-        }
-      }
-    }
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc, 'eventLog': logMsg});
-    modCommon.triggerEvent('toggleMediaStates',
-      {'userId': this.userId, 'pc': this.pc, 'type': febType});
-  }
   addIceCandidate(ic) {
     this.pc.addIceCandidate(new RTCIceCandidate(ic))
       .then(

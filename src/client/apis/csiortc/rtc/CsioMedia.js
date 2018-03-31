@@ -104,6 +104,23 @@ class CsioMediaCtrl {
     modCommon.triggerEvent(
       CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
   }
+  // toggle media states
+  toggleMediaStates(isMuteOrPaused, mediaType) {
+    if (!this.localStream) {
+      return;
+    }
+    let mediaTracks = mediaType === 'audio'
+      ? this.localStream.getAudioTracks() : this.localStream.getVideoTracks();
+    if (mediaTracks.length === 0) {
+      console.warn('No local ', mediaType, 'track available.');
+      return;
+    }
+    for (const i in mediaTracks) {
+      if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
+        mediaTracks[i].enabled = isMuteOrPaused;
+      }
+    }
+  }
 }
 
 export default CsioMediaCtrl;
