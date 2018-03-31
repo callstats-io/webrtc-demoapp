@@ -23,6 +23,7 @@ class CsioRTC {
     // ui related events
     document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
     document.addEventListener(CsioEvents.UIEvent.TOGGLE_MEDIA_STATE, this.onToggleMediaState.bind(this), false);
+    document.addEventListener(CsioEvents.UIEvent.CLOSE_MEETING, this.onCloseMeeting.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, this.onSetLocalMedia.bind(this), false);
     // signaling specific events
     // 1. connection with socket io success
@@ -44,6 +45,13 @@ class CsioRTC {
     const mediaType = e.detail.mediaType;
     const isEnable = e.detail.isEnable;
     this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+  }
+  onCloseMeeting(e) {
+    console.log('came here');
+    this.signaling.stop();
+    for (let userId in Object.keys(this.pcs)) {
+      this.mayBeDisposePC(userId);
+    }
   }
   // when we have local media we are ready to join the room
   onSetLocalMedia(roomName) {
@@ -93,8 +101,8 @@ class CsioRTC {
   }
   mayBeDisposePC(userId) {
     if (this.pcs[userId]) {
-      this.csoiMedia.disposeStream(false, userId);
       this.pcs[userId].close();
+      this.csoiMedia.disposeStream(false, userId);
       delete this.pcs[userId];
     }
   }

@@ -108,7 +108,7 @@ class CsioPeerConnection {
     console.log('ICE connection state:', this.pc.iceConnectionState);
     if (this.pc.iceConnectionState === 'failed' ||
       this.pc.iceConnectionState === 'disconnected') {
-      this.createOffer(true);
+      // this.createOffer(true);
     } else if (this.pc.iceConnectionState === 'completed' ||
       this.pc.iceConnectionState === 'closed') {
       modCommon.triggerEvent('applicationLogEvent',

@@ -32,7 +32,8 @@ const CsioEvents = {
     MEETING_PAGE_LOADED: 'meetingpageloaded',
     VIDEO_FOCUS_CHANGE: 'videofocuschange',
     TOGGLE_MEDIA_STATE: 'togglemediastate',
-    SHARE_MEETING_LINK: 'sharemeetinglink'
+    SHARE_MEETING_LINK: 'sharemeetinglink',
+    CLOSE_MEETING: 'closemeeting'
   }
 };
 const triggerEvent = (name, detail) => {

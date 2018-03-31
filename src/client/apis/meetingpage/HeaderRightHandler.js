@@ -19,6 +19,10 @@ class HeaderRightHandler {
   }
   onClickCloseButton(e) {
     e.preventDefault();
+    triggerEvent(
+      CsioEvents.UIEvent.CLOSE_MEETING,
+      {});
+    window.location.href = location.origin;
   }
 }
 
