@@ -14,6 +14,7 @@ class CsioRTC {
     this.pcConfig = undefined;
     this.roomName = undefined;
     this.pcs = {};
+    this.labels = ['chat'];
     // all objects class
     this.csObject = new callstats();
     this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
@@ -95,6 +96,9 @@ class CsioRTC {
       const iceConfig = this.pcConfig;
       const stream = this.csoiMedia.getStream(true);
       const pc = new CsioPeerConnection(userId, iceConfig, stream);
+      for (const label of this.labels) {
+        pc.createChannel(label);
+      }
       this.csoiMedia.addStream(stream, pc);
       this.pcs[userId] = pc;
     }

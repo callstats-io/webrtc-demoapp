@@ -218,7 +218,9 @@ class CsioPeerConnection {
   }
 
   sendChannelMessage(label, message) {
-    this.datachannels[label].send(message);
+    if (this.datachannels[label]) {
+      this.datachannels[label].send(message);
+    }
   }
 }
 
