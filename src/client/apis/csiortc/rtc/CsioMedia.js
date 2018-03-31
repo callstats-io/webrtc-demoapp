@@ -92,7 +92,7 @@ class CsioMediaCtrl {
     };
     // if from click handler must need a change
     if (from === 'onClickHandler') {
-      detail.media = this.remoteStreams[userId];
+      detail.media = userId === 'local' ? this.localStream : this.remoteStreams[userId];
     } else {
       if (this.remoteStreams[this.previouslySelectedUserId]) {
         detail.media = this.remoteStreams[this.previouslySelectedUserId];
