@@ -7,7 +7,7 @@
 var modCommon = require('../utils/Common');
 
 class CsioPeerConnection {
-  constructor(userId, iceConfig) {
+  constructor(userId, iceConfig, stream) {
     if (!userId || userId === '') {
       console.error('Necessary parameter missing:', userId);
       return;
@@ -254,22 +254,6 @@ class CsioPeerConnection {
 
   sendChannelMessage(label, message) {
     this.datachannels[label].send(message);
-  }
-
-  removeTrackInternals() {
-    this.pc.getSenders().forEach((sender) => {
-      this.pc.removeTrack(sender);
-      console.log(this.userId, 'remove local stream with kind', sender);
-    }, this);
-  }
-
-  addTrackInternals() {
-    window.localStream.getTracks().forEach(function(track) {
-      if (typeof this.pc.addTrack === 'function') {
-        this.pc.addTrack(track, window.localStream);
-        console.log(this.userId, 'added local stream with kind', track.kind);
-      }
-    }, this);
   }
 }
 

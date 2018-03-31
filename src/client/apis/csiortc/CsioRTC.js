@@ -61,7 +61,7 @@ class CsioRTC {
   onUserJoin(e) {
     const userId = e.detail.userId;
     console.log('new user joined.', userId);
-    this.mayBeCreateOffer(userId);
+    this.doOffer(userId);
   }
   onUserLeave(e) {
     const userId = e.detail.userId;
@@ -71,24 +71,19 @@ class CsioRTC {
     const userId = e.detail.userId;
     const json = JSON.parse(e.detail.message);
     if (json.ice) {
-      const pc = this.mayeBeInitializePC(userId);
-      pc.addIceCandidate(json.ice);
+      this.pcs[userId].addIceCandidate(json.ice);
     } else {
-      this.mayBeCreateAnswer(userId, json.offer);
+      this.doAnswer(userId, json.offer);
     }
   }
-  mayeBeInitializePC(userId) {
-    const iceConfig = this.pcConfig;
-    let pc;
-    if (this.pcs[userId]) {
-      pc = this.pcs[userId];
-    } else {
-      pc = new CsioPeerConnection(userId, iceConfig);
-      this.pcs[userId] = pc;
+  mayBeCreatePC(userId) {
+    if (!this.pcs[userId]) {
+      const iceConfig = this.pcConfig;
       const stream = this.csoiMedia.getStream(true);
+      const pc = new CsioPeerConnection(userId, iceConfig, stream);
       this.csoiMedia.addStream(stream, pc);
+      this.pcs[userId] = pc;
     }
-    return pc;
   }
   mayBeDisposePC(userId) {
     if (this.pcs[userId]) {
@@ -97,12 +92,14 @@ class CsioRTC {
       delete this.pcs[userId];
     }
   }
-  mayBeCreateOffer(userId) {
-    const pc = this.mayeBeInitializePC(userId);
+  doOffer(userId) {
+    this.mayBeCreatePC(userId);
+    const pc = this.pcs[userId];
     pc.createOffer();
   }
-  mayBeCreateAnswer(userId, offer) {
-    let pc = this.mayeBeInitializePC(userId);
+  doAnswer(userId, offer) {
+    this.mayBeCreatePC(userId);
+    const pc = this.pcs[userId];
     pc.setRemoteDescription(offer);
   }
   // csio related events, and function

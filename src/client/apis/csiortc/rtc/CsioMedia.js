@@ -42,19 +42,19 @@ class CsioMediaCtrl {
     modCommon.triggerEvent(
       CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
   }
-  addStream(stream, pc) {
+  addStream(stream, ctx) {
     stream.getTracks().forEach(function(mediaTrack) {
-      if (typeof pc.addTrack === 'function') {
-        pc.addTrack(mediaTrack, stream);
+      if (typeof ctx.pc.addTrack === 'function') {
+        ctx.pc.addTrack(mediaTrack, stream);
       }
-    });
+    }, ctx);
   }
-  removeStream(pc, userId) {
-    pc.getSenders().forEach((sender) => {
-      if (typeof pc.removeTrack === 'function') {
-        pc.removeTrack(sender);
+  removeStream(ctx, userId) {
+    ctx.pc.getSenders().forEach(function(sender) {
+      if (typeof ctx.pc.removeTrack === 'function') {
+        ctx.pc.removeTrack(sender);
       }
-    });
+    }, ctx);
     modCommon.triggerEvent(
       CsioEvents.UserEvent.Media.REMOVEREMOTESTREAM,
       {'userId': userId});
@@ -66,7 +66,7 @@ class CsioMediaCtrl {
       return this.remoteStreams[userId];
     }
   }
-  disposeStream(isLocal, userId){
+  disposeStream(isLocal, userId) {
     if (isLocal) {
       this.localStream = null;
     } else {
