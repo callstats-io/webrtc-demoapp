@@ -17,9 +17,12 @@ class Video extends React.Component {
   render() {
     const videoStyle = {
       marginRight: 'auto',
+      marginLeft: 'auto',
       display: 'block',
       maxWidth: '640px',
-      maxHeight: '480px'
+      maxHeight: '340px',
+      webkitTransform: 'scaleX(1.5)',
+      mozTransform: 'scaleX(1.5)'
     };
     return (
       <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)}>
