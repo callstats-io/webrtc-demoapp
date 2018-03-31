@@ -13,7 +13,7 @@ class BrandLeft extends React.Component {
     };
     return (
       <div className="navbar-header" style={navbarHeader}>
-        <a className="navbar-brand" href="#" style={navbarBrannd}>
+        <a className="navbar-brand" style={navbarBrannd}>
           <img alt="Brand" src={'/static/images/brand-logo.png'} style={customStyle}/>
         </a>
       </div>
