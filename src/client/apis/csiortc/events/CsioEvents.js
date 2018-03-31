@@ -25,7 +25,6 @@ const CsioEvents = {
       LOCALMEDIA: 'localmedia',
       REMOTEMEDIA: 'remotemedia',
       ADDREMOTESTREAM: 'addRemoteVideo',
-      REMOVEREMOTESTREAM: 'removeRemoteVideo'
     }
   },
   UIEvent: {

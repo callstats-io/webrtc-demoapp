@@ -55,9 +55,6 @@ class CsioMediaCtrl {
         ctx.pc.removeTrack(sender);
       }
     }, ctx);
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOVEREMOTESTREAM,
-      {'userId': userId});
   }
   getStream(isLocal, userId) {
     if (isLocal) {
@@ -71,6 +68,8 @@ class CsioMediaCtrl {
       this.localStream = null;
     } else {
       delete this.remoteStreams[userId];
+      modCommon.triggerEvent(
+        CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
     }
   }
 }
