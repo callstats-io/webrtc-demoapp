@@ -31,7 +31,8 @@ const CsioEvents = {
     JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick',
     MEETING_PAGE_LOADED: 'meetingpageloaded',
     VIDEO_FOCUS_CHANGE: 'videofocuschange',
-    TOGGLE_MEDIA_STATE: 'togglemediastate'
+    TOGGLE_MEDIA_STATE: 'togglemediastate',
+    SHARE_MEETING_LINK: 'sharemeetinglink'
   }
 };
 const triggerEvent = (name, detail) => {

@@ -2,6 +2,7 @@ import React from 'react';
 
 import HeaderLayout from './header/HeaderLayout';
 import ContentLayout from './content/ContentLayout';
+import ShareLinkPopup from './popup/ShareLinkPopup';
 
 const CsioEvents = require('./../../apis/csiortc/events/CsioEvents').CsioEvents;
 const triggerEvent = require('./../../apis/csiortc/events/CsioEvents').triggerEvent;
@@ -22,6 +23,7 @@ export class AppLayout extends React.Component {
       <div className={'container-fluid'}>
         <HeaderLayout/>
         <ContentLayout/>
+        <ShareLinkPopup/>
       </div>
     );
   }
