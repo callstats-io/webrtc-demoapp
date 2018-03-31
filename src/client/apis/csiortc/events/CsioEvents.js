@@ -18,7 +18,8 @@ const CsioEvents = {
       CONNECT: 'localname',
       USERJOIN: 'userJoin',
       USERLEAVE: 'userLeave',
-      USERMESSAGE: 'userMessage'
+      USERMESSAGE: 'userMessage',
+      SETLOCALMEDIA: 'setlocalmedia'
     },
     Media: {
       LOCALMEDIA: 'localmedia',

@@ -5,4 +5,9 @@ function triggerEvent(name, detail) {
   document.dispatchEvent(newEvent);
 }
 
-export { triggerEvent };
+const csioConfigParams = {
+  disableBeforeUnloadHandler: false,
+  applicationVersion: 'v1.0'
+};
+
+export { triggerEvent, csioConfigParams };

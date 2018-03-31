@@ -2,110 +2,110 @@
 
 import CsioSignalling from './signaling/CsioSignalling';
 import CsioPeerConnection from './rtc/CsioPeerConnection';
+import CsioMedia from './rtc/CsioMedia';
 const CsioEvents = require('./events/CsioEvents').CsioEvents;
-const modCommon = require('./utils/Common');
+const csioConfigParams = require('./utils/Common');
 
 class CsioRTC {
   constructor() {
     console.log('CSIORTC');
     // application scope variable
-    this.localUserId = undefined;
     this.mediaConfig = undefined;
     this.pcConfig = undefined;
     this.roomName = undefined;
-    this.signaling = new CsioSignalling();
-    this.localStream = undefined;
-    this.remoteStreams = {};
     this.pcs = {};
-    // this.csObject = new callstats();
-    // this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
-    // this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
-
+    // all objects class
+    this.csObject = new callstats();
+    this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
+    this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
+    this.signaling = new CsioSignalling();
+    this.csoiMedia = new CsioMedia();
+    // ui related events
+    document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
+    document.addEventListener(CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, this.onSetLocalMedia.bind(this), false);
+    // signaling specific events
+    // 1. connection with socket io success
+    // 2. a new user join to room
+    // 3. a existing user left room
+    // 4. a user send a message in room
     document.addEventListener(CsioEvents.UserEvent.Signaling.CONNECT, this.onConnect.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERJOIN, this.onUserJoin.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERLEAVE, this.onUserLeave.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERMESSAGE, this.onUserMessage.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Media.ADDREMOTESTREAM, this.onAddStream.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Media.REMOVEREMOTESTREAM, this.onRemoveStream.bind(this), false);
+  }
+  onMeetingPageLoaded(e) {
+    const roomName = e.detail.roomName;
+    this.roomName = roomName;
+    // initialize media
+    this.mayBeInitializeMedia();
+  }
+  // when we have local media we are ready to join the room
+  onSetLocalMedia(roomName) {
+    this.signaling.start(roomName);
+  }
+  mayBeInitializeMedia() {
+    const mediaConstrain = this.mediaConfig;
+    const roomName = this.roomName;
+    if (mediaConstrain !== undefined && roomName !== undefined) {
+      this.csoiMedia.getUserMedia(mediaConstrain);
+    }
   }
   onConnect(e) {
     const userId = e.detail.localname;
-    console.log('Initialize callstats', userId);
     const userID = {
       'userName': userId,
       'aliasName': userId
     };
-    const configParams = {
-      disableBeforeUnloadHandler: false,
-      applicationVersion: 'v1.0'
-    };
-    /*this.csObject.initialize('619077833', 'RwAYI/480Qen:zi4TsKz/XW/AfINdX90EyCwSmlYqN0HKt0Lb6uFG1D4=',
-      userID, this.csInitCallback, this.csStatsCallback, configParams);*/
+    this.initializeCsio(userID);
   }
   onUserJoin(e) {
     const userId = e.detail.userId;
-    const iceConfig = this.pcConfig;
-    console.log('new user joined.', userId, iceConfig);
-    const pc = new CsioPeerConnection(
-      userId,
-      iceConfig,
-      this.localStream);
-    this.pcs[userId] = pc;
-    pc.createOffer();
+    console.log('new user joined.', userId);
+    this.mayBeCreateOffer(userId);
   }
   onUserLeave(e) {
     const userId = e.detail.userId;
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOVEREMOTESTREAM,
-      {'userId': userId});
-    if (this.pcs[userId]) {
-      this.pcs[userId].close();
-      delete this.pcs[userId];
-    }
+    this.mayBeDisposePC(userId);
   }
   onUserMessage(e) {
     const userId = e.detail.userId;
-    const message = e.detail.message;
-    console.warn('->', userId, message);
+    const json = JSON.parse(e.detail.message);
+    if (json.ice) {
+      const pc = this.mayeBeInitializePC(userId);
+      pc.addIceCandidate(json.ice);
+    } else {
+      this.mayBeCreateAnswer(userId, json.offer);
+    }
+  }
+  mayeBeInitializePC(userId) {
+    const iceConfig = this.pcConfig;
     let pc;
     if (this.pcs[userId]) {
       pc = this.pcs[userId];
     } else {
-      pc = new CsioPeerConnection(
-        userId,
-        this.iceConfig, this.localStream);
+      pc = new CsioPeerConnection(userId, iceConfig);
       this.pcs[userId] = pc;
+      const stream = this.csoiMedia.getStream(true);
+      this.csoiMedia.addStream(stream, pc);
     }
-
-    let json = JSON.parse(message);
-    if (json.ice) {
-      pc.addIceCandidate(json.ice);
+    return pc;
+  }
+  mayBeDisposePC(userId) {
+    if (this.pcs[userId]) {
+      this.csoiMedia.disposeStream(false, userId);
+      this.pcs[userId].close();
+      delete this.pcs[userId];
     }
-    if (json.offer) {
-      pc.setRemoteDescription(json.offer);
-    }
   }
-  onAddStream(e) {
-    const streams = e.detail.streams;
-    const userId = e.detail.userId;
-    this.remoteStreams[userId] = streams[0];
-    console.log('->','remote streams',this.remoteStreams);
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
+  mayBeCreateOffer(userId) {
+    const pc = this.mayeBeInitializePC(userId);
+    pc.createOffer();
   }
-  onRemoveStream(e) {
-    const userId = e.detail.userId;
-    delete this.remoteStreams[userId];
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOTEMEDIA, {'media': this.remoteStreams});
+  mayBeCreateAnswer(userId, offer) {
+    let pc = this.mayeBeInitializePC(userId);
+    pc.setRemoteDescription(offer);
   }
-  sayHello() {
-    console.log('say hello');
-  }
-  // signaling related call
-  joinRoom(roomName) {
-    this.signaling.start(roomName);
-  }
+  // csio related events, and function
   // CSIO object callback
   defaultConfigCallback(config) {
     console.log('ConfigService, default config:', config);
@@ -115,20 +115,7 @@ class CsioRTC {
     if (config.peerConnection) {
       this.pcConfig = config.peerConnection;
     }
-    const self = this;
-    const roomName = this.roomName;
-    if (roomName !== undefined) {
-      this.initializeLocalMedia(config.media).then(
-        (stream) => {
-          window.csioRTC.setLocalStream(stream);
-          if (roomName !== undefined) {
-            self.joinRoom(roomName);
-          }
-        },
-        (err) => {
-          console.error(err);
-        });
-    }
+    this.mayBeInitializeMedia();
   }
   recommendedConfigCallback(config) {
     console.log('ConfigService, recommended config:', config);
@@ -139,40 +126,17 @@ class CsioRTC {
       this.pcConfig = config.peerConnection;
     }
   }
+  initializeCsio(userID) {
+    this.csObject.initialize('619077833',
+      'RwAYI/480Qen:zi4TsKz/XW/AfINdX90EyCwSmlYqN0HKt0Lb6uFG1D4=',
+      userID, this.csInitCallback, this.csStatsCallback, csioConfigParams);
+  }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
   }
   csStatsCallback(stats) {
     console.log('stats callback');
   };
-  initializeLocalMedia(constraints) {
-    return new Promise((resolve, reject) => {
-      navigator.mediaDevices.getUserMedia(constraints)
-        .then(function(stream) {
-          modCommon.triggerEvent(
-            CsioEvents.UserEvent.Media.LOCALMEDIA, {'media': stream});
-          resolve(stream);
-        },
-        function(e) {
-          reject(e);
-        });
-    });
-  }
-  setLocalStream(stream) {
-    this.localStream = stream;
-  }
-  setRoomName(roomName) {
-    this.roomName = roomName;
-  }
-  getRoomName() {
-    return this.roomName;
-  }
-  getMediaConstrain() {
-    return this.mediaConfig;
-  }
-  getStream() {
-    return this.localStream;
-  }
 }
 
 export default CsioRTC;

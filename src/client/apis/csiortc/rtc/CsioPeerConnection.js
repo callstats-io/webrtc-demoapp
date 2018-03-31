@@ -7,47 +7,20 @@
 var modCommon = require('../utils/Common');
 
 class CsioPeerConnection {
-  constructor(userId, iceConfig, localStream) {
-    if (!localStream || !userId || userId === '') {
-      console.error('Necessary parameter missing:',
-        localStream, userId);
+  constructor(userId, iceConfig) {
+    if (!userId || userId === '') {
+      console.error('Necessary parameter missing:', userId);
       return;
     }
     this.userId = userId;
 
     // TODO is there any error when the TURN servers are not responding o.s.?
     this.pc = new RTCPeerConnection(iceConfig);
-    modCommon.triggerEvent('newPeerConnection',
-      {'userId': userId, 'pc': this.pc});
-
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc, 'eventLog': 'PeerConnection created for ' + this.userId});
-
     this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
-
     console.log(userId, 'new peer connection');
     this.pc.onicecandidate = this.onIceCandidate.bind(this);
-
-    this.pc.oniceconnectionstatechange = function(e) {
-      console.log('ICE connection state:', this.pc.iceConnectionState);
-      if (this.pc.iceConnectionState === 'failed' ||
-        this.pc.iceConnectionState === 'disconnected') {
-        this.createOffer(true);
-      } else if (this.pc.iceConnectionState === 'completed' ||
-        this.pc.iceConnectionState === 'closed') {
-        modCommon.triggerEvent('applicationLogEvent',
-          {'pc': this.pc,
-            'eventLog': 'ICE connection ' +
-            this.pc.iceConnectionState + ' for ' + this.userId});
-      }
-    }.bind(this);
-    localStream.getTracks().forEach(function(track) {
-      if (typeof this.pc.addTrack === 'function') {
-        this.pc.addTrack(track, localStream);
-        console.log(userId, 'added local stream with kind', track.kind);
-      }
-    }, this);
+    this.pc.oniceconnectionstatechange = this.oniceconnectionstatechange.bind(this);
     this.pc.ontrack = this.onTrack.bind(this);
   }
 
@@ -166,7 +139,19 @@ class CsioPeerConnection {
               'error': e});
         }.bind(this));
   }
-
+  oniceconnectionstatechange(e) {
+    console.log('ICE connection state:', this.pc.iceConnectionState);
+    if (this.pc.iceConnectionState === 'failed' ||
+      this.pc.iceConnectionState === 'disconnected') {
+      this.createOffer(true);
+    } else if (this.pc.iceConnectionState === 'completed' ||
+      this.pc.iceConnectionState === 'closed') {
+      modCommon.triggerEvent('applicationLogEvent',
+        {'pc': this.pc,
+          'eventLog': 'ICE connection ' +
+          this.pc.iceConnectionState + ' for ' + this.userId});
+    }
+  }
   // callback functions
   onTrack(e) {
     console.log(this.userId, 'received remote stream');

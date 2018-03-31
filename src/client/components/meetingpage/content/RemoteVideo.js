@@ -9,17 +9,20 @@ class RemoteVideo extends React.Component {
     this.state = {
       remoteVideos: {}
     };
-    document.addEventListener(CsioEvents.UserEvent.Media.REMOTEMEDIA, this.onRemoteVideos.bind(this), false);
+    document.addEventListener(
+      CsioEvents.UserEvent.Media.REMOTEMEDIA,
+      this.onRemoteVideos.bind(this),
+      false);
   }
   onRemoteVideos(e) {
     const media = e.detail.media;
     this.setState({
       remoteVideos: media
     });
+    console.log('got remote media', media);
   };
   render() {
     const remoteVideos = this.state.remoteVideos;
-    console.log('->', 'need update', remoteVideos);
     const listItems = Object.entries(remoteVideos).map(([key, value]) =>
       <div className="col-xs-3" key={key}>
         <div align="center" className="embed-responsive embed-responsive-16by9" key={{key}}>
