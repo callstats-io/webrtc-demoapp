@@ -1,0 +1,28 @@
+{
+  "name": "Callstats.io WebRTC Screensharing",
+  "author": "Callstats.io",
+  "version": "0.0.1",
+  "manifest_version" : 2,
+  "minimum_chrome_version": "51",
+  "description" : "An utility extension for callstats.io to support screensharing",
+  "homepage_url": "https://github.com/callstats-io/webrtc-demoapp",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [{
+    "js": ["content.js"],
+    "all_frames": true,
+    "run_at": "document_end",
+    "matches": ["https://localhost:4040/*","https://api.callstats.io/*","https://localhost:3001/*"]
+  }],
+  "icons" : {
+    "48" : "logo_48_48.png"
+  },
+  "permissions": [
+    "desktopCapture"
+  ],
+  "web_accessible_resources": [
+    "logo_48_48.png"
+  ]
+}
