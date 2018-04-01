@@ -2,6 +2,7 @@
 import React from 'react';
 import Video from './Video';
 import ContentRightHandler from './../../../apis/meetingpage/ContentRightHandler';
+import ChatLayout from './ChatWindow';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 class ContentRight extends React.Component {
   constructor(props) {
@@ -79,7 +80,7 @@ class ContentRight extends React.Component {
           <hr />
         </div>
         <div className={'row'}>
-          Chat will go here
+          <ChatLayout/>
         </div>
       </div>
     );
