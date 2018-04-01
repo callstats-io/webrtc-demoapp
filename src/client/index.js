@@ -16,5 +16,6 @@ import CsioRTC from './apis/csiortc/CsioRTC';
 if (!window.Intl) {
   window.Intl = intl;
 }
+
 const csioRTC = new CsioRTC();
 ReactDOM.render(<App />, document.getElementById('app'));

@@ -63,7 +63,11 @@ module.exports = {
       filename: '[name].css',
       disable: IS_DEV
     }),
-    new webpack.EnvironmentPlugin(['NODE_ENV'])
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
+    new webpack.DefinePlugin({
+      __appid__: JSON.stringify(process.env.APPID || ''),
+      __appsecret__: JSON.stringify(process.env.APPSECRET || '')
+    })
   ],
   resolve: {
     modules: ['node_modules', join('src', 'client')]

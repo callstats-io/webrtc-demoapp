@@ -151,8 +151,8 @@ class CsioRTC {
     }
   }
   initializeCsio(userID) {
-    this.csObject.initialize('619077833',
-      'RwAYI/480Qen:zi4TsKz/XW/AfINdX90EyCwSmlYqN0HKt0Lb6uFG1D4=',
+    this.csObject.initialize(__appid__,
+      __appsecret__,
       userID, this.csInitCallback, this.csStatsCallback, csioConfigParams);
   }
   csInitCallback(csError, csErrMsg) {
