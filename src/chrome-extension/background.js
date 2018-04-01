@@ -1,17 +1,17 @@
 'use strict';
 
-chrome.runtime.onConnect.addListener( (port) => {
+chrome.runtime.onConnect.addListener((port) => {
   const onScreenSourceID = (sourceId) => {
-    if(!sourceId || !sourceId.length) {
+    if (!sourceId || !sourceId.length) {
       port.postMessage('PermissionDeniedError');
     } else {
-      port.postMessage( {'csioSourceId': sourceId,
-        'evt': 'onCsioSourceId'} );
+      port.postMessage({'csioSourceId': sourceId,
+        'evt': 'onCsioSourceId'});
     }
   };
 
   const onCSIORequest = (evt) => {
-    if( evt !== 'csioRequestScreenSourceId' ) {
+    if (evt !== 'csioRequestScreenSourceId') {
       return;
     }
     chrome.desktopCapture.chooseDesktopMedia(
@@ -20,5 +20,5 @@ chrome.runtime.onConnect.addListener( (port) => {
       onScreenSourceID
     );
   };
-  port.onMessage.addListener(onCSIORequest );
+  port.onMessage.addListener(onCSIORequest);
 });
