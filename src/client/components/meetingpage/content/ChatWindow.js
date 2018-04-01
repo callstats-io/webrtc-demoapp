@@ -1,13 +1,16 @@
 import React from 'react';
+import {CsioEvents} from '../../../apis/csiortc/events/CsioEvents';
+import ChatWindowHandler from '../../../apis/meetingpage/ChatWindowHandler';
 class ChatLayout extends React.Component {
   constructor(props) {
     super();
-    this.state = {
-      inputText: ''
-    };
+    this.chatLayoutHandler = new ChatWindowHandler();
+    this.state = this.chatLayoutHandler.getState();
+    document.addEventListener(
+      CsioEvents.RTCEvent.CHANNELMESSAGE,
+      this.chatLayoutHandler.onChannelMessage.bind(this), false);
   }
-  onInputChange() {}
-  onSendClick() {}
+
   render() {
     var left = '0px';
     if (this.props.show) {
@@ -22,31 +25,19 @@ class ChatLayout extends React.Component {
     return (
       <div className="row-fluid"
         style={{transform: 'translateX(' + left + ')'}}>
-        <textarea className="form-control" readOnly='true'
+        <textarea id='chatBox' className="form-control" readOnly='true'
           style={slideoutTextarea}
-          value={this.props.chatText}/>
+          value={this.state.chatText}
+          ref={(el) => { this.messagesContainer = el; } }/>
         <div>
           <input id="chatInput" style={{width: '80%'}} type="text"
             value={this.state.inputText}
-            onChange={this.onInputChange.bind(this)}/>
+            onChange={this.chatLayoutHandler.onInputChange.bind(this)}/>
           <button id="chatButton"
-            onClick={this.onSendClick.bind(this)}>Send</button>
+            onClick={this.chatLayoutHandler.onSendClick.bind(this)}>Send</button>
         </div>
       </div>
     );
-  }
-
-  onInputChange(e) {
-    this.setState({
-      inputText: e.target.value
-    });
-  }
-  onSendClick() {
-    var msg = this.state.inputText;
-    this.props.onNewMessage(msg);
-    this.setState({
-      inputText: ''
-    });
   }
 }
 

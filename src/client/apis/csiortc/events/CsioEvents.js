@@ -34,6 +34,9 @@ const CsioEvents = {
     TOGGLE_MEDIA_STATE: 'togglemediastate',
     SHARE_MEETING_LINK: 'sharemeetinglink',
     CLOSE_MEETING: 'closemeeting'
+  },
+  RTCEvent: {
+    CHANNELMESSAGE: 'channelMessage'
   }
 };
 const triggerEvent = (name, detail) => {
