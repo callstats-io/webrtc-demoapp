@@ -35,6 +35,8 @@ class CsioRTC {
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERJOIN, this.onUserJoin.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERLEAVE, this.onUserLeave.bind(this), false);
     document.addEventListener(CsioEvents.UserEvent.Signaling.USERMESSAGE, this.onUserMessage.bind(this), false);
+    // webrtc events
+    document.addEventListener(CsioEvents.RTCEvent.SENDMESSAGE, this.onSendDCMessage.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     const roomName = e.detail.roomName;
@@ -89,6 +91,13 @@ class CsioRTC {
       this.pcs[userId].addIceCandidate(json.ice);
     } else {
       this.doAnswer(userId, json.offer);
+    }
+  }
+  onSendDCMessage(e) {
+    const label = e.detail.label;
+    const message = e.detail.message;
+    for (let i in this.pcs) {
+      this.pcs[i].sendChannelMessage(label, message);
     }
   }
   mayBeCreatePC(userId) {

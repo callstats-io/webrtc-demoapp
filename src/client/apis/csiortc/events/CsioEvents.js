@@ -36,7 +36,8 @@ const CsioEvents = {
     CLOSE_MEETING: 'closemeeting'
   },
   RTCEvent: {
-    CHANNELMESSAGE: 'channelMessage'
+    CHANNELMESSAGE: 'channelMessage',
+    SENDMESSAGE: 'sendDataChannelMessage'
   }
 };
 const triggerEvent = (name, detail) => {

@@ -1,5 +1,5 @@
-import * as modCommon from '../csiortc/events/CsioEvents';
-import ReactDOM from 'react-dom';
+import {CsioEvents, triggerEvent} from '../csiortc/events/CsioEvents';
+
 
 class ChatWindowHandler {
   constructor() {
@@ -28,7 +28,9 @@ class ChatWindowHandler {
     this.setState({
       inputText: ''
     });
-    modCommon.triggerEvent('channelMessage',
+    triggerEvent(CsioEvents.RTCEvent.CHANNELMESSAGE,
+      {'label': label, 'userId': userId, 'message': message});
+    triggerEvent(CsioEvents.RTCEvent.SENDMESSAGE,
       {'label': label, 'userId': userId, 'message': message});
   }
   onChannelMessage(e) {
