@@ -121,7 +121,7 @@ class CsioMediaCtrl {
     }
     this.previouslySelectedUserId = userId;
     TriggerEvent(
-      CsioEvents.CsioMediaCtrl.ON_VIDEO_FOCUS_CHANGE, detail);
+      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE, detail);
   }
 }
 

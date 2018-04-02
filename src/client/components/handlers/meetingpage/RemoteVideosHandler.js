@@ -24,7 +24,7 @@ class RemoteVideosHandler {
       userId: keys.length > 0 ? keys[0] : 'local'
     };
     TriggerEvent(
-      CsioEvents.CsioMediaCtrl.ON_VIDEO_FOCUS_CHANGE, detail);
+      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE, detail);
   }
 }
 

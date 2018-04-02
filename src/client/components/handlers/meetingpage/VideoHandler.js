@@ -1,6 +1,5 @@
 'use strict';
-const triggerEvent = require('./../../apis/csiortc/events/CsioEvents').triggerEvent;
-const CsioEvents = require('./../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class VideoHandler {
   constructor(name) {
@@ -30,8 +29,8 @@ class VideoHandler {
       userId: userId,
       from: 'onClickHandler'
     };
-    triggerEvent(
-      CsioEvents.UIEvent.VIDEO_FOCUS_CHANGE,
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE,
       detail);
   }
 }

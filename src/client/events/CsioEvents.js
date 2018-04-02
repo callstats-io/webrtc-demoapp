@@ -18,7 +18,7 @@ const CsioEvents = {
     ON_LOCAL_USER_MEDIA: 'csiomediactrl.onLocalUserMedia',
     ON_REMOTE_MEDIA: 'csiomediactrl.onRemoteMedia',
     ON_ADD_REMOVE_REMOTESTREAM: 'csiomediactrl.addRemoveRemoteVideo',
-    ON_VIDEO_FOCUS_CHANGE: 'csiomediactrl.onVideoFocusChanged'
+    VIDEO_FOCUS_CHANGE: 'csiomediactrl.videoFocusChanged'
   },
   CsioPeerConnection: {
     ON_PEERCONNECTION_CLOSED: 'csiopeerconnection.onPeerConnectionClosed',
