@@ -1,5 +1,5 @@
 import React from 'react';
-const modCommon = require('./../../../apis/csiortc/utils/Common');
+const modCommon = require('../../../apis/utils/Common');
 const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class JoinMeeting extends React.Component {

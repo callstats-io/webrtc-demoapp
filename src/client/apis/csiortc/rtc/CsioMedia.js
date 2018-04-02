@@ -1,7 +1,6 @@
 'use strict';
 
-const modCommon = require('../utils/Common');
-const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class CsioMediaCtrl {
   constructor() {
@@ -9,10 +8,6 @@ class CsioMediaCtrl {
     this.remoteStreams = {};
     this.localStream = {};
     // event listeners
-    document.addEventListener(
-      CsioEvents.UserEvent.Media.LOCALMEDIA,
-      this.onLocalStream.bind(this),
-      false);
     document.addEventListener(
       CsioEvents.UserEvent.Media.ADDREMOTESTREAM,
       this.onRemoteStream.bind(this), false);
@@ -23,34 +18,32 @@ class CsioMediaCtrl {
       false);
   }
   getUserMedia(constraints) {
+    const self = this;
     navigator.mediaDevices.getUserMedia(constraints)
       .then(function(stream) {
         const detail = {
           media: stream,
           from: 'getUserMedia'
         };
-        modCommon.triggerEvent(
-          CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
+        self.localStream = stream;
+        TriggerEvent(
+          CsioEvents.CsioMediaCtrl.ON_USER_MEDIA, detail);
       },
       function(e) {
         console.error(e);
+        self.localStream = null;
       });
-  }
-  onLocalStream(e) {
-    const stream = e.detail.media;
-    const from = e.detail.from;
-    if (from === 'getUserMedia') {
-      this.localStream = stream;
-      modCommon.triggerEvent(
-        CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, {});
-    }
   }
   onRemoteStream(e) {
     const streams = e.detail.streams;
     const userId = e.detail.userId;
     this.remoteStreams[userId] = streams[0];
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.REMOTEMEDIA, {media: this.remoteStreams, userId: userId});
+    const detail = {
+      media: this.remoteStreams,
+      userId: userId
+    };
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM, detail);
   }
   addStream(stream, ctx) {
     stream.getTracks().forEach(function(mediaTrack) {
@@ -73,14 +66,26 @@ class CsioMediaCtrl {
       return this.remoteStreams[userId];
     }
   }
-  disposeStream(isLocal, userId) {
-    if (isLocal) {
+  disposeLocalStream(isLocal, userId) {
+    if (this.localStream) {
+      for (const at in this.localStream.getTracks()) {
+        if (typeof this.localStream.getTrack === 'function') {
+          if (this.localStream.getTracks()[at]) {
+            this.localStream.getTracks()[at].stop();
+          }
+        }
+      }
       this.localStream = null;
-    } else {
-      delete this.remoteStreams[userId];
-      modCommon.triggerEvent(
-        CsioEvents.UserEvent.Media.REMOTEMEDIA, {media: this.remoteStreams, userId: userId});
     }
+  }
+  disposeRemoteStream(userId) {
+    delete this.remoteStreams[userId];
+    const detail = {
+      media: this.remoteStreams,
+      userId: userId
+    };
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM, detail);
   }
   // UI related stream change handler
   onVideoFocusChanged(e) {
@@ -101,8 +106,8 @@ class CsioMediaCtrl {
       }
     }
     this.previouslySelectedUserId = userId;
-    modCommon.triggerEvent(
-      CsioEvents.UserEvent.Media.LOCALMEDIA, detail);
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.ON_VIDEO_FOCUS_CHANGE, detail);
   }
   // toggle media states
   toggleMediaStates(isMuteOrPaused, mediaType) {

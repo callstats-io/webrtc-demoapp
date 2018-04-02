@@ -4,7 +4,7 @@ import CsioSignalling from './signaling/CsioSignalling';
 import CsioPeerConnection from './rtc/CsioPeerConnection';
 import CsioMedia from './rtc/CsioMedia';
 const CsioEvents = require('./events/CsioEvents').CsioEvents;
-const csioConfigParams = require('./utils/Common');
+const csioConfigParams = require('../utils/Common');
 
 class CsioRTC {
   constructor() {

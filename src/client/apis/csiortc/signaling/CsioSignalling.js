@@ -5,18 +5,16 @@
 
 'use strict';
 import io from 'socket.io-client';
-const modCommon = require('../utils/Common');
-const CsioEvents = require('../events/CsioEvents').CsioEvents;
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class CsioSignalling {
   constructor() {
     this.socket = null;
     document.addEventListener(
-      CsioEvents.SocketIOEvents.UserEvent.SENDMESSAGE,
-      function(e) {
+      CsioEvents.CSIOSignaling.SENDMESSAGE,
+      (e) => {
         this.send(e.detail.userId, e.detail.message);
-      }.bind(this),
-      false);
+      }, false);
 
     /**
      * Open connection and set hooks for users joining,
@@ -24,31 +22,47 @@ class CsioSignalling {
      */
     this.socket = io.connect();
     this.socket.on(
-      CsioEvents.SocketIOEvents.CONNECT, function(data) {
-        modCommon.triggerEvent(
-          CsioEvents.UserEvent.Signaling.CONNECT, {'localname': this.id});
+      CsioEvents.CSIOSignaling.CONNECT, function(data) {
+        const detail = {
+          localName: this.id,
+          from: 'onSocketConnect'
+        };
+        TriggerEvent(
+          CsioEvents.CSIOSignaling.ON_CONNECT, detail);
       });
 
     // hear from others
     this.socket.on(
-      CsioEvents.SocketIOEvents.JOIN, function(userId) {
-        console.log(userId, 'user joining');
-        modCommon.triggerEvent(
-          CsioEvents.UserEvent.Signaling.USERJOIN, {'userId': userId});
+      CsioEvents.CSIOSignaling.JOIN, function(userId) {
+        console.log(userId, 'user joined');
+        const detail = {
+          userId: this.userId,
+          from: 'onSocketJoin'
+        };
+        TriggerEvent.triggerEvent(
+          CsioEvents.CSIOSignaling.ON_JOIN, detail);
       });
 
     this.socket.on(
-      CsioEvents.SocketIOEvents.LEAVE, function(userId) {
+      CsioEvents.CSIOSignaling.LEAVE, function(userId) {
         console.log(userId, 'user leaving');
-        modCommon.triggerEvent(
-          CsioEvents.UserEvent.Signaling.USERLEAVE, {'userId': userId});
+        const detail = {
+          userId: userId,
+          from: 'onSocketLeave'
+        };
+        TriggerEvent.triggerEvent(
+          CsioEvents.CSIOSignaling.ON_LEAVE, detail);
       });
 
     this.socket.on(
-      CsioEvents.SocketIOEvents.MESSAGE, function(userId, message) {
-        modCommon.triggerEvent(
-          CsioEvents.UserEvent.Signaling.USERMESSAGE,
-          {'userId': userId, 'message': message});
+      CsioEvents.CSIOSignaling.MESSAGE, function(userId, message) {
+        const detail = {
+          userId: userId,
+          message: message,
+          from: 'onSocketMessage'
+        };
+        TriggerEvent.triggerEvent(
+          CsioEvents.CSIOSignaling.ON_MESSAGE, detail);
       });
   }
 
@@ -56,7 +70,7 @@ class CsioSignalling {
     // annouce your presence
     console.log('Joining', room);
     this.socket.emit(
-      CsioEvents.SocketIOEvents.UserEvent.JOIN, room);
+      CsioEvents.CSIOSignaling.JOIN, room);
   }
 
   /**
@@ -64,7 +78,7 @@ class CsioSignalling {
    */
   stop() {
     this.socket.emit(
-      CsioEvents.SocketIOEvents.UserEvent.LEAVE);
+      CsioEvents.CSIOSignaling.LEAVE);
   }
 
   /**
@@ -72,7 +86,7 @@ class CsioSignalling {
    */
   send(to, msg) {
     this.socket.emit(
-      CsioEvents.SocketIOEvents.UserEvent.MESSAGE, to, msg);
+      CsioEvents.CSIOSignaling.MESSAGE, to, msg);
   }
 
   /**
@@ -80,7 +94,7 @@ class CsioSignalling {
    */
   generateToken(userId, callback) {
     this.socket.emit(
-      CsioEvents.SocketIOEvents.UserEvent.GENERATETOKEN, userId, callback);
+      CsioEvents.CSIOSignaling.GENERATE_TOKEN, userId, callback);
   }
 }
 

@@ -4,7 +4,7 @@
 
 'use strict';
 
-var modCommon = require('../utils/Common');
+var modCommon = require('../../utils/Common');
 
 class CsioPeerConnection {
   constructor(userId, iceConfig, stream) {
