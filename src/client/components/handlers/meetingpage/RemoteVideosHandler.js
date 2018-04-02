@@ -1,6 +1,6 @@
 'use strict';
-const triggerEvent = require('./../../apis/csiortc/events/CsioEvents').triggerEvent;
-const CsioEvents = require('./../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
+
 class RemoteVideosHandler {
   constructor() {
     this.remoteVideos = {};
@@ -21,12 +21,10 @@ class RemoteVideosHandler {
     // may be we want to change video focus
     const keys = Object.keys(media || {});
     const detail = {
-      userId: keys.length > 0 ? keys[0] : 'local',
-      from: 'onRemoteVideos'
+      userId: keys.length > 0 ? keys[0] : 'local'
     };
-    triggerEvent(
-      CsioEvents.UIEvent.VIDEO_FOCUS_CHANGE,
-      detail);
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.ON_VIDEO_FOCUS_CHANGE, detail);
   }
 }
 

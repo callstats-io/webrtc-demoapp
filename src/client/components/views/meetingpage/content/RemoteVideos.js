@@ -2,7 +2,7 @@
 import React from 'react';
 import Video from './Video';
 import RemoteVideosHandler from '../../../handlers/meetingpage/RemoteVideosHandler';
-const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents} from '../../../../events/CsioEvents';
 
 class RemoteVideo extends React.Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class RemoteVideo extends React.Component {
     this.remoteVideosHandler = new RemoteVideosHandler();
     this.state = this.remoteVideosHandler.getState();
     document.addEventListener(
-      CsioEvents.UserEvent.Media.REMOTEMEDIA,
+      CsioEvents.CsioMediaCtrl.ON_REMOTE_MEDIA,
       this.remoteVideosHandler.onRemoteVideos.bind(this),
       false);
   }
