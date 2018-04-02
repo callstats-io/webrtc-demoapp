@@ -30,6 +30,10 @@ const CsioEvents = {
   },
   LANDING_PAGE: {
     ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'
+  },
+  MEETING_PAGE: {
+    ON_MEETING_PAGE_LOADED: 'meetingpage.onmeetingpageloaded',
+    ON_SHARE_MEETING_LINK: 'meetingpage.onsharemeetinglink'
   }
 };
 

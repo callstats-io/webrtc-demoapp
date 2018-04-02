@@ -13,7 +13,6 @@ class ShareLinkPopupHandler {
   }
   onShareButtonClick(e) {
     const meetingRoomURL = e.detail.meetingRoomURL;
-    console.log('->',meetingRoomURL);
     this.setState({
       meetingRoomURL: meetingRoomURL,
       showModal: 'block'

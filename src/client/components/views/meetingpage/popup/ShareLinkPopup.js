@@ -1,15 +1,15 @@
 'use strict';
 import React from 'react';
 import ShareLinkPopupHandler from '../../../handlers/meetingpage/ShareLinkPopupHandler';
-const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents} from '../../../../events/CsioEvents';
 
-class JoinRoomPopup extends React.Component {
+class ShareLinkPopup extends React.Component {
   constructor(props) {
     super(props);
     this.shareLinkPopupHandler = new ShareLinkPopupHandler();
     this.state = this.shareLinkPopupHandler.getState();
     document.addEventListener(
-      CsioEvents.UIEvent.SHARE_MEETING_LINK,
+      CsioEvents.MEETING_PAGE.ON_SHARE_MEETING_LINK,
       this.shareLinkPopupHandler.onShareButtonClick.bind(this),
       false);
   }
@@ -42,4 +42,4 @@ class JoinRoomPopup extends React.Component {
   }
 }
 
-export default JoinRoomPopup;
+export default ShareLinkPopup;
