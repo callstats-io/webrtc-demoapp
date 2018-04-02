@@ -1,7 +1,7 @@
 'use strict';
-import {CsioEvents, triggerEvent} from '../csiortc/events/CsioEvents';
+import nameGenerator from 'docker-names';
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
-const nameGenerator = require('docker-names');
 class ContentRightHandler {
   constructor() {
     this.mediaStream = null;
@@ -21,12 +21,9 @@ class ContentRightHandler {
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;
-    const from = e.detail.from;
-    if (from === 'getUserMedia') {
-      this.setState({
-        media: media
-      });
-    }
+    this.setState({
+      media: media
+    });
   }
   handleInputChange(e) {
     const userName = e.target.value;
@@ -45,9 +42,8 @@ class ContentRightHandler {
       isEnable: !audioMuted
     };
     console.log(detail);
-    triggerEvent(
-      CsioEvents.UIEvent.TOGGLE_MEDIA_STATE,
-      detail);
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
   onVideoToggle(e) {
     e.preventDefault();
@@ -59,9 +55,8 @@ class ContentRightHandler {
       mediaType: 'video',
       isEnable: !videoMuted
     };
-    triggerEvent(
-      CsioEvents.UIEvent.TOGGLE_MEDIA_STATE,
-      detail);
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
   onScreenShareToggle(e) {
     e.preventDefault();
@@ -73,9 +68,8 @@ class ContentRightHandler {
       mediaType: 'screen',
       isEnable: screenShared
     };
-    triggerEvent(
-      CsioEvents.UIEvent.TOGGLE_MEDIA_STATE,
-      detail);
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
 }
 

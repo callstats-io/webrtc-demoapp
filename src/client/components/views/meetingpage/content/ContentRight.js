@@ -1,16 +1,17 @@
 'use strict';
 import React from 'react';
 import Video from './Video';
-import ContentRightHandler from '../../../handlers/meetingpage/ContentRightHandler';
 import ChatLayout from './ChatWindow';
-const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import ContentRightHandler from '../../../handlers/meetingpage/ContentRightHandler';
+import {CsioEvents} from '../../../../events/CsioEvents';
+
 class ContentRight extends React.Component {
   constructor(props) {
     super(props);
     this.contentRightHandler = new ContentRightHandler();
     this.state = this.contentRightHandler.getState();
     document.addEventListener(
-      CsioEvents.UserEvent.Media.LOCALMEDIA,
+      CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.contentRightHandler.onLocalVideoStream.bind(this),
       false);
   }
@@ -60,7 +61,7 @@ class ContentRight extends React.Component {
                 </a>
               </div>
               <div className={'col-xs-4'}>
-                {/*Todo Currently disabled*/}
+                {/* Todo Currently disabled */}
                 <a>
                   <span className="glyphicon glyphicon-eye-open" aria-hidden="true" style={{
                     fontSize: '22px',

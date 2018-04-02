@@ -35,7 +35,8 @@ const CsioEvents = {
   MEETING_PAGE: {
     ON_MEETING_PAGE_LOADED: 'meetingpage.onmeetingpageloaded',
     ON_SHARE_MEETING_LINK: 'meetingpage.onsharemeetinglink',
-    ON_MEETING_CLOSE_CLICKED: 'meetingpage.onmeetingcloseclicked'
+    ON_MEETING_CLOSE_CLICKED: 'meetingpage.onmeetingcloseclicked',
+    ON_TOGGLE_MEDIA_STATE: 'meetingpage.ontogglemediastate'
   }
 };
 
