@@ -23,7 +23,11 @@ const CsioEvents = {
   },
   CsioPeerConnection: {
     ON_PEERCONNECTION_CLOSED: 'csiopeerconnection.onPeerConnectionClosed',
-    ON_WEBRTC_ERROR: 'csiopeerconnection.onWebrtcError'
+    ON_WEBRTC_ERROR: 'csiopeerconnection.onWebrtcError',
+    ON_REMOTE_STREAM: 'csiopeerconnection.onRemoteStream',
+    ON_WERTC_ERROR: 'csiopeerconnection.webrtcError',
+    ON_SEND_MESSAGE: 'csiopeerconnection.sendMessage',
+    ON_CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
   },
   SocketIOEvents: {
     CONNECT: 'connect',

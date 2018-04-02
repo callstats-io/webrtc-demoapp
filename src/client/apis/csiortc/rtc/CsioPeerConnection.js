@@ -4,7 +4,7 @@
 
 'use strict';
 
-var modCommon = require('../../utils/Common');
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class CsioPeerConnection {
   constructor(userId, iceConfig, stream) {
@@ -30,8 +30,11 @@ class CsioPeerConnection {
       this.datachannels[label].close();
     }
     this.pc.close();
-    modCommon.triggerEvent('closePeerConnection',
-      {'userId': this.userId, 'pc': this.pc});
+    const detail = {
+      userId: this.userId,
+      pc: this.pc
+    };
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CLOSED, detail);
   }
 
   addIceCandidate(ic) {
@@ -63,7 +66,7 @@ class CsioPeerConnection {
   }
 
   setRemoteDescription(offer) {
-    var l = new RTCSessionDescription(offer);
+    const l = new RTCSessionDescription(offer);
     this.pc.setRemoteDescription(l)
       .then(
         // setRemoteDescription success
@@ -78,24 +81,14 @@ class CsioPeerConnection {
               }.bind(this),
               // createAnswer failure
               function(e) {
-                modCommon.triggerEvent('webrtcError',
-                  {'type': 'createAnswer',
-                    'userId': this.userId,
-                    'pc': this.pc,
-                    'error': e});
-              }.bind(this));
+              });
           } else {
             console.log(this.userId, 'answer received');
           }
         }.bind(this),
         // setRemoteDescription failure
         function(e) {
-          modCommon.triggerEvent('webrtcError',
-            {'type': 'setRemoteDescription',
-              'userId': this.userId,
-              'pc': this.pc,
-              'error': e});
-        }.bind(this));
+        });
   }
   oniceconnectionstatechange(e) {
     console.log('ICE connection state:', this.pc.iceConnectionState);
@@ -109,10 +102,12 @@ class CsioPeerConnection {
   // callback functions
   onTrack(e) {
     console.log(this.userId, 'received remote stream');
-    modCommon.triggerEvent('addRemoteVideo',
-      {'pc': this.pc, 'userId': this.userId, 'streams': e.streams});
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc, 'eventLog': 'Remote stream received for ' + this.userId});
+    const detail = {
+      pc: this.pc,
+      userId: this.userId,
+      streams: e.streams
+    };
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM, detail);
   }
 
   onAddIceCandidateSuccess() {
@@ -122,22 +117,19 @@ class CsioPeerConnection {
   onAddIceCandidateError(error) {
     console.log(this.userId, 'failed to add ICE Candidate: ' +
       error.toString());
-
-    modCommon.triggerEvent('webrtcError',
-      {'type': 'addIceCandidate',
-        'userId': this.userId,
-        'pc': this.pc,
-        'error': error});
   }
 
   onIceCandidate(e) {
     if (e.candidate) {
       // send ICE candidate
-      var json = {'ice': e.candidate};
-      var str = JSON.stringify(json);
+      const json = {'ice': e.candidate};
+      const str = JSON.stringify(json);
       console.log(this.userId, 'sending ICE');
-      modCommon.triggerEvent('sendMessage',
-        {'userId': this.userId, 'message': str});
+      const detail = {
+        userId: this.userId,
+        message: str
+      };
+      TriggerEvent(CsioEvents.CsioPeerConnection.ON_SEND_MESSAGE, detail);
     }
   }
 
@@ -146,18 +138,16 @@ class CsioPeerConnection {
       .then(
         function() {
           // send offer
-          var json = {'offer': e};
-          var str = JSON.stringify(json);
-          modCommon.triggerEvent('sendMessage',
-            {'userId': this.userId, 'message': str});
+          const json = {'offer': e};
+          const str = JSON.stringify(json);
+          const detail = {
+            userId: this.userId,
+            message: str
+          };
+          TriggerEvent(CsioEvents.CsioPeerConnection.ON_SEND_MESSAGE, detail);
         }.bind(this),
-        function(error) {
-          modCommon.triggerEvent('webrtcError',
-            {'type': 'setLocalDescription',
-              'userId': this.userId,
-              'pc': this.pc,
-              'error': error});
-        }.bind(this));
+        function(e) {
+        });
   }
 
   /*
@@ -168,42 +158,34 @@ class CsioPeerConnection {
     console.log('Channel creating:', label);
     this.datachannels[label] = this.pc.createDataChannel(label);
     this.setChannelCallbacks(label);
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc,
-        'eventLog': 'DataChannel ' + label + ' created for ' +
-        this.userId});
   }
 
   setChannelCallbacks(label) {
     this.datachannels[label].onmessage = this.handleChannelMessage.bind(this);
     this.datachannels[label].onopen = function(e) {
       console.log('Channel opened:', label);
-      modCommon.triggerEvent('applicationLogEvent',
-        {'pc': this.pc,
-          'eventLog': 'DataChannel ' + label + ' opened for ' +
-          this.userId});
-    }.bind(this);
+    };
     this.datachannels[label].onclose = function(e) {
       console.log('Channel closed:', label);
-      modCommon.triggerEvent('applicationLogEvent',
-        {'pc': this.pc,
-          'eventLog': 'DataChannel ' + label + ' closed for ' +
-          this.userId});
-    }.bind(this);
+    };
   }
 
   receiveChannelCallback(event) {
-    var label = event.channel.label;
+    const label = event.channel.label;
     console.log(this.userId, 'receive channel:', label);
     this.datachannels[label] = event.channel;
     this.setChannelCallbacks(label);
   }
 
   handleChannelMessage(event) {
-    var label = event.currentTarget.label;
-    var message = event.data;
-    modCommon.triggerEvent('channelMessage',
-      {'label': label, 'userId': this.userId, 'message': message});
+    const label = event.currentTarget.label;
+    const message = event.data;
+    const detail = {
+      label: label,
+      userId: this.userId,
+      message: message
+    };
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
   }
 
   sendChannelMessage(label, message) {
