@@ -1,6 +1,6 @@
 'use strict';
 
-class CreateMeetingHandler {
+class JoinRoomHandler {
   constructor() {
     this.roomName = '';
     this.joinRoomButtonEnabled = false;
@@ -42,4 +42,4 @@ class CreateMeetingHandler {
   }
 }
 
-export default CreateMeetingHandler;
+export default JoinRoomHandler;

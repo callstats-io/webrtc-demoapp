@@ -1,18 +1,17 @@
 'use strict';
 import React from 'react';
-import {Redirect} from 'react-router-dom';
-
-import JoinMeetingHandler from '../../../handlers/landingpage/JoinMeetingHandler';
-const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import Redirect from 'react-router-dom';
+import JoinRoomHandler from '../../../handlers/landingpage/JoinRoomHandler';
+import {CsioEvents} from '../../../../events/CsioEvents';
 
 class JoinRoomPopup extends React.Component {
   constructor(props) {
     super(props);
-    this.meetingHandler = new JoinMeetingHandler(this);
-    this.state = this.meetingHandler.getState();
+    this.joinRoomHandler = new JoinRoomHandler();
+    this.state = this.joinRoomHandler.getState();
     document.addEventListener(
-      CsioEvents.UIEvent.JOIN_ROOM_LINK_CLICK,
-      this.meetingHandler.onJoinRoomClick.bind(this),
+      CsioEvents.LANDING_PAGE.ON_JOIN_ROOM_LINK_CLICK,
+      this.joinRoomHandler.onJoinRoomClick.bind(this),
       false);
   }
 
@@ -37,18 +36,18 @@ class JoinRoomPopup extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.meetingHandler.handleInputChange.bind(this)}/>
+                  onChange={this.joinRoomHandler.handleInputChange.bind(this)}/>
               </div>
             </div>
             <div className="modal-footer">
               <button type="button"
                 className="btn btn-primary"
                 disabled={!this.state.joinRoomButtonEnabled}
-                onClick={this.meetingHandler.handleJoinMeeting.bind(this)}
+                onClick={this.joinRoomHandler.handleJoinMeeting.bind(this)}
               > Join room </button>
               <button type="button"
                 className="btn btn-primary"
-                onClick={this.meetingHandler.handleCloseModal.bind(this)}>Close</button>
+                onClick={this.joinRoomHandler.handleCloseModal.bind(this)}>Close</button>
             </div>
           </div>
         </div>

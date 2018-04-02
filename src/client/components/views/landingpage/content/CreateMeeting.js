@@ -5,8 +5,8 @@ import CreateMetingHandler from '../../../handlers/landingpage/CreateMeetingHand
 class CreateMeetingLayout extends React.Component {
   constructor(props) {
     super(props);
-    this.meetingHandler = new CreateMetingHandler();
-    this.state = this.meetingHandler.getState();
+    this.joinRoomHandler = new CreateMetingHandler();
+    this.state = this.joinRoomHandler.getState();
   }
   render() {
     const customStyle = {
@@ -45,14 +45,14 @@ class CreateMeetingLayout extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.meetingHandler.handleInputChange.bind(this)}/>
+                  onChange={this.joinRoomHandler.handleInputChange.bind(this)}/>
               </div>
             </li>
             <li style={liCustomStyle}>
               <button type="button" className={'btn btn-info dropdown-toggle'}
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                 disabled={!this.state.createRoomButtonEnabled}
-                onClick={this.meetingHandler.handleCreateRoomClick.bind(this)}>
+                onClick={this.joinRoomHandler.handleCreateRoomClick.bind(this)}>
               Creating meeting</button>
             </li>
           </ul>
