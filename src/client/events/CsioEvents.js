@@ -29,7 +29,7 @@ const CsioEvents = {
     CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
   },
   LANDING_PAGE: {
-    ON_JOIN_ROOM_LINK_CLICK: 'landingpage.onjoinroomlinkclick'
+    ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'
   }
 };
 

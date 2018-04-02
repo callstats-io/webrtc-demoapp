@@ -1,17 +1,17 @@
 'use strict';
 import React from 'react';
 import Redirect from 'react-router-dom';
-import JoinRoomHandler from '../../../handlers/landingpage/JoinRoomHandler';
+import JoinMeetingHandler from '../../../handlers/landingpage/JoinMeetingHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
 
-class JoinRoomPopup extends React.Component {
+class JoinMeetingRoomPopup extends React.Component {
   constructor(props) {
     super(props);
-    this.joinRoomHandler = new JoinRoomHandler();
-    this.state = this.joinRoomHandler.getState();
+    this.joinMeetingHandler = new JoinMeetingHandler();
+    this.state = this.joinMeetingHandler.getState();
     document.addEventListener(
-      CsioEvents.LANDING_PAGE.ON_JOIN_ROOM_LINK_CLICK,
-      this.joinRoomHandler.onJoinRoomClick.bind(this),
+      CsioEvents.LANDING_PAGE.ON_JOIN_MEETING_ROOM_LINK_CLICK,
+      this.joinMeetingHandler.onJoinRoomClick.bind(this),
       false);
   }
 
@@ -36,18 +36,18 @@ class JoinRoomPopup extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.joinRoomHandler.handleInputChange.bind(this)}/>
+                  onChange={this.joinMeetingHandler.handleInputChange.bind(this)}/>
               </div>
             </div>
             <div className="modal-footer">
               <button type="button"
                 className="btn btn-primary"
                 disabled={!this.state.joinRoomButtonEnabled}
-                onClick={this.joinRoomHandler.handleJoinMeeting.bind(this)}
+                onClick={this.joinMeetingHandler.handleJoinMeeting.bind(this)}
               > Join room </button>
               <button type="button"
                 className="btn btn-primary"
-                onClick={this.joinRoomHandler.handleCloseModal.bind(this)}>Close</button>
+                onClick={this.joinMeetingHandler.handleCloseModal.bind(this)}>Close</button>
             </div>
           </div>
         </div>
@@ -56,4 +56,4 @@ class JoinRoomPopup extends React.Component {
   }
 }
 
-export default JoinRoomPopup;
+export default JoinMeetingRoomPopup;

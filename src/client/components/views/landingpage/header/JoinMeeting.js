@@ -10,7 +10,7 @@ class JoinMeeting extends React.Component {
     const JoinMeeting = (e) => {
       e.preventDefault();
       TriggerEvent(
-        CsioEvents.LANDING_PAGE.ON_JOIN_ROOM_LINK_CLICK, {});
+        CsioEvents.LANDING_PAGE.ON_JOIN_MEETING_ROOM_LINK_CLICK, {});
     };
     return (
       <nav>
