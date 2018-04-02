@@ -3,7 +3,7 @@ import React from 'react';
 import Video from './Video';
 import RemoteVideos from './RemoteVideos';
 import ContentLeftHandler from '../../../handlers/meetingpage/ContentLeftHandler';
-const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents} from '../../../../events/CsioEvents';
 
 class ContentLeft extends React.Component {
   constructor(props) {
@@ -11,7 +11,7 @@ class ContentLeft extends React.Component {
     this.contentLeftHandler = new ContentLeftHandler();
     this.state = this.contentLeftHandler.getState();
     document.addEventListener(
-      CsioEvents.UserEvent.Media.LOCALMEDIA,
+      CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.contentLeftHandler.onLocalVideoStream.bind(this), false);
   }
   render() {

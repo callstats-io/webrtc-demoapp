@@ -17,12 +17,11 @@ class CsioMediaCtrl {
     navigator.mediaDevices.getUserMedia(constraints)
       .then(function(stream) {
         const detail = {
-          media: stream,
-          from: 'getUserMedia'
+          media: stream
         };
         self.localStream = stream;
         TriggerEvent(
-          CsioEvents.CsioMediaCtrl.ON_USER_MEDIA, detail);
+          CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA, detail);
       },
       function(e) {
         console.error(e);

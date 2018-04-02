@@ -15,7 +15,7 @@ const CsioEvents = {
     ON_GENERATE_TOKEN: 'csioevents.onGenerateToken'
   },
   CsioMediaCtrl: {
-    ON_USER_MEDIA: 'csiomediactrl.onUserMedia',
+    ON_LOCAL_USER_MEDIA: 'csiomediactrl.onLocalUserMedia',
     ON_REMOTE_MEDIA: 'csiomediactrl.onRemoteMedia',
     ON_ADD_REMOVE_REMOTESTREAM: 'csiomediactrl.addRemoveRemoteVideo',
     ON_VIDEO_FOCUS_CHANGE: 'csiomediactrl.onVideoFocusChanged'
