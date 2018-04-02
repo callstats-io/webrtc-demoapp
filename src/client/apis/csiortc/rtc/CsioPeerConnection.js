@@ -26,14 +26,12 @@ class CsioPeerConnection {
 
   // callable functions
   close() {
-    for (var label in this.datachannels) {
+    for (const label in this.datachannels) {
       this.datachannels[label].close();
     }
     this.pc.close();
     modCommon.triggerEvent('closePeerConnection',
       {'userId': this.userId, 'pc': this.pc});
-    modCommon.triggerEvent('applicationLogEvent',
-      {'pc': this.pc, 'eventLog': 'PeerConnection closed for ' + this.userId});
   }
 
   addIceCandidate(ic) {
@@ -61,12 +59,7 @@ class CsioPeerConnection {
         this.onCreateOfferSuccess(e);
       }.bind(this),
       function(e) {
-        modCommon.triggerEvent('webrtcError',
-          {'type': 'createOffer',
-            'userId': this.userId,
-            'pc': this.pc,
-            'error': e});
-      }.bind(this));
+      });
   }
 
   setRemoteDescription(offer) {
@@ -111,10 +104,6 @@ class CsioPeerConnection {
       // this.createOffer(true);
     } else if (this.pc.iceConnectionState === 'completed' ||
       this.pc.iceConnectionState === 'closed') {
-      modCommon.triggerEvent('applicationLogEvent',
-        {'pc': this.pc,
-          'eventLog': 'ICE connection ' +
-          this.pc.iceConnectionState + ' for ' + this.userId});
     }
   }
   // callback functions

@@ -1,26 +1,29 @@
 'use strict';
-import CsioMediaCtrl from '../apis/csiortc/rtc/CsioMedia';
 
 const CsioEvents = {
   CSIOSignaling: {
-    SEND_MESSAGE: 'sendMessage',
-    CONNECT: 'connect',
-    JOIN: 'join',
-    LEAVE: 'leave',
-    MESSAGE: 'message',
-    GENERATE_TOKEN: 'generateToken',
-    ON_SEND_MESSAGE: 'onSendMessage',
-    ON_CONNECT: 'onConnect',
-    ON_JOIN: 'onJoin',
-    ON_LEAVE: 'onLeave',
-    ON_MESSAGE: 'onMessage',
-    ON_GENERATE_TOKEN: 'onGenerateToken'
+    SEND_MESSAGE: 'csioevents.sendMessage',
+    CONNECT: 'csioevents.connect',
+    JOIN: 'csioevents.join',
+    LEAVE: 'csioevents.leave',
+    MESSAGE: 'csioevents.message',
+    GENERATE_TOKEN: 'csioevents.generateToken',
+    ON_SEND_MESSAGE: 'csioevents.onSendMessage',
+    ON_CONNECT: 'csioevents.onConnect',
+    ON_JOIN: 'csioevents.onJoin',
+    ON_LEAVE: 'csioevents.onLeave',
+    ON_MESSAGE: 'csioevents.onMessage',
+    ON_GENERATE_TOKEN: 'csioevents.onGenerateToken'
   },
   CsioMediaCtrl: {
-    ON_USER_MEDIA: 'onUserMedia',
-    ON_REMOTE_MEDIA: 'onRemoteMedia',
-    ON_ADD_REMOVE_REMOTESTREAM: 'addRemoveRemoteVideo',
-    ON_VIDEO_FOCUS_CHANGE: 'onVideoFocusChanged'
+    ON_USER_MEDIA: 'csiomediactrl.onUserMedia',
+    ON_REMOTE_MEDIA: 'csiomediactrl.onRemoteMedia',
+    ON_ADD_REMOVE_REMOTESTREAM: 'csiomediactrl.addRemoveRemoteVideo',
+    ON_VIDEO_FOCUS_CHANGE: 'csiomediactrl.onVideoFocusChanged'
+  },
+  CsioPeerConnection: {
+    ON_PEERCONNECTION_CLOSED: 'csiopeerconnection.onPeerConnectionClosed',
+    ON_WEBRTC_ERROR: 'csiopeerconnection.onWebrtcError'
   },
   SocketIOEvents: {
     CONNECT: 'connect',
