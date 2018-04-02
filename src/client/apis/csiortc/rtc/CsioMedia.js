@@ -9,13 +9,8 @@ class CsioMediaCtrl {
     this.localStream = {};
     // event listeners
     document.addEventListener(
-      CsioEvents.UserEvent.Media.ADDREMOTESTREAM,
-      this.onRemoteStream.bind(this), false);
-
-    document.addEventListener(
-      CsioEvents.UIEvent.VIDEO_FOCUS_CHANGE,
-      this.onVideoFocusChanged.bind(this),
-      false);
+      CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM,
+      this.onRemoteStream, false);
   }
   getUserMedia(constraints) {
     const self = this;
@@ -33,17 +28,6 @@ class CsioMediaCtrl {
         console.error(e);
         self.localStream = null;
       });
-  }
-  onRemoteStream(e) {
-    const streams = e.detail.streams;
-    const userId = e.detail.userId;
-    this.remoteStreams[userId] = streams[0];
-    const detail = {
-      media: this.remoteStreams,
-      userId: userId
-    };
-    TriggerEvent(
-      CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM, detail);
   }
   addStream(stream, ctx) {
     stream.getTracks().forEach(function(mediaTrack) {
@@ -87,7 +71,38 @@ class CsioMediaCtrl {
     TriggerEvent(
       CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM, detail);
   }
-  // UI related stream change handler
+  // toggle media states
+  toggleMediaStates(isMuteOrPaused, mediaType) {
+    if (!this.localStream) {
+      return;
+    }
+    let mediaTracks = mediaType === 'audio'
+      ? this.localStream.getAudioTracks() : this.localStream.getVideoTracks();
+    if (mediaTracks.length === 0) {
+      console.warn('No local ', mediaType, 'track available.');
+      return;
+    }
+    for (const i in mediaTracks) {
+      if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
+        mediaTracks[i].enabled = isMuteOrPaused;
+      }
+    }
+  }
+
+  // Event based functions
+  // when peer connection got remote streams
+  onRemoteStream(e) {
+    const streams = e.detail.streams;
+    const userId = e.detail.userId;
+    this.remoteStreams[userId] = streams[0];
+    const detail = {
+      media: this.remoteStreams,
+      userId: userId
+    };
+    TriggerEvent(
+      CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM, detail);
+  }
+  // ui related stream change handler
   onVideoFocusChanged(e) {
     const userId = e.detail.userId;
     const from = e.detail.from;
@@ -108,23 +123,6 @@ class CsioMediaCtrl {
     this.previouslySelectedUserId = userId;
     TriggerEvent(
       CsioEvents.CsioMediaCtrl.ON_VIDEO_FOCUS_CHANGE, detail);
-  }
-  // toggle media states
-  toggleMediaStates(isMuteOrPaused, mediaType) {
-    if (!this.localStream) {
-      return;
-    }
-    let mediaTracks = mediaType === 'audio'
-      ? this.localStream.getAudioTracks() : this.localStream.getVideoTracks();
-    if (mediaTracks.length === 0) {
-      console.warn('No local ', mediaType, 'track available.');
-      return;
-    }
-    for (const i in mediaTracks) {
-      if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
-        mediaTracks[i].enabled = isMuteOrPaused;
-      }
-    }
   }
 }
 

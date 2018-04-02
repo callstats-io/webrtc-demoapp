@@ -8,7 +8,6 @@ const CsioEvents = {
     LEAVE: 'csioevents.leave',
     MESSAGE: 'csioevents.message',
     GENERATE_TOKEN: 'csioevents.generateToken',
-    SEND_MESSAGE: 'csioevents.onSendMessage',
     ON_CONNECT: 'csioevents.onConnect',
     ON_JOIN: 'csioevents.onJoin',
     ON_LEAVE: 'csioevents.onLeave',
@@ -29,33 +28,6 @@ const CsioEvents = {
     SEND_MESSAGE: 'csiopeerconnection.sendMessage',
     CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
   },
-  SocketIOEvents: {
-    CONNECT: 'connect',
-    JOIN: 'join',
-    LEAVE: 'leave',
-    MESSAGE: 'message',
-    UserEvent: {
-      SENDMESSAGE: 'sendMessage',
-      JOIN: 'join',
-      LEAVE: 'leave',
-      MESSAGE: 'message',
-      GENERATETOKEN: 'generateToken'
-    }
-  },
-  UserEvent: {
-    Signaling: {
-      CONNECT: 'localname',
-      USERJOIN: 'userJoin',
-      USERLEAVE: 'userLeave',
-      USERMESSAGE: 'userMessage',
-      SETLOCALMEDIA: 'setlocalmedia'
-    },
-    Media: {
-      LOCALMEDIA: 'localmedia',
-      REMOTEMEDIA: 'remotemedia',
-      ADDREMOTESTREAM: 'addRemoteVideo'
-    }
-  },
   UIEvent: {
     JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick',
     MEETING_PAGE_LOADED: 'meetingpageloaded',
@@ -63,10 +35,6 @@ const CsioEvents = {
     TOGGLE_MEDIA_STATE: 'togglemediastate',
     SHARE_MEETING_LINK: 'sharemeetinglink',
     CLOSE_MEETING: 'closemeeting'
-  },
-  RTCEvent: {
-    CHANNELMESSAGE: 'channelMessage',
-    SENDMESSAGE: 'sendDataChannelMessage'
   }
 };
 

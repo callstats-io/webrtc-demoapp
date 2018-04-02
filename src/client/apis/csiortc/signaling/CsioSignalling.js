@@ -11,7 +11,7 @@ class CsioSignalling {
   constructor() {
     this.socket = null;
     document.addEventListener(
-      CsioEvents.CSIOSignaling.SENDMESSAGE,
+      CsioEvents.CsioPeerConnection.SEND_MESSAGE,
       (e) => {
         this.send(e.detail.userId, e.detail.message);
       }, false);
