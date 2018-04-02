@@ -8,7 +8,7 @@ const CsioEvents = {
     LEAVE: 'csioevents.leave',
     MESSAGE: 'csioevents.message',
     GENERATE_TOKEN: 'csioevents.generateToken',
-    ON_SEND_MESSAGE: 'csioevents.onSendMessage',
+    SEND_MESSAGE: 'csioevents.onSendMessage',
     ON_CONNECT: 'csioevents.onConnect',
     ON_JOIN: 'csioevents.onJoin',
     ON_LEAVE: 'csioevents.onLeave',
@@ -26,8 +26,8 @@ const CsioEvents = {
     ON_WEBRTC_ERROR: 'csiopeerconnection.onWebrtcError',
     ON_REMOTE_STREAM: 'csiopeerconnection.onRemoteStream',
     ON_WERTC_ERROR: 'csiopeerconnection.webrtcError',
-    ON_SEND_MESSAGE: 'csiopeerconnection.sendMessage',
-    ON_CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
+    SEND_MESSAGE: 'csiopeerconnection.sendMessage',
+    CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
   },
   SocketIOEvents: {
     CONNECT: 'connect',

@@ -129,7 +129,7 @@ class CsioPeerConnection {
         userId: this.userId,
         message: str
       };
-      TriggerEvent(CsioEvents.CsioPeerConnection.ON_SEND_MESSAGE, detail);
+      TriggerEvent(CsioEvents.CsioPeerConnection.SEND_MESSAGE, detail);
     }
   }
 
@@ -144,7 +144,7 @@ class CsioPeerConnection {
             userId: this.userId,
             message: str
           };
-          TriggerEvent(CsioEvents.CsioPeerConnection.ON_SEND_MESSAGE, detail);
+          TriggerEvent(CsioEvents.CsioPeerConnection.SEND_MESSAGE, detail);
         }.bind(this),
         function(e) {
         });
@@ -185,7 +185,7 @@ class CsioPeerConnection {
       userId: this.userId,
       message: message
     };
-    TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
+    TriggerEvent(CsioEvents.CsioPeerConnection.CHANNEL_MESSAGE, detail);
   }
 
   sendChannelMessage(label, message) {
