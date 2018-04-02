@@ -1,6 +1,6 @@
 import React from 'react';
 import {CsioEvents} from '../../../apis/csiortc/events/CsioEvents';
-import ChatWindowHandler from '../../../apis/meetingpage/ChatWindowHandler';
+import ChatWindowHandler from '../../../handlers/meetingpage/ChatWindowHandler';
 class ChatLayout extends React.Component {
   constructor(props) {
     super();

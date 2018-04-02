@@ -3,7 +3,7 @@
 
 'use strict';
 import React from 'react';
-import VideoHandler from './../../../apis/meetingpage/VideoHandler';
+import VideoHandler from '../../../handlers/meetingpage/VideoHandler';
 class Video extends React.Component {
   constructor(props) {
     super(props);

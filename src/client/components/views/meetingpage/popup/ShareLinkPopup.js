@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import ShareLinkPopupHandler from '../../../apis/meetingpage/ShareLinkPopupHandler';
+import ShareLinkPopupHandler from '../../../handlers/meetingpage/ShareLinkPopupHandler';
 const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class JoinRoomPopup extends React.Component {

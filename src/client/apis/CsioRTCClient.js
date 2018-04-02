@@ -5,6 +5,9 @@ class CsioRTCClient {
   constructor() {
     this.csiortc = new CsioRTC();
   }
+  initialize() {
+    console.log('CsioRTCClient initialized!');
+  }
 }
 
 export let csioRTCClient = new CsioRTCClient();

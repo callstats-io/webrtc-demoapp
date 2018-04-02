@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import HeaderRightHandler from '../../../apis/meetingpage/HeaderRightHandler';
+import HeaderRightHandler from '../../../handlers/meetingpage/HeaderRightHandler';
 
 class HeaderRight extends React.Component {
   constructor(props) {

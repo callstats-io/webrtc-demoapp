@@ -28,13 +28,8 @@ const CsioEvents = {
     SEND_MESSAGE: 'csiopeerconnection.sendMessage',
     CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
   },
-  UIEvent: {
-    JOIN_ROOM_LINK_CLICK: 'joinroomlinkclick',
-    MEETING_PAGE_LOADED: 'meetingpageloaded',
-    VIDEO_FOCUS_CHANGE: 'videofocuschange',
-    TOGGLE_MEDIA_STATE: 'togglemediastate',
-    SHARE_MEETING_LINK: 'sharemeetinglink',
-    CLOSE_MEETING: 'closemeeting'
+  LANDING_PAGE: {
+    ON_JOIN_ROOM_LINK_CLICK: 'landingpage.onjoinroomlinkclick'
   }
 };
 

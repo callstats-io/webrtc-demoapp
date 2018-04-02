@@ -2,7 +2,7 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 
-import JoinMeetingHandler from './../../../apis/landingpage/JoinMeetingHandler';
+import JoinMeetingHandler from '../../../handlers/landingpage/JoinMeetingHandler';
 const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class JoinRoomPopup extends React.Component {

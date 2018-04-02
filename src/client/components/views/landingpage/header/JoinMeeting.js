@@ -1,6 +1,5 @@
 import React from 'react';
-const modCommon = require('../../../apis/utils/Common');
-const CsioEvents = require('./../../../apis/csiortc/events/CsioEvents').CsioEvents;
+import {CsioEvents, TriggerEvent} from '../../../../events/CsioEvents';
 
 class JoinMeeting extends React.Component {
   render() {
@@ -8,10 +7,10 @@ class JoinMeeting extends React.Component {
       textDecoration: 'none',
       background: 'inherit'
     };
-    const JoinMeeting = () => {
-      modCommon.triggerEvent(
-        CsioEvents.UIEvent.JOIN_ROOM_LINK_CLICK,
-        {});
+    const JoinMeeting = (e) => {
+      e.preventDefault();
+      TriggerEvent(
+        CsioEvents.LANDING_PAGE.ON_JOIN_ROOM_LINK_CLICK, {});
     };
     return (
       <nav>

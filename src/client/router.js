@@ -1,8 +1,8 @@
 import React from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
 
-import LandingLayout from 'components/landingpage/AppLayout';
-import MeetingLayout from 'components/meetingpage/AppLayout';
+import LandingLayout from 'components/views/landingpage/AppLayout';
+import MeetingLayout from 'components/views/meetingpage/AppLayout';
 
 export default function() {
   return (

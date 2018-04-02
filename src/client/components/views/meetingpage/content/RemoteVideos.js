@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import Video from './Video';
-import RemoteVideosHandler from './../../../apis/meetingpage/RemoteVideosHandler';
+import RemoteVideosHandler from '../../../handlers/meetingpage/RemoteVideosHandler';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 
 class RemoteVideo extends React.Component {

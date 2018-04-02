@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import Video from './Video';
-import ContentRightHandler from './../../../apis/meetingpage/ContentRightHandler';
+import ContentRightHandler from '../../../handlers/meetingpage/ContentRightHandler';
 import ChatLayout from './ChatWindow';
 const CsioEvents = require('../../../apis/csiortc/events/CsioEvents').CsioEvents;
 class ContentRight extends React.Component {
