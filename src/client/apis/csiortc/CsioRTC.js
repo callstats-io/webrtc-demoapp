@@ -4,6 +4,7 @@ import CsioSignalling from './signaling/CsioSignalling';
 import CsioPeerConnection from './rtc/CsioPeerConnection';
 import CsioMediaCtrl from './rtc/CsioMediaCtrl';
 import CsioConfigParams from './../utils/Common';
+import CsioStats from './csiostats/CsioStats';
 
 class CsioRTC {
   constructor() {
@@ -14,12 +15,11 @@ class CsioRTC {
     this.roomName = undefined;
     this.pcs = {};
     this.labels = ['chat'];
-    // all objects class
-    this.csObject = new callstats();
-    this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
-    this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
+
     this.signaling = new CsioSignalling();
     this.csoiMedia = new CsioMediaCtrl();
+    this.csioStats = new CsioStats();
+
     // ui related events
     // document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
     // document.addEventListener(CsioEvents.UIEvent.TOGGLE_MEDIA_STATE, this.onToggleMediaState.bind(this), false);
@@ -37,6 +37,7 @@ class CsioRTC {
     // webrtc events
     // document.addEventListener(CsioEvents.RTCEvent.SENDMESSAGE, this.onSendDCMessage.bind(this), false);
   }
+
   onMeetingPageLoaded(e) {
     const roomName = e.detail.roomName;
     this.roomName = roomName;
@@ -128,27 +129,7 @@ class CsioRTC {
     const pc = this.pcs[userId];
     pc.setRemoteDescription(offer);
   }
-  // csio related events, and function
-  // CSIO object callback
-  defaultConfigCallback(config) {
-    console.log('ConfigService, default config:', config);
-    if (config.media) {
-      this.mediaConfig = config.media;
-    }
-    if (config.peerConnection) {
-      this.pcConfig = config.peerConnection;
-    }
-    this.mayBeInitializeMedia();
-  }
-  recommendedConfigCallback(config) {
-    console.log('ConfigService, recommended config:', config);
-    if (config.media) {
-      this.mediaConfig = config.media;
-    }
-    if (config.peerConnection) {
-      this.pcConfig = config.peerConnection;
-    }
-  }
+
   initializeCsio(userID) {
     this.csObject.initialize(__appid__,
       __appsecret__,
