@@ -11,12 +11,10 @@ import App from './App';
 // global styles
 import './style.scss';
 // load the csioRTC Client
-import CsioRTCClient from './apis/CsioRTCClient';
+import {} from './apis/CsioRTCClient';
 
 // apply polyfill
 if (!window.Intl) {
   window.Intl = intl;
 }
-const csioRTCClient = new CsioRTCClient();
-csioRTCClient.initialize();
 ReactDOM.render(<App />, document.getElementById('app'));

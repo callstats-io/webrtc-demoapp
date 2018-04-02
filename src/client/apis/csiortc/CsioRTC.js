@@ -2,9 +2,8 @@
 
 import CsioSignalling from './signaling/CsioSignalling';
 import CsioPeerConnection from './rtc/CsioPeerConnection';
-import CsioMedia from './rtc/CsioMedia';
-const CsioEvents = require('./events/CsioEvents').CsioEvents;
-const csioConfigParams = require('../utils/Common');
+import CsioMediaCtrl from './rtc/CsioMediaCtrl';
+import CsioConfigParams from './../utils/Common';
 
 class CsioRTC {
   constructor() {
@@ -20,23 +19,23 @@ class CsioRTC {
     this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
     this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
     this.signaling = new CsioSignalling();
-    this.csoiMedia = new CsioMedia();
+    this.csoiMedia = new CsioMediaCtrl();
     // ui related events
-    document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
-    document.addEventListener(CsioEvents.UIEvent.TOGGLE_MEDIA_STATE, this.onToggleMediaState.bind(this), false);
-    document.addEventListener(CsioEvents.UIEvent.CLOSE_MEETING, this.onCloseMeeting.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, this.onSetLocalMedia.bind(this), false);
+    // document.addEventListener(CsioEvents.UIEvent.MEETING_PAGE_LOADED, this.onMeetingPageLoaded.bind(this), false);
+    // document.addEventListener(CsioEvents.UIEvent.TOGGLE_MEDIA_STATE, this.onToggleMediaState.bind(this), false);
+    // document.addEventListener(CsioEvents.UIEvent.CLOSE_MEETING, this.onCloseMeeting.bind(this), false);
+    // document.addEventListener(CsioEvents.UserEvent.Signaling.SETLOCALMEDIA, this.onSetLocalMedia.bind(this), false);
     // signaling specific events
     // 1. connection with socket io success
     // 2. a new user join to room
     // 3. a existing user left room
     // 4. a user send a message in room
-    document.addEventListener(CsioEvents.UserEvent.Signaling.CONNECT, this.onConnect.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Signaling.USERJOIN, this.onUserJoin.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Signaling.USERLEAVE, this.onUserLeave.bind(this), false);
-    document.addEventListener(CsioEvents.UserEvent.Signaling.USERMESSAGE, this.onUserMessage.bind(this), false);
+    // document.addEventListener(CsioEvents.UserEvent.Signaling.CONNECT, this.onConnect.bind(this), false);
+    // document.addEventListener(CsioEvents.UserEvent.Signaling.USERJOIN, this.onUserJoin.bind(this), false);
+    // document.addEventListener(CsioEvents.UserEvent.Signaling.USERLEAVE, this.onUserLeave.bind(this), false);
+    // document.addEventListener(CsioEvents.UserEvent.Signaling.USERMESSAGE, this.onUserMessage.bind(this), false);
     // webrtc events
-    document.addEventListener(CsioEvents.RTCEvent.SENDMESSAGE, this.onSendDCMessage.bind(this), false);
+    // document.addEventListener(CsioEvents.RTCEvent.SENDMESSAGE, this.onSendDCMessage.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     const roomName = e.detail.roomName;
@@ -153,7 +152,7 @@ class CsioRTC {
   initializeCsio(userID) {
     this.csObject.initialize(__appid__,
       __appsecret__,
-      userID, this.csInitCallback, this.csStatsCallback, csioConfigParams);
+      userID, this.csInitCallback, this.csStatsCallback, CsioConfigParams);
   }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);

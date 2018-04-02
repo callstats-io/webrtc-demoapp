@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Redirect from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import JoinMeetingHandler from '../../../handlers/landingpage/JoinMeetingHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
 

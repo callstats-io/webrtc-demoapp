@@ -10,4 +10,4 @@ class CsioRTCClient {
   }
 }
 
-export let csioRTCClient = new CsioRTCClient();
+export let RTCClient = new CsioRTCClient();
