@@ -26,14 +26,16 @@ const CsioEvents = {
     ON_REMOTE_STREAM: 'csiopeerconnection.onRemoteStream',
     ON_WERTC_ERROR: 'csiopeerconnection.webrtcError',
     SEND_MESSAGE: 'csiopeerconnection.sendMessage',
-    CHANNEL_MESSAGE: 'csiopeerconnection.channelMessage'
+    SEND_CHANNEL_MESSAGE: 'csiopeerconnection.sendChannelMessage',
+    ON_CHANNEL_MESSAGE: 'csiopeerconnection.onChannelMessage'
   },
   LANDING_PAGE: {
     ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'
   },
   MEETING_PAGE: {
     ON_MEETING_PAGE_LOADED: 'meetingpage.onmeetingpageloaded',
-    ON_SHARE_MEETING_LINK: 'meetingpage.onsharemeetinglink'
+    ON_SHARE_MEETING_LINK: 'meetingpage.onsharemeetinglink',
+    ON_MEETING_CLOSE_CLICKED: 'meetingpage.onmeetingcloseclicked'
   }
 };
 

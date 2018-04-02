@@ -1,6 +1,5 @@
 // A video element class taken from
 // https://github.com/facebook/react/pull/9146
-
 'use strict';
 import React from 'react';
 import VideoHandler from '../../../handlers/meetingpage/VideoHandler';

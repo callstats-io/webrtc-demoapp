@@ -1,5 +1,6 @@
-import {CsioEvents, triggerEvent} from '../csiortc/events/CsioEvents';
+'use strict';
 
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class ChatWindowHandler {
   constructor() {
@@ -22,16 +23,17 @@ class ChatWindowHandler {
     });
   }
   onSendClick() {
-    const label = 'chat';
-    const userId = 'Me';
     const message = this.state.inputText;
     this.setState({
       inputText: ''
     });
-    triggerEvent(CsioEvents.RTCEvent.CHANNELMESSAGE,
-      {'label': label, 'userId': userId, 'message': message});
-    triggerEvent(CsioEvents.RTCEvent.SENDMESSAGE,
-      {'label': label, 'userId': userId, 'message': message});
+    const detail = {
+      label: 'chat',
+      userId: 'Me',
+      message: message
+    };
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
+    TriggerEvent(CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE, detail);
   }
   onChannelMessage(e) {
     const label = e.detail.label;

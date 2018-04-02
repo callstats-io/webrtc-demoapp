@@ -1,6 +1,6 @@
 'use strict';
 
-import {CsioEvents, triggerEvent} from '../csiortc/events/CsioEvents';
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class HeaderRightHandler {
   getState() {
@@ -10,19 +10,18 @@ class HeaderRightHandler {
     e.preventDefault();
     const meetingRoomURL = window.location.href;
     const detail = {
-      meetingRoomURL: meetingRoomURL,
-      from: 'onClickShareButton'
+      meetingRoomURL: meetingRoomURL
     };
-    triggerEvent(
-      CsioEvents.UIEvent.SHARE_MEETING_LINK,
-      detail);
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_SHARE_MEETING_LINK, detail);
   }
   onClickCloseButton(e) {
     e.preventDefault();
-    triggerEvent(
-      CsioEvents.UIEvent.CLOSE_MEETING,
-      {});
-    window.location.href = location.origin;
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
+    setTimeout((e) => {
+      window.location.href = location.origin;
+    }, 500);
   }
 }
 

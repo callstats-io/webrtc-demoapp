@@ -1,14 +1,15 @@
 import React from 'react';
-import {CsioEvents} from '../../../apis/csiortc/events/CsioEvents';
 import ChatWindowHandler from '../../../handlers/meetingpage/ChatWindowHandler';
+import {CsioEvents} from '../../../../events/CsioEvents';
+
 class ChatLayout extends React.Component {
   constructor(props) {
-    super();
-    this.chatLayoutHandler = new ChatWindowHandler();
-    this.state = this.chatLayoutHandler.getState();
+    super(props);
+    this.chatWindowHandler = new ChatWindowHandler();
+    this.state = this.chatWindowHandler.getState();
     document.addEventListener(
-      CsioEvents.RTCEvent.CHANNELMESSAGE,
-      this.chatLayoutHandler.onChannelMessage.bind(this), false);
+      CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE,
+      this.chatWindowHandler.onChannelMessage.bind(this), false);
   }
 
   render() {
@@ -32,9 +33,9 @@ class ChatLayout extends React.Component {
         <div>
           <input id="chatInput" style={{width: '80%'}} type="text"
             value={this.state.inputText}
-            onChange={this.chatLayoutHandler.onInputChange.bind(this)}/>
+            onChange={this.chatWindowHandler.onInputChange.bind(this)}/>
           <button id="chatButton"
-            onClick={this.chatLayoutHandler.onSendClick.bind(this)}>Send</button>
+            onClick={this.chatWindowHandler.onSendClick.bind(this)}>Send</button>
         </div>
       </div>
     );
