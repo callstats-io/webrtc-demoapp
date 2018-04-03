@@ -8,9 +8,9 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 export class AppLayout extends React.Component {
   constructor(props) {
     super(props);
-    const roomName = this.props.match.params.roomName;
+    this.roomName = this.props.match.params.roomName;
     const detail = {
-      roomName: roomName
+      roomName: this.roomName
     };
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_MEETING_PAGE_LOADED,
@@ -19,7 +19,7 @@ export class AppLayout extends React.Component {
   render() {
     return (
       <div className={'container-fluid'}>
-        <HeaderLayout/>
+        <HeaderLayout roomName={this.roomName}/>
         <ContentLayout/>
         <ShareLinkPopup/>
       </div>

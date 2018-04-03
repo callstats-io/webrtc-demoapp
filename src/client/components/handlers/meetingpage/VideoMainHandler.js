@@ -22,7 +22,6 @@ class VideoMainHandler {
   onResizeVideoView(e) {
     const height = Math.max(e.detail.height - 200, 320.0);
     const from = e.detail.from;
-    console.warn(height, from);
     if (from === 'contentRightHandler') {
       this.setState({
         videoHeight: height

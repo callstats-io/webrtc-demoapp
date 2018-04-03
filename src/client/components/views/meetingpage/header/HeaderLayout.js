@@ -10,7 +10,7 @@ class HeaderLayout extends React.Component {
         <div className="container-fluid">
           <BrandLeft/>
           <div id="navbar" className="navbar-collapse collapse">
-            <HeaderLeft/>
+            <HeaderLeft roomName={this.props.roomName}/>
             <HeaderRight/>
           </div>
         </div>
