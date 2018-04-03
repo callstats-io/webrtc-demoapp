@@ -6,6 +6,8 @@ class ChatLayout extends React.Component {
   constructor(props) {
     super(props);
     this.chatWindowHandler = new ChatWindowHandler();
+    this.onSendClick = this.chatWindowHandler.onSendClick.bind(this);
+    this.getUserName = this.chatWindowHandler.getUserName.bind(this);
     this.state = this.chatWindowHandler.getState();
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE,
@@ -30,12 +32,18 @@ class ChatLayout extends React.Component {
           style={slideoutTextarea}
           value={this.state.chatText}
           ref={(el) => { this.messagesContainer = el; } }/>
-        <div>
-          <input id="chatInput" style={{width: '80%'}} type="text"
+        <div className="input-group">
+          <input className="form-control" placeholder="Write something..."
+            type="text"
             value={this.state.inputText}
-            onChange={this.chatWindowHandler.onInputChange.bind(this)}/>
-          <button id="chatButton"
-            onClick={this.chatWindowHandler.onSendClick.bind(this)}>Send</button>
+            onChange={this.chatWindowHandler.onInputChange.bind(this)}
+            onKeyUp={this.chatWindowHandler.onKeyUp.bind(this)}/>
+          <span className="input-group-btn">
+            <button className="btn btn-default" type="button"
+              onClick={this.chatWindowHandler.onSendClick.bind(this)}>
+              Send
+            </button>
+          </span>
         </div>
       </div>
     );

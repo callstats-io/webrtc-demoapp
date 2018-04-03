@@ -22,23 +22,39 @@ class ChatWindowHandler {
       inputText: inputText
     });
   }
+  onKeyUp(e) {
+    if (e.key === 'Enter') {
+      this.onSendClick();
+    }
+  }
   onSendClick() {
     const message = this.state.inputText;
     this.setState({
       inputText: ''
     });
+    const aliseName = this.getUserName();
     const detail = {
       label: 'chat',
       userId: 'Me',
-      message: message
+      message: JSON.stringify({
+        message: message,
+        aliseName: aliseName || ''
+      })
     };
-    TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
-    TriggerEvent(CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE, detail);
+    if (message && message.length > 0) {
+      TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
+      TriggerEvent(CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE, detail);
+    }
   }
   onChannelMessage(e) {
+    let userId = e.detail.userId;
     const label = e.detail.label;
-    const userId = e.detail.userId;
-    const message = e.detail.message;
+    const channelMessage = JSON.parse(e.detail.message);
+    const message = channelMessage.message;
+    const aliseName = channelMessage.aliseName;
+    if (aliseName && aliseName.length > 0) {
+      userId = aliseName;
+    }
     if (label === 'chat') {
       let temp = this.state.chatMessages;
       const chatText = this.state.chatText;
@@ -54,6 +70,13 @@ class ChatWindowHandler {
         this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
       }
     }.bind(this), 200);
+  }
+  getUserName() {
+    let userName = JSON.parse(localStorage.getItem('userName'));
+    if (userName) {
+      return userName;
+    }
+    return '';
   }
 }
 export default ChatWindowHandler;

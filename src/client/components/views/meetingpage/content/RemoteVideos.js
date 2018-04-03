@@ -17,7 +17,8 @@ class RemoteVideo extends React.Component {
   render() {
     const rowStyle = {
       paddingTop: '2%',
-      paddingLeft: '2%'
+      paddingLeft: '2%',
+      color: '#442173'
     };
     const remoteVideos = this.state.remoteVideos;
     const listItems = Object.entries(remoteVideos).map(([key, value]) =>
