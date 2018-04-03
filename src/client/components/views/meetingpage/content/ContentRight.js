@@ -9,6 +9,7 @@ class ContentRight extends React.Component {
   constructor(props) {
     super(props);
     this.contentRightHandler = new ContentRightHandler();
+    this.saveUserName = this.contentRightHandler.saveUserName.bind(this);
     this.state = this.contentRightHandler.getState();
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
@@ -28,20 +29,25 @@ class ContentRight extends React.Component {
     return (
       <div className={'col-xs-4'} style={curStyle} ref={(el) => { this.rightContainer = el; } }>
         <div className={'row'} style={rowStyle}>
-          You name and settings
+            You name and settings
         </div>
         <div className={'row'} style={rowStyle}>
           <div className={'col-xs-7'}>
             <div className={'row'}>
-              <div className={'col-xs-4'} style={{padding: '0px', paddingTop: '3%'}}>
+              <a href='#' style={{color: '#442173'}} title="click to enter a name"
+                onClick={this.contentRightHandler.onClickUserName.bind(this)}>
+                <div className={'col-xs-4'} style={{padding: '0px', paddingTop: '3%'}}>
                 Your name
-              </div>
+                </div>
+              </a>
               <div className={'col-xs-8'} style={{padding: '0px'}}>
                 <div className="input-group">
                   <input className="form-control"
+                    disabled={this.state.userNameInput}
                     value={this.state.userName}
                     onChange={this.contentRightHandler.handleInputChange.bind(this)}
-                    placeholder="Your name"/>
+                    placeholder="Your name"
+                    onKeyUp={this.contentRightHandler.onKeyUp.bind(this)}/>
                 </div>
               </div>
             </div>

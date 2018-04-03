@@ -5,10 +5,11 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 class ContentRightHandler {
   constructor() {
     this.mediaStream = null;
-    this.userName = nameGenerator.getRandomName(); // some random name
+    this.userName = this.getUserName();
     this.audioMuted = false;
     this.videoMuted = false;
     this.screenShared = false;
+    this.userNameInput = 'disabled';
   }
   getState() {
     return {
@@ -16,7 +17,8 @@ class ContentRightHandler {
       userName: this.userName,
       audioMuted: this.audioMuted,
       videoMuted: this.videoMuted,
-      screenShared: this.screenShared
+      screenShared: this.screenShared,
+      userNameInput: this.userNameInput
     };
   }
   onLocalVideoStream(e) {
@@ -95,6 +97,36 @@ class ContentRightHandler {
         CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
         detail);
     }
+  }
+  onClickUserName(e) {
+    e.preventDefault();
+    const nextUserInput = this.state.userNameInput === 'disabled' ? '' : 'disabled';
+    if (nextUserInput === 'disabled') {
+      this.saveUserName(this.state.userName);
+    }
+    this.setState({
+      userNameInput: nextUserInput
+    });
+  }
+  onKeyUp(e) {
+    if (e.key === 'Enter') {
+      this.setState({
+        userNameInput: 'disabled'
+      });
+      this.saveUserName(this.state.userName);
+    }
+  }
+  saveUserName(userName) {
+    localStorage.setItem('userName', JSON.stringify(userName));
+  }
+  getUserName() {
+    let userName = JSON.parse(localStorage.getItem('userName'));
+    if (userName) {
+      return userName;
+    }
+    userName = nameGenerator.getRandomName(); // some random name
+    this.saveUserName(userName);
+    return userName;
   }
 }
 
