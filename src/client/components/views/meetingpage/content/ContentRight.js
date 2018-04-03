@@ -86,7 +86,7 @@ class ContentRight extends React.Component {
             </div>
           </div>
         </div>
-        <div className={'row'} style={{paddingTop: '10%'}}>
+        <div className={'row'} style={{paddingTop: '5%'}}>
           <hr />
         </div>
         <div className={'row'}>

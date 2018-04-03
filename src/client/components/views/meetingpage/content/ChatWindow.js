@@ -23,27 +23,39 @@ class ChatLayout extends React.Component {
       display: 'block',
       minHeight: '300px',
       maxHeight: '400px',
-      marginBottom: '6px'
+      backgroundColor: '#FFFFFF'
+    };
+    const customStyle = {
+      backgroundColor: '#7C54B6',
+      color: '#FFFFFF',
+      height: '35px',
+      paddingTop: '7px',
+      paddingLeft: '10px'
     };
     return (
-      <div className="row-fluid"
-        style={{transform: 'translateX(' + left + ')'}}>
-        <textarea id='chatBox' className="form-control" readOnly='true'
-          style={slideoutTextarea}
-          value={this.state.chatText}
-          ref={(el) => { this.messagesContainer = el; } }/>
-        <div className="input-group">
-          <input className="form-control" placeholder="Write something..."
-            type="text"
-            value={this.state.inputText}
-            onChange={this.chatWindowHandler.onInputChange.bind(this)}
-            onKeyUp={this.chatWindowHandler.onKeyUp.bind(this)}/>
-          <span className="input-group-btn">
-            <button className="btn btn-default" type="button"
-              onClick={this.chatWindowHandler.onSendClick.bind(this)}>
+      <div>
+        <div className='row-fluid' style={customStyle}>
+          <p> <strong> Group chat </strong> </p>
+        </div>
+        <div className="row-fluid"
+          style={{transform: 'translateX(' + left + ')'}}>
+          <textarea id='chatBox' className="form-control" readOnly='true'
+            style={slideoutTextarea}
+            value={this.state.chatText}
+            ref={(el) => { this.messagesContainer = el; } }/>
+          <div className="input-group">
+            <input className="form-control" placeholder="Send a message"
+              type="text"
+              value={this.state.inputText}
+              onChange={this.chatWindowHandler.onInputChange.bind(this)}
+              onKeyUp={this.chatWindowHandler.onKeyUp.bind(this)}/>
+            <span className="input-group-btn">
+              <button className="btn btn-default" type="button"
+                onClick={this.chatWindowHandler.onSendClick.bind(this)}>
               Send
-            </button>
-          </span>
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     );
