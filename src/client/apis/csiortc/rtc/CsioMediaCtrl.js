@@ -10,7 +10,7 @@ class CsioMediaCtrl {
     // event listeners
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM,
-      this.onRemoteStream, false);
+      this.onRemoteStream.bind(this), false);
   }
   getUserMedia(constraints) {
     const self = this;

@@ -36,10 +36,10 @@ class CsioSignalling {
       CsioEvents.SocketIOEvents.JOIN, function(userId) {
         console.log(userId, 'user joined');
         const detail = {
-          userId: this.userId,
+          userId: userId,
           from: 'onSocketJoin'
         };
-        TriggerEvent.triggerEvent(
+        TriggerEvent(
           CsioEvents.CSIOSignaling.ON_JOIN, detail);
       });
 
@@ -50,7 +50,7 @@ class CsioSignalling {
           userId: userId,
           from: 'onSocketLeave'
         };
-        TriggerEvent.triggerEvent(
+        TriggerEvent(
           CsioEvents.CSIOSignaling.ON_LEAVE, detail);
       });
 
@@ -61,7 +61,7 @@ class CsioSignalling {
           message: message,
           from: 'onSocketMessage'
         };
-        TriggerEvent.triggerEvent(
+        TriggerEvent(
           CsioEvents.CSIOSignaling.ON_MESSAGE, detail);
       });
   }
@@ -70,7 +70,7 @@ class CsioSignalling {
     // annouce your presence
     console.log('Joining', room);
     this.socket.emit(
-      CsioEvents.CSIOSignaling.JOIN, room);
+      CsioEvents.SocketIOEvents.JOIN, room);
   }
 
   /**
@@ -78,7 +78,7 @@ class CsioSignalling {
    */
   stop() {
     this.socket.emit(
-      CsioEvents.CSIOSignaling.LEAVE);
+      CsioEvents.SocketIOEvents.LEAVE);
   }
 
   /**
@@ -86,7 +86,7 @@ class CsioSignalling {
    */
   send(to, msg) {
     this.socket.emit(
-      CsioEvents.CSIOSignaling.MESSAGE, to, msg);
+      CsioEvents.SocketIOEvents.MESSAGE, to, msg);
   }
 
   /**
@@ -94,7 +94,7 @@ class CsioSignalling {
    */
   generateToken(userId, callback) {
     this.socket.emit(
-      CsioEvents.CSIOSignaling.GENERATE_TOKEN, userId, callback);
+      CsioEvents.SocketIOEvents.GENERATE_TOKEN, userId, callback);
   }
 }
 

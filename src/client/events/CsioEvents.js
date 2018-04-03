@@ -20,6 +20,10 @@ const CsioEvents = {
     ON_MESSAGE: 'csioevents.onMessage',
     ON_GENERATE_TOKEN: 'csioevents.onGenerateToken'
   },
+  CsioStats: {
+    ON_INITIALIZED: 'csiostats.initialized',
+    ON_DISCONNECTED: 'csiostats.disconnected'
+  },
   CsioMediaCtrl: {
     ON_LOCAL_USER_MEDIA: 'csiomediactrl.onLocalUserMedia',
     ON_REMOTE_MEDIA: 'csiomediactrl.onRemoteMedia',

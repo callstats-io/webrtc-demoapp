@@ -1,6 +1,7 @@
 'use strict';
 
 import CsioConfigParams from '../../utils/Common';
+import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class CsioStats {
   constructor() {
@@ -17,7 +18,10 @@ class CsioStats {
     this.csObject.initialize(
       __appid__,
       __appsecret__,
-      userID, this.csInitCallback, this.csStatsCallback, CsioConfigParams);
+      userID,
+      this.csInitCallback.bind(this),
+      this.csStatsCallback.bind(this),
+      CsioConfigParams);
   }
   // csio related events, and function
   // CSIO object callback
@@ -28,9 +32,16 @@ class CsioStats {
   recommendedConfigCallback(config) {
     console.log('ConfigService, recommended config:', config);
     this.config = {...this.config, ...config};
+    const detail = {
+      config: this.config
+    };
+    TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, detail);
   }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
+    if (csError !== 'success') {
+      TriggerEvent(CsioEvents.CsioStats.ON_DISCONNECTED, {});
+    }
   }
   csStatsCallback(stats) {
     console.log('stats callback');
