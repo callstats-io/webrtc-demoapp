@@ -2,27 +2,31 @@
 // https://github.com/facebook/react/pull/9146
 'use strict';
 import React from 'react';
-import VideoHandler from '../../../handlers/meetingpage/VideoHandler';
+import VideoMainHandler from '../../../handlers/meetingpage/VideoMainHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
-class Video extends React.Component {
+class VideoMain extends React.Component {
   constructor(props) {
     super(props);
-    this.videoHandler = new VideoHandler(this.props.name);
+    this.videoHandler = new VideoMainHandler(this.props.name);
     this.state = this.videoHandler.getState();
     this.componentDidMount = this.videoHandler.componentDidMount.bind(this);
     this.shouldComponentUpdate = this.videoHandler.shouldComponentUpdate.bind(this);
     this.componentDidUpdate = this.videoHandler.componentDidUpdate.bind(this);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
+      this.videoHandler.onResizeVideoView.bind(this), false);
   }
 
   render() {
-    const videoStyle = {
+    const customStyle = {
       marginRight: 'auto',
       marginLeft: 'auto',
       display: 'block',
-      maxWidth: '640px',
-      maxHeight: '340px',
-      WebkitTransform: 'scaleX(1.5)',
+      width: `${this.state.videoWidth}px`,
+      height: `${this.state.videoHeight}px`,
+      WebkitTransform: `scaleX(${this.state.scale})`,
       MozTransform: 'scaleX(1.5)'
+
     };
     return (
       <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)}>
@@ -30,7 +34,7 @@ class Video extends React.Component {
           muted={this.videoHandler.muted}
           className="thumbnail"
           autoPlay loop
-          style={videoStyle}
+          style={customStyle}
           ref={(video) => {
             this.video = video;
           }}>
@@ -40,4 +44,4 @@ class Video extends React.Component {
   }
 }
 
-export default Video;
+export default VideoMain;

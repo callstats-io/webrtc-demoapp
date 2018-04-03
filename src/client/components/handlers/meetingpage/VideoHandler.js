@@ -10,7 +10,8 @@ class VideoHandler {
     }
   }
   getState() {
-    return {};
+    return {
+    };
   }
   componentDidMount() {
     this.video.srcObject = this.props.stream;

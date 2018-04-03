@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Video from './Video';
+import VideoMain from './VideoMain';
 import RemoteVideos from './RemoteVideos';
 import ContentLeftHandler from '../../../handlers/meetingpage/ContentLeftHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
@@ -16,6 +16,8 @@ class ContentLeft extends React.Component {
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE,
       this.contentLeftHandler.onLocalVideoStream.bind(this), false);
+    window.addEventListener('resize',
+      this.contentLeftHandler.onResizeWindow.bind(this), false);
   }
   render() {
     const cusStyle = {
@@ -31,8 +33,9 @@ class ContentLeft extends React.Component {
     return (
       <div className={'col-xs-8'} style={cusStyle}>
         <div className={'row'} style={rowStyle}>
-          <div className={'row'} style={rowStyle}>
-            <Video key={'local'} name={'local'}
+          <div className={'row'} style={rowStyle}
+            ref={(el) => { this.videoContainer = el; } }>
+            <VideoMain key={'local'} name={'local'}
               stream={this.state.media}/>
           </div>
         </div>
