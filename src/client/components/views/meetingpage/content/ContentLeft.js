@@ -13,6 +13,9 @@ class ContentLeft extends React.Component {
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.contentLeftHandler.onLocalVideoStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE,
+      this.contentLeftHandler.onLocalVideoStream.bind(this), false);
   }
   render() {
     const cusStyle = {

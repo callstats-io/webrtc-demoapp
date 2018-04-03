@@ -55,7 +55,6 @@ class CsioRTC {
   }
   mayBeCreatePC(userId) {
     if (userId && !this.pcs[userId]) {
-      console.warn(userId, this.pcs[userId]);
       const iceConfig = this.config ? this.config.peerConnection : {};
       const stream = this.csoiMedia.getStream(true);
       this.pcs[userId] = new CsioPeerConnection(userId, iceConfig, stream);

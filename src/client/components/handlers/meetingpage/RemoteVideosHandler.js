@@ -21,10 +21,11 @@ class RemoteVideosHandler {
     // may be we want to change video focus
     const keys = Object.keys(media || {});
     const detail = {
-      userId: keys.length > 0 ? keys[0] : 'local'
+      userId: keys.length > 0 ? keys[0] : 'local',
+      from: 'remoteVideosHandler'
     };
     TriggerEvent(
-      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE, detail);
+      CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE, detail);
   }
 }
 

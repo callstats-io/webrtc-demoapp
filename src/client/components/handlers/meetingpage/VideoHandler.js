@@ -30,7 +30,7 @@ class VideoHandler {
       from: 'onClickHandler'
     };
     TriggerEvent(
-      CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE,
+      CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE,
       detail);
   }
 }

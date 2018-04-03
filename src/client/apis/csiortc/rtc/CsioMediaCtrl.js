@@ -11,6 +11,9 @@ class CsioMediaCtrl {
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM,
       this.onRemoteStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE,
+      this.onVideoFocusChanged.bind(this), false);
   }
   getUserMedia(constraints) {
     const self = this;
