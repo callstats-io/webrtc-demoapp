@@ -28,7 +28,6 @@ class ContentLeftHandler {
       console.warn('-> ', this.state.videoHeight, from);
     }
   }
-
 }
 
 export default ContentLeftHandler;

@@ -24,6 +24,8 @@ class ContentRightHandler {
     this.setState({
       media: media
     });
+    // a hack to find right container height on runtime
+    // when it first arrive
     if (this.rightContainer) {
       const curHeight = this.rightContainer.clientHeight;
       const detail = {
