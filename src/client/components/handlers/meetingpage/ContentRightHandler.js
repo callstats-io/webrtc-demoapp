@@ -24,6 +24,18 @@ class ContentRightHandler {
     this.setState({
       media: media
     });
+    if (this.rightContainer) {
+      const curHeight = this.rightContainer.clientHeight;
+      const detail = {
+        height: curHeight,
+        from: 'contentRightHandler'
+      };
+      setTimeout((e) => {
+        TriggerEvent(
+          CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
+          detail);
+      }, 200);
+    }
   }
   handleInputChange(e) {
     const userName = e.target.value;
