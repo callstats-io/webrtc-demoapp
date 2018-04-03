@@ -10,7 +10,7 @@ class RemoteVideo extends React.Component {
     this.remoteVideosHandler = new RemoteVideosHandler();
     this.state = this.remoteVideosHandler.getState();
     document.addEventListener(
-      CsioEvents.CsioMediaCtrl.ON_REMOTE_MEDIA,
+      CsioEvents.CsioMediaCtrl.ON_ADD_REMOVE_REMOTESTREAM,
       this.remoteVideosHandler.onRemoteVideos.bind(this),
       false);
   }
