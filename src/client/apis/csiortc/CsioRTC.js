@@ -20,6 +20,9 @@ class CsioRTC {
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.onLocalUserMedia.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE,
+      this.onSendChannelMessage.bind(this), false);
   }
   mayBeInitializeRTC() {
     const mediaConfig = this.config ? this.config.media : undefined;
@@ -72,6 +75,13 @@ class CsioRTC {
   toggleMediaStates(isEnable, mediaType) {
     if (mediaType !== 'screen') {
       this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+    }
+  }
+  onSendChannelMessage(e) {
+    const label = e.detail.label;
+    const message = e.detail.message;
+    for (let i in this.pcs) {
+      this.pcs[i].sendChannelMessage(label, message);
     }
   }
 }
