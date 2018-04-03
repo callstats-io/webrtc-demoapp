@@ -21,7 +21,7 @@ class VideoMain extends React.Component {
       objectFit: 'fill',
       width: '90%',
       paddingRight: '5%',
-      maxHeight: this.state.videoHeight
+      maxHeight: `${this.state.videoHeight}px`
     };
     return (
       <video id={this.videoHandler.name}

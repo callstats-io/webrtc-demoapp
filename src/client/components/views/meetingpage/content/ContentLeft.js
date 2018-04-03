@@ -16,13 +16,18 @@ class ContentLeft extends React.Component {
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.VIDEO_FOCUS_CHANGE,
       this.contentLeftHandler.onLocalVideoStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
+      this.contentLeftHandler.onResizeVideoView.bind(this), false);
   }
   render() {
     const cusStyle = {
       paddingRight: '2%',
       borderRight: '1px solid #ccc',
-      paddingBottom: '1%'
+      paddingBottom: '1%',
+      height: `${this.state.hrHeight}px`
     };
+
     const rowStyle = {
       paddingTop: '2%',
       paddingLeft: '2%'

@@ -14,11 +14,9 @@ class VideoMainHandler {
     };
   }
   componentDidMount() {
-    console.log('componentDidMount', this.state.videoHeight);
     this.video.srcObject = this.props.stream;
   }
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.state.videoHeight);
     this.video.srcObject = this.props.stream;
   }
   onResizeVideoView(e) {
@@ -29,7 +27,6 @@ class VideoMainHandler {
       this.setState({
         videoHeight: height
       });
-      console.warn('-> ', this.state.videoHeight, from);
     }
   }
 }
