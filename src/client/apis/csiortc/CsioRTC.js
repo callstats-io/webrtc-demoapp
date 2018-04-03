@@ -70,7 +70,9 @@ class CsioRTC {
     }
   }
   toggleMediaStates(isEnable, mediaType) {
-    this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+    if (mediaType !== 'screen') {
+      this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+    }
   }
 }
 

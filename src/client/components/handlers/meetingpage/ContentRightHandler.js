@@ -59,8 +59,7 @@ class ContentRightHandler {
   }
   onScreenShareToggle(e) {
     e.preventDefault();
-    // Should handle differently
-    /* const screenShared = !this.state.screenShared;
+    const screenShared = !this.state.screenShared;
     this.setState({
       screenShared: screenShared
     });
@@ -69,7 +68,7 @@ class ContentRightHandler {
       isEnable: screenShared
     };
     TriggerEvent(
-      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail); */
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
 }
 
