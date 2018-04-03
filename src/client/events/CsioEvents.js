@@ -1,6 +1,12 @@
 'use strict';
 
 const CsioEvents = {
+  SocketIOEvents: {
+    CONNECT: 'connect',
+    JOIN: 'join',
+    LEAVE: 'leave',
+    MESSAGE: 'message'
+  },
   CSIOSignaling: {
     SEND_MESSAGE: 'csioevents.sendMessage',
     CONNECT: 'csioevents.connect',

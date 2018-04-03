@@ -12,9 +12,9 @@ class CsioSignalling {
     this.socket = null;
     document.addEventListener(
       CsioEvents.CsioPeerConnection.SEND_MESSAGE,
-      (e) => {
+      function(e) {
         this.send(e.detail.userId, e.detail.message);
-      }, false);
+      }.bind(this), false);
 
     /**
      * Open connection and set hooks for users joining,
@@ -22,9 +22,9 @@ class CsioSignalling {
      */
     this.socket = io.connect();
     this.socket.on(
-      CsioEvents.CSIOSignaling.CONNECT, function(data) {
+      CsioEvents.SocketIOEvents.CONNECT, function(data) {
         const detail = {
-          localName: this.id,
+          userId: this.id,
           from: 'onSocketConnect'
         };
         TriggerEvent(
@@ -33,7 +33,7 @@ class CsioSignalling {
 
     // hear from others
     this.socket.on(
-      CsioEvents.CSIOSignaling.JOIN, function(userId) {
+      CsioEvents.SocketIOEvents.JOIN, function(userId) {
         console.log(userId, 'user joined');
         const detail = {
           userId: this.userId,
@@ -44,7 +44,7 @@ class CsioSignalling {
       });
 
     this.socket.on(
-      CsioEvents.CSIOSignaling.LEAVE, function(userId) {
+      CsioEvents.SocketIOEvents.LEAVE, function(userId) {
         console.log(userId, 'user leaving');
         const detail = {
           userId: userId,
@@ -55,7 +55,7 @@ class CsioSignalling {
       });
 
     this.socket.on(
-      CsioEvents.CSIOSignaling.MESSAGE, function(userId, message) {
+      CsioEvents.SocketIOEvents.MESSAGE, function(userId, message) {
         const detail = {
           userId: userId,
           message: message,

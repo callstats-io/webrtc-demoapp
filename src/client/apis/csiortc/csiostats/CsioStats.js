@@ -23,9 +23,11 @@ class CsioStats {
   // CSIO object callback
   defaultConfigCallback(config) {
     console.log('ConfigService, default config:', config);
+    this.config = {...this.config, ...config};
   }
   recommendedConfigCallback(config) {
     console.log('ConfigService, recommended config:', config);
+    this.config = {...this.config, ...config};
   }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
