@@ -14,6 +14,8 @@ class ContentRight extends React.Component {
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.contentRightHandler.onLocalVideoStream.bind(this),
       false);
+    window.addEventListener('resize',
+      this.contentRightHandler.onResizeWindow.bind(this), false);
   }
   render() {
     const curStyle = {
@@ -24,7 +26,7 @@ class ContentRight extends React.Component {
       paddingTop: '5%'
     };
     return (
-      <div className={'col-xs-4'} style={curStyle}>
+      <div className={'col-xs-4'} style={curStyle} ref={(el) => { this.rightContainer = el; } }>
         <div className={'row'} style={rowStyle}>
           You name and settings
         </div>

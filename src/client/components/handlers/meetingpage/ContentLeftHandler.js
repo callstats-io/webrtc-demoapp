@@ -1,7 +1,5 @@
 'use strict';
 
-import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
-
 class ContentLeftHandler {
   constructor() {
     this.mediaStream = null;
@@ -16,20 +14,6 @@ class ContentLeftHandler {
     this.setState({
       media: media
     });
-  }
-  onResizeWindow(e) {
-    if (this.videoContainer) {
-      const curWidth = this.videoContainer.clientWidth;
-      const curHeight = this.videoContainer.clientHeight;
-      const detail = {
-        width: curWidth,
-        height: curHeight,
-        from: 'contentLeftHandler'
-      };
-      TriggerEvent(
-        CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
-        detail);
-    }
   }
 }
 

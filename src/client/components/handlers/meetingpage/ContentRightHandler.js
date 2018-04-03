@@ -70,6 +70,18 @@ class ContentRightHandler {
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
+  onResizeWindow(e) {
+    if (this.rightContainer) {
+      const curHeight = this.rightContainer.clientHeight;
+      const detail = {
+        height: curHeight,
+        from: 'contentRightHandler'
+      };
+      TriggerEvent(
+        CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
+        detail);
+    }
+  }
 }
 
 export default ContentRightHandler;

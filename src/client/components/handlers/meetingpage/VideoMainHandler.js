@@ -1,5 +1,4 @@
 'use strict';
-import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class VideoMainHandler {
   constructor(name) {
@@ -8,50 +7,29 @@ class VideoMainHandler {
     if (name === 'local') {
       this.muted = true;
     }
-    this.prvWidth = 0;
-    this.prvHeight = 0;
   }
   getState() {
     return {
-      videoWidth: 340,
-      videoHeight: 640,
-      scale: parseFloat(640.0 / 320.0)
+      videoHeight: 640.0
     };
   }
   componentDidMount() {
-    console.log('componentDidMount', this.state.videoWidth, this.state.videoHeight);
+    console.log('componentDidMount', this.state.videoHeight);
     this.video.srcObject = this.props.stream;
-  }
-  shouldComponentUpdate(props) {
-    return true;
   }
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.state.videoWidth, this.state.videoHeight);
+    console.log('componentDidUpdate', this.state.videoHeight);
     this.video.srcObject = this.props.stream;
   }
-  onClickHandler(e) {
-    e.preventDefault();
-    // name is actually user's user id
-    const userId = this.props.name;
-    const detail = {
-      userId: userId,
-      from: 'onClickHandler'
-    };
-    TriggerEvent(
-      CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE,
-      detail);
-  }
   onResizeVideoView(e) {
-    const width = e.detail.width;
-    const height = e.detail.height;
+    const height = Math.max(e.detail.height - 200, 320.0);
     const from = e.detail.from;
-    if (from === 'contentLeftHandler') {
+    console.warn(height, from);
+    if (from === 'contentRightHandler') {
       this.setState({
-        videoWidth: width,
-        videoHeight: height,
-        scale: parseFloat(height) / parseFloat(width)
+        videoHeight: height
       });
-      console.warn('-> ', width, height, from);
+      console.warn('-> ', this.state.videoHeight, from);
     }
   }
 }
