@@ -31,7 +31,7 @@ class ContentRight extends React.Component {
         <div className={'row'} style={rowStyle}>
           <div className={'col-xs-7'}>
             <div className={'row'}>
-              <div className={'col-xs-4'} style={{padding: '0px'}}>
+              <div className={'col-xs-4'} style={{padding: '0px', paddingTop: '3%'}}>
                 Your name
               </div>
               <div className={'col-xs-8'} style={{padding: '0px'}}>
