@@ -62,6 +62,13 @@ class CsioRTC {
       this.csoiMedia.addStream(stream, this.pcs[userId]);
     }
   }
+  mayBeDisposePC(userId) {
+    if (userId && this.pcs[userId]) {
+      this.pcs[userId].close();
+      this.csoiMedia.disposeRemoteStream(userId);
+      delete this.pcs[userId];
+    }
+  }
 }
 
 export default CsioRTC;

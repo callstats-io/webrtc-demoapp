@@ -49,7 +49,7 @@ class CsioMediaCtrl {
       return this.remoteStreams[userId];
     }
   }
-  disposeLocalStream(isLocal, userId) {
+  disposeLocalStream() {
     if (this.localStream) {
       for (const at in this.localStream.getTracks()) {
         if (typeof this.localStream.getTrack === 'function') {

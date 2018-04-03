@@ -18,6 +18,8 @@ class CsioRTCClient {
       this.onNewUserJoined.bind(this), false);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_MESSAGE,
       this.onUserMessage.bind(this), false);
+    document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,
+      this.onUserLeave.bind(this), false);
   }
 
   // on connect with socket io
@@ -54,6 +56,10 @@ class CsioRTCClient {
     } else if (json.offer) {
       this.csiortc.doAnswer(userId, json.offer);
     }
+  }
+  onUserLeave(e) {
+    const userId = e.detail.userId;
+    this.csiortc.mayBeDisposePC(userId);
   }
 }
 
