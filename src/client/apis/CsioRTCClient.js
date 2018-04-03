@@ -20,6 +20,8 @@ class CsioRTCClient {
       this.onUserMessage.bind(this), false);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,
       this.onUserLeave.bind(this), false);
+    document.addEventListener(CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
+      this.onToggleMediaState.bind(this), false);
   }
 
   // on connect with socket io
@@ -60,6 +62,11 @@ class CsioRTCClient {
   onUserLeave(e) {
     const userId = e.detail.userId;
     this.csiortc.mayBeDisposePC(userId);
+  }
+  onToggleMediaState(e) {
+    const isEnable = e.detail.isEnable;
+    const mediaType = e.detail.mediaType;
+    this.csiortc.toggleMediaStates(isEnable, mediaType);
   }
 }
 

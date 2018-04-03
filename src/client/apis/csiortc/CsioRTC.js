@@ -69,6 +69,9 @@ class CsioRTC {
       delete this.pcs[userId];
     }
   }
+  toggleMediaStates(isEnable, mediaType) {
+    this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+  }
 }
 
 export default CsioRTC;

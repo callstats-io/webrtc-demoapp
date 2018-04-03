@@ -41,7 +41,6 @@ class ContentRightHandler {
       mediaType: 'audio',
       isEnable: !audioMuted
     };
-    console.log(detail);
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
@@ -60,7 +59,8 @@ class ContentRightHandler {
   }
   onScreenShareToggle(e) {
     e.preventDefault();
-    const screenShared = !this.state.screenShared;
+    // Should handle differently
+    /* const screenShared = !this.state.screenShared;
     this.setState({
       screenShared: screenShared
     });
@@ -69,7 +69,7 @@ class ContentRightHandler {
       isEnable: screenShared
     };
     TriggerEvent(
-      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail); */
   }
 }
 
