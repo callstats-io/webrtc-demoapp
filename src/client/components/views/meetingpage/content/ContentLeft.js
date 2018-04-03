@@ -22,7 +22,7 @@ class ContentLeft extends React.Component {
   }
   render() {
     const cusStyle = {
-      paddingRight: '2%',
+      paddingRight: '0%',
       borderRight: '1px solid #ccc',
       paddingBottom: '1%',
       height: `${this.state.hrHeight}px`
