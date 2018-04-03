@@ -16,11 +16,7 @@ class Video extends React.Component {
 
   render() {
     const videoStyle = {
-      marginRight: 'auto',
-      marginLeft: 'auto',
-      display: 'block',
-      maxWidth: '640px',
-      maxHeight: '340px',
+      padding: '0px',
       WebkitTransform: 'scaleX(1.5)',
       MozTransform: 'scaleX(1.5)'
     };
