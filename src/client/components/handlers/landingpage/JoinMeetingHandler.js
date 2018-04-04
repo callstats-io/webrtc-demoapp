@@ -34,6 +34,14 @@ class JoinMeetingHandler {
       shouldRedirectToMeetingPage: true
     });
   }
+  onKeyUp(e) {
+    if (e.key === 'Enter') {
+      this.setState({
+        showModal: 'none',
+        shouldRedirectToMeetingPage: true
+      });
+    }
+  }
   handleCloseModal(e) {
     this.setState({
       showModal: 'none',

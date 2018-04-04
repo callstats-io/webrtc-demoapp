@@ -36,7 +36,8 @@ class JoinMeetingRoomPopup extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.createMeetingHandler.handleInputChange.bind(this)}/>
+                  onChange={this.createMeetingHandler.handleInputChange.bind(this)}
+                  onKeyUp={this.createMeetingHandler.onKeyUp.bind(this)}/>
               </div>
             </div>
             <div className="modal-footer">
