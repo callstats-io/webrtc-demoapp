@@ -29,6 +29,13 @@ class CsioMediaCtrl {
       function(e) {
         console.error(e);
         self.localStream = null;
+        const detail = {
+          type: 'getUserMedia',
+          pc: this.pc,
+          error: e
+        };
+        TriggerEvent(
+          CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
       });
   }
   addStream(stream, ctx) {
