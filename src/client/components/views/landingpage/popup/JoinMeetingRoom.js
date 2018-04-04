@@ -7,11 +7,11 @@ import {CsioEvents} from '../../../../events/CsioEvents';
 class JoinMeetingRoomPopup extends React.Component {
   constructor(props) {
     super(props);
-    this.createMeetingHandler = new JoinMeetingHandler();
-    this.state = this.createMeetingHandler.getState();
+    this.joinMeetingHandler = new JoinMeetingHandler();
+    this.state = this.joinMeetingHandler.getState();
     document.addEventListener(
       CsioEvents.LANDING_PAGE.ON_JOIN_MEETING_ROOM_LINK_CLICK,
-      this.createMeetingHandler.onJoinRoomClick.bind(this),
+      this.joinMeetingHandler.onJoinRoomClick.bind(this),
       false);
   }
 
@@ -36,19 +36,19 @@ class JoinMeetingRoomPopup extends React.Component {
                 <input className="form-control"
                   placeholder="Meeting name"
                   value={this.state.roomName}
-                  onChange={this.createMeetingHandler.handleInputChange.bind(this)}
-                  onKeyUp={this.createMeetingHandler.onKeyUp.bind(this)}/>
+                  onChange={this.joinMeetingHandler.handleInputChange.bind(this)}
+                  onKeyUp={this.joinMeetingHandler.onKeyUp.bind(this)}/>
               </div>
             </div>
             <div className="modal-footer">
               <button type="button"
                 className="btn btn-primary"
                 disabled={!this.state.joinRoomButtonEnabled}
-                onClick={this.createMeetingHandler.handleJoinMeeting.bind(this)}
+                onClick={this.joinMeetingHandler.handleJoinMeeting.bind(this)}
               > Join room </button>
               <button type="button"
                 className="btn btn-primary"
-                onClick={this.createMeetingHandler.handleCloseModal.bind(this)}>Close</button>
+                onClick={this.joinMeetingHandler.handleCloseModal.bind(this)}>Close</button>
             </div>
           </div>
         </div>

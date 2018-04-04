@@ -21,6 +21,13 @@ class CreateMeetingHandler {
       createRoomButtonEnabled: needEnable
     });
   }
+  onKeyUp(e) {
+    if (e.key === 'Enter') {
+      this.setState({
+        shouldRedirectToMeetingPage: true
+      });
+    }
+  }
   handleCreateRoomClick(e) {
     this.setState({
       shouldRedirectToMeetingPage: true
