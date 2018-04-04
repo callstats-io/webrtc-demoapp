@@ -35,7 +35,12 @@
     "trace": true,
     "io": true,
     "CsioWebrtcApp": true,
-    "callstats": true
+    "module": true,
+    "__dirname": true,
+    "process": true,
+    "__appid__": false,
+    "__appsecret__": false,
+    "callstats": false
   },
   "parserOptions": {
     "ecmaFeatures": {
