@@ -4,6 +4,7 @@ import HeaderLayout from './header/HeaderLayout';
 import ContentLayout from './content/ContentLayout';
 import ShareLinkPopup from './popup/ShareLinkPopup';
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
+import AlertLayout from './alert/AlertLayout';
 
 export class AppLayout extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ export class AppLayout extends React.Component {
     return (
       <div className={'container-fluid'}>
         <HeaderLayout roomName={this.roomName}/>
+        <AlertLayout/>
         <ContentLayout/>
         <ShareLinkPopup/>
       </div>
