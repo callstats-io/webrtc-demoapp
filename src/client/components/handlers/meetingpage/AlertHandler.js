@@ -42,7 +42,12 @@ class AlertHandler {
   onNewUserJoined(e) {
     const userId = e.detail.userId;
     const text = `${userId} joined the meeting`;
-    this.showAlart('alert-success', text);
+    this.showAlart('alert-info', text);
+  }
+  onUserLeave(e) {
+    const userId = e.detail.userId;
+    const text = `${userId} left the meeting`;
+    this.showAlart('alert-warning', text);
   }
 }
 export default AlertHandler;

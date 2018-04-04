@@ -10,6 +10,8 @@ class AlertLayout extends React.Component {
     this.state = this.alertHandler.getState();
     document.addEventListener(CsioEvents.CSIOSignaling.ON_JOIN,
       this.alertHandler.onNewUserJoined.bind(this), false);
+    document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,
+      this.alertHandler.onUserLeave.bind(this), false);
   }
   render() {
     return (
