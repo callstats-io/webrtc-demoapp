@@ -53,7 +53,7 @@ class AlertHandler {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
     const text = `You ${mediaType === 'audio'
-      ? (!isEnable ? 'Muted' : 'Unmuted') : (!isEnable ? 'Paused' : 'Resumed')} ${mediaType}`;
+      ? (!isEnable ? 'muted' : 'unmuted') : (!isEnable ? 'paused' : 'resumed')} ${mediaType}`;
     this.showAlart('alert-warning', text);
   }
 }
