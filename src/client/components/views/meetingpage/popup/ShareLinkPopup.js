@@ -16,8 +16,8 @@ class ShareLinkPopup extends React.Component {
 
   render() {
     const customStyle = {
-      paddingTop: '5%',
-      paddingBottom: '8%'
+      paddingTop: '%',
+      paddingBottom: '0px'
     };
     return (
       <div className="modal" tabIndex="-1" role="dialog" style={{
