@@ -31,6 +31,7 @@ const CsioEvents = {
     VIDEO_FOCUS_CHANGE: 'csiomediactrl.videoFocusChanged'
   },
   CsioPeerConnection: {
+    ON_PEERCONNECTION_CREATED: 'csiopeerconnection.onpeerconnectioncreated',
     ON_PEERCONNECTION_CLOSED: 'csiopeerconnection.onPeerConnectionClosed',
     ON_WEBRTC_ERROR: 'csiopeerconnection.onWebrtcError',
     ON_REMOTE_STREAM: 'csiopeerconnection.onRemoteStream',

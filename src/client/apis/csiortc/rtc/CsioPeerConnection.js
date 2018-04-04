@@ -16,6 +16,12 @@ class CsioPeerConnection {
 
     // TODO is there any error when the TURN servers are not responding o.s.?
     this.pc = new RTCPeerConnection(iceConfig);
+    const detail = {
+      userId: this.userId,
+      pc: this.pc
+    };
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CREATED, detail);
     this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
     console.log(userId, 'new peer connection');
@@ -34,7 +40,8 @@ class CsioPeerConnection {
       userId: this.userId,
       pc: this.pc
     };
-    TriggerEvent(CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CLOSED, detail);
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CLOSED, detail);
   }
 
   addIceCandidate(ic) {
@@ -62,7 +69,14 @@ class CsioPeerConnection {
         this.onCreateOfferSuccess(e);
       }.bind(this),
       function(e) {
-      });
+        const detail = {
+          type: 'createOffer',
+          pc: this.pc,
+          error: e
+        };
+        TriggerEvent(
+          CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
+      }.bind(this));
   }
 
   setRemoteDescription(offer) {
@@ -81,14 +95,28 @@ class CsioPeerConnection {
               }.bind(this),
               // createAnswer failure
               function(e) {
-              });
+                const detail = {
+                  type: 'createAnswer',
+                  pc: this.pc,
+                  error: e
+                };
+                TriggerEvent(
+                  CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
+              }.bind(this));
           } else {
             console.log(this.userId, 'answer received');
           }
         }.bind(this),
         // setRemoteDescription failure
         function(e) {
-        });
+          const detail = {
+            type: 'setRemoteDescription',
+            pc: this.pc,
+            error: e
+          };
+          TriggerEvent(
+            CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
+        }.bind(this));
   }
   oniceconnectionstatechange(e) {
     console.log('ICE connection state:', this.pc.iceConnectionState);
@@ -117,6 +145,13 @@ class CsioPeerConnection {
   onAddIceCandidateError(error) {
     console.log(this.userId, 'failed to add ICE Candidate: ' +
       error.toString());
+    const detail = {
+      type: 'addIceCandidate',
+      pc: this.pc,
+      error: error
+    };
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
   }
 
   onIceCandidate(e) {
@@ -146,8 +181,15 @@ class CsioPeerConnection {
           };
           TriggerEvent(CsioEvents.CsioPeerConnection.SEND_MESSAGE, detail);
         }.bind(this),
-        function(e) {
-        });
+        function(error) {
+          const detail = {
+            type: 'setLocalDescription',
+            pc: this.pc,
+            error: error
+          };
+          TriggerEvent(
+            CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
+        }.bind(this));
   }
 
   /*
