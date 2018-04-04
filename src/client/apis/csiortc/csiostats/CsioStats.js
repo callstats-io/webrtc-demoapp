@@ -15,11 +15,40 @@ class CsioStats {
       CsioEvents.MEETING_PAGE.ON_MEETING_PAGE_LOADED,
       this.onMeetingPageLoaded.bind(this), false);
     document.addEventListener(
+      CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CREATED,
+      this.onPeerconnectionCreated.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CLOSED,
+      this.onPeerconnectionClosed.bind(this), false);
+    document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR,
       this.handleWebrtcError.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM,
+      this.onRemoteStream.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioRTC.ON_TOGGLE_MEDIA_STATE,
+      this.onToggleMediaState.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     this.roomName = e.detail.roomName;
+  }
+  onPeerconnectionCreated(e) {
+    const roomName = this.roomName;
+    const pcObject = e.detail.pc;
+    const remoteUserID = e.detail.userId;
+    const usage = this.csObject.fabricUsage.multiplex;
+    this.csObject.addNewFabric(pcObject, remoteUserID, usage,
+      roomName, this.pcCallback);
+  }
+  pcCallback(err, msg) {
+    console.log(`Monitoring status: '${err} msg: ${msg}`);
+  }
+  onPeerconnectionClosed(e) {
+    const roomName = this.roomName;
+    const pcObject = e.detail.pc;
+    const fabricEvent = this.csObject.fabricEvent.fabricTerminated;
+    this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
   initialize(userID) {
     if (this.isInitialized) {
@@ -87,6 +116,63 @@ class CsioStats {
         return;
     }
     this.csObject.reportError(pcObject, roomName, csioType, err);
+  }
+  onRemoteStream(e) {
+    const roomName = this.roomName;
+    const pc = e.detail.pc;
+    const remoteUserId = e.detail.userId;
+
+    // associate SSRCs
+    var ssrcs = [];
+    var validLine = RegExp.prototype.test.bind(/^([a-z])=(.*)/);
+    var reg = /^ssrc:(\d*) ([\w_]*):(.*)/;
+    pc.remoteDescription.sdp.split(/(\r\n|\r|\n)/).filter(validLine)
+      .forEach(function(l) {
+        var type = l[0];
+        var content = l.slice(2);
+        if (type === 'a') {
+          if (reg.test(content)) {
+            var match = content.match(reg);
+            if (!(ssrcs.includes(match[1]))) {
+              ssrcs.push(match[1]);
+            }
+          }
+        }
+      });
+    for (const ssrc in ssrcs) {
+      this.csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrcs[ssrc],
+        'camera', /* video element id */remoteUserId);
+    }
+  }
+  onToggleMediaState(e) {
+    const roomName = this.roomName;
+    const pcObject = e.detail.pc;
+    const type = e.detail.type;
+    let fabricEvent;
+    switch (type) {
+      case 'audioMuted':
+        fabricEvent = this.csObject.fabricEvent.audioMute;
+        break;
+      case 'audioUnmuted':
+        fabricEvent = this.csObject.fabricEvent.audioUnmute;
+        break;
+      case 'videoPaused':
+        fabricEvent = this.csObject.fabricEvent.videoPause;
+        break;
+      case 'videoResumed':
+        fabricEvent = this.csObject.fabricEvent.videoResume;
+        break;
+      case 'screenShareEnabled':
+        fabricEvent = this.csObject.fabricEvent.screenShareStart;
+        break;
+      case 'screenShareDisabled':
+        fabricEvent = this.csObject.fabricEvent.screenShareStop;
+        break;
+      default:
+        console.log('Error', type, 'not handled!');
+        return;
+    }
+    this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
 }
 

@@ -2,7 +2,7 @@
 
 import CsioSignalling from './signaling/CsioSignalling';
 import CsioMediaCtrl from './rtc/CsioMediaCtrl';
-import {CsioEvents} from '../../events/CsioEvents';
+import {CsioEvents, TriggerEvent} from '../../events/CsioEvents';
 import CsioPeerConnection from './rtc/CsioPeerConnection';
 
 class CsioRTC {
@@ -74,6 +74,24 @@ class CsioRTC {
   toggleMediaStates(isEnable, mediaType) {
     if (mediaType !== 'screen') {
       this.csoiMedia.toggleMediaStates(isEnable, mediaType);
+    }
+    let _type;
+    if (mediaType === 'audio') {
+      _type = (isEnable ? 'audioUnmuted' : 'audioMuted');
+    } else if (mediaType === 'video') {
+      _type = (isEnable ? 'videoResumed' : 'videoPaused');
+    } else if (mediaType === 'screen') {
+      _type = (isEnable ? 'screenShareEnabled' : 'screenShareDisabled');
+    }
+    for (const key in this.pcs) {
+      if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+        const detail = {
+          pc: this.pcs[key],
+          type: _type
+        };
+        TriggerEvent(
+          CsioEvents.CsioRTC.ON_TOGGLE_MEDIA_STATE, detail);
+      }
     }
   }
   onSendChannelMessage(e) {

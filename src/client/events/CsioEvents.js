@@ -40,6 +40,9 @@ const CsioEvents = {
     SEND_CHANNEL_MESSAGE: 'csiopeerconnection.sendChannelMessage',
     ON_CHANNEL_MESSAGE: 'csiopeerconnection.onChannelMessage'
   },
+  CsioRTC: {
+    ON_TOGGLE_MEDIA_STATE: 'csiortc.ontogglemediastate'
+  },
   LANDING_PAGE: {
     ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'
   },
