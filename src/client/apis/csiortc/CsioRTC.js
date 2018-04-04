@@ -75,22 +75,33 @@ class CsioRTC {
     if (mediaType !== 'screen') {
       this.csoiMedia.toggleMediaStates(isEnable, mediaType);
     }
-    let _type;
-    if (mediaType === 'audio') {
-      _type = (isEnable ? 'audioUnmuted' : 'audioMuted');
-    } else if (mediaType === 'video') {
-      _type = (isEnable ? 'videoResumed' : 'videoPaused');
-    } else if (mediaType === 'screen') {
-      _type = (isEnable ? 'screenShareEnabled' : 'screenShareDisabled');
-    }
+    const getLog = (userId) => {
+      let _type;
+      let eventLog;
+      if (mediaType === 'audio') {
+        _type = (isEnable ? 'audioUnmuted' : 'audioMuted');
+        eventLog = `Audio is ${(isEnable ? 'unmuted' : 'muted')} for ${userId}`;
+      } else if (mediaType === 'video') {
+        _type = (isEnable ? 'videoResumed' : 'videoPaused');
+        eventLog = `Video is ${(isEnable ? 'resumed' : 'paused')} for ${userId}`;
+      } else if (mediaType === 'screen') {
+        _type = (isEnable ? 'screenShareEnabled' : 'screenShareDisabled');
+        eventLog = `Screen share is ${(isEnable ? 'enabled' : 'disabled')} for ${userId}`;
+      }
+      return {_type, eventLog};
+    };
     for (const key in this.pcs) {
       if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+        let {_type, eventLog} = getLog(key);
         const detail = {
-          pc: this.pcs[key],
-          type: _type
+          pc: this.pcs[key].pc,
+          type: _type,
+          eventLog: eventLog
         };
         TriggerEvent(
           CsioEvents.CsioRTC.ON_TOGGLE_MEDIA_STATE, detail);
+        TriggerEvent(
+          CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
       }
     }
   }

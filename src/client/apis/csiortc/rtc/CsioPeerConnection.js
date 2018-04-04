@@ -18,10 +18,13 @@ class CsioPeerConnection {
     this.pc = new RTCPeerConnection(iceConfig);
     const detail = {
       userId: this.userId,
-      pc: this.pc
+      pc: this.pc,
+      eventLog: `PeerConnection created for ${this.userId}`
     };
     TriggerEvent(
       CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CREATED, detail);
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
     this.datachannels = {};
     this.pc.ondatachannel = this.receiveChannelCallback.bind(this);
     console.log(userId, 'new peer connection');
@@ -38,10 +41,13 @@ class CsioPeerConnection {
     this.pc.close();
     const detail = {
       userId: this.userId,
-      pc: this.pc
+      pc: this.pc,
+      eventLog: `PeerConnection closed for ${this.userId}`
     };
     TriggerEvent(
       CsioEvents.CsioPeerConnection.ON_PEERCONNECTION_CLOSED, detail);
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
   }
 
   addIceCandidate(ic) {
@@ -125,6 +131,12 @@ class CsioPeerConnection {
       // this.createOffer(true);
     } else if (this.pc.iceConnectionState === 'completed' ||
       this.pc.iceConnectionState === 'closed') {
+      const detail = {
+        pc: this.pc,
+        eventLog: `ICE connection ${this.pc.iceConnectionState} for ${this.userId}`
+      };
+      TriggerEvent(
+        CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
     }
   }
   // callback functions
@@ -133,9 +145,11 @@ class CsioPeerConnection {
     const detail = {
       pc: this.pc,
       userId: this.userId,
-      streams: e.streams
+      streams: e.streams,
+      eventLog: `Remote stream received for ${this.userId}`
     };
     TriggerEvent(CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM, detail);
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
   }
 
   onAddIceCandidateSuccess() {
@@ -200,16 +214,34 @@ class CsioPeerConnection {
     console.log('Channel creating:', label);
     this.datachannels[label] = this.pc.createDataChannel(label);
     this.setChannelCallbacks(label);
+    const detail = {
+      pc: this.pc,
+      eventLog: `DataChannel ${label} created for ${this.userId}`
+    };
+    TriggerEvent(
+      CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
   }
 
   setChannelCallbacks(label) {
     this.datachannels[label].onmessage = this.handleChannelMessage.bind(this);
     this.datachannels[label].onopen = function(e) {
       console.log('Channel opened:', label);
-    };
+      const detail = {
+        pc: this.pc,
+        eventLog: `DataChannel ${label} opened for ${this.userId}`
+      };
+      TriggerEvent(
+        CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
+    }.bind(this);
     this.datachannels[label].onclose = function(e) {
       console.log('Channel closed:', label);
-    };
+      const detail = {
+        pc: this.pc,
+        eventLog: `DataChannel ${label} closed for ${this.userId}`
+      };
+      TriggerEvent(
+        CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG, detail);
+    }.bind(this);
   }
 
   receiveChannelCallback(event) {

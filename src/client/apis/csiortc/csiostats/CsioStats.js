@@ -29,6 +29,9 @@ class CsioStats {
     document.addEventListener(
       CsioEvents.CsioRTC.ON_TOGGLE_MEDIA_STATE,
       this.onToggleMediaState.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG,
+      this.onApplicationLog.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     this.roomName = e.detail.roomName;
@@ -38,6 +41,7 @@ class CsioStats {
     const pcObject = e.detail.pc;
     const remoteUserID = e.detail.userId;
     const usage = this.csObject.fabricUsage.multiplex;
+    console.log({pcObject, remoteUserID, usage, roomName});
     this.csObject.addNewFabric(pcObject, remoteUserID, usage,
       roomName, this.pcCallback);
   }
@@ -48,6 +52,7 @@ class CsioStats {
     const roomName = this.roomName;
     const pcObject = e.detail.pc;
     const fabricEvent = this.csObject.fabricEvent.fabricTerminated;
+    console.log({pcObject, fabricEvent, roomName});
     this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
   initialize(userID) {
@@ -115,6 +120,7 @@ class CsioStats {
         console.log('Error', type, 'not handled!');
         return;
     }
+    console.warn('handleWebrtcError ', roomName, pcObject);
     this.csObject.reportError(pcObject, roomName, csioType, err);
   }
   onRemoteStream(e) {
@@ -139,6 +145,7 @@ class CsioStats {
           }
         }
       });
+    console.warn('onRemoteStream ', roomName, pc, remoteUserId);
     for (const ssrc in ssrcs) {
       this.csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrcs[ssrc],
         'camera', /* video element id */remoteUserId);
@@ -172,7 +179,16 @@ class CsioStats {
         console.log('Error', type, 'not handled!');
         return;
     }
+    console.log({pcObject, fabricEvent, roomName});
     this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+  }
+  onApplicationLog(e) {
+    const roomName = this.roomName;
+
+    const pcObject = e.detail.pc;
+    const applicationLog = e.detail.eventLog;
+    const csioType = this.csObject.webRTCFunctions.applicationLog;
+    this.csObject.reportError(pcObject, roomName, csioType, applicationLog);
   }
 }
 
