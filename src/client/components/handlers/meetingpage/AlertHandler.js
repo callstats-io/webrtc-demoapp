@@ -49,5 +49,12 @@ class AlertHandler {
     const text = `${userId} left the meeting`;
     this.showAlart('alert-warning', text);
   }
+  onToggleMediaState(e) {
+    const isEnable = e.detail.isEnable;
+    const mediaType = e.detail.mediaType;
+    const text = `You ${mediaType === 'audio'
+      ? (!isEnable ? 'Muted' : 'Unmuted') : (!isEnable ? 'Paused' : 'Resumed')} ${mediaType}`;
+    this.showAlart('alert-warning', text);
+  }
 }
 export default AlertHandler;

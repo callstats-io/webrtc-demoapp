@@ -12,6 +12,8 @@ class AlertLayout extends React.Component {
       this.alertHandler.onNewUserJoined.bind(this), false);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,
       this.alertHandler.onUserLeave.bind(this), false);
+    document.addEventListener(CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
+      this.alertHandler.onToggleMediaState.bind(this), false);
   }
   render() {
     return (
