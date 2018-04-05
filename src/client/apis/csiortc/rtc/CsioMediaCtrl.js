@@ -62,11 +62,7 @@ class CsioMediaCtrl {
   disposeLocalStream() {
     if (this.localStream) {
       for (const at in this.localStream.getTracks()) {
-        if (typeof this.localStream.getTrack === 'function') {
-          if (this.localStream.getTracks()[at]) {
-            this.localStream.getTracks()[at].stop();
-          }
-        }
+        this.localStream.getTracks()[at].stop();
       }
       this.localStream = null;
     }
