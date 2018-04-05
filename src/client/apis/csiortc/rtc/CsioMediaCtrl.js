@@ -31,7 +31,7 @@ class CsioMediaCtrl {
         self.localStream = null;
         const detail = {
           type: 'getUserMedia',
-          pc: this.pc,
+          pc: null,
           error: e
         };
         TriggerEvent(

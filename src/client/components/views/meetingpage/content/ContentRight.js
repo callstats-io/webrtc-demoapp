@@ -69,8 +69,7 @@ class ContentRight extends React.Component {
                 </a>
               </div>
               <div className={'col-xs-4'}>
-                {/* Todo Currently disabled */}
-                <a>
+                <a href='#' onClick={this.contentRightHandler.onScreenShareToggle.bind(this)}>
                   <span className="glyphicon glyphicon-eye-open" aria-hidden="true" style={{
                     fontSize: '22px',
                     color: this.state.screenShared ? '#442173' : '#808080'

@@ -9,6 +9,7 @@ class CsioRTC {
   constructor() {
     console.log('CSIORTC');
     // application scope variable
+    this.joined = false;
     this.config = undefined;
     this.roomName = undefined;
     this.pcs = {};
@@ -23,6 +24,7 @@ class CsioRTC {
     document.addEventListener(
       CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE,
       this.onSendChannelMessage.bind(this), false);
+    window.addEventListener('message', this.onStartedScreenShare.bind(this), this);
   }
   mayBeInitializeRTC() {
     const mediaConfig = this.config ? this.config.media : undefined;
@@ -35,7 +37,26 @@ class CsioRTC {
   onLocalUserMedia(e) {
     const roomName = this.roomName;
     if (roomName) {
-      this.signaling.start(roomName);
+      if (this.joined) {
+        // already in the room
+        // will need a re-negotiation
+        // Add tracks
+        const stream = this.csoiMedia.getStream(true);
+        for (const key in this.pcs) {
+          if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+            this.csoiMedia.addStream(stream, this.pcs[key]);
+          }
+        }
+        // renegotiate
+        for (const key in this.pcs) {
+          if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+            this.pcs[key].createOffer();
+          }
+        }
+      } else {
+        this.signaling.start(roomName);
+        this.joined = true;
+      }
     }
   }
   doOffer(userId) {
@@ -71,8 +92,52 @@ class CsioRTC {
       delete this.pcs[userId];
     }
   }
+  mayBeStartStopScreenShare(isEnable) {
+    for (const key in this.pcs) {
+      if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+        this.csoiMedia.removeStream(this.pcs[key]);
+      }
+    }
+    this.csoiMedia.disposeLocalStream();
+    if (isEnable) {
+      window.postMessage('csioCheckAddonInstalled', '*');
+    } else {
+      // restart with getting local audio video
+      const mediaConfig = this.config ? this.config.media : undefined;
+      const roomName = this.roomName;
+      if (mediaConfig && roomName) {
+        this.csoiMedia.getUserMedia(mediaConfig);
+      }
+    }
+  }
+  onStartedScreenShare(msg) {
+    if (!msg.data) {
+
+    } else if (msg.data.evt === 'onCsioSourceId') {
+      const constraints = {
+        'mandatory': {
+          'chromeMediaSource': 'desktop',
+          'maxWidth': Math.min(screen.width, 1920),
+          'maxHeight': Math.min(screen.height, 1080),
+          'chromeMediaSourceId': msg.data.csioSourceId
+        },
+        'optional': [
+          {googTemporalLayeredScreencast: true}
+        ]
+      };
+      const roomName = this.roomName;
+      if (constraints && roomName) {
+        this.csoiMedia.getUserMedia({video: constraints, audio: false});
+      }
+    } else if (msg.data === 'csioAddonInstalled') {
+      window.postMessage('csioRequestScreenSourceId', '*');
+    }
+  }
   toggleMediaStates(isEnable, mediaType) {
-    if (mediaType !== 'screen') {
+    if (mediaType === 'screen') {
+      // this is screen share
+      this.mayBeStartStopScreenShare(isEnable);
+    } else {
       this.csoiMedia.toggleMediaStates(isEnable, mediaType);
     }
     const getLog = (userId) => {
