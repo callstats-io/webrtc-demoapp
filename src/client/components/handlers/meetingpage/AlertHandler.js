@@ -52,8 +52,14 @@ class AlertHandler {
   onToggleMediaState(e) {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
-    const text = `You ${mediaType === 'audio'
-      ? (!isEnable ? 'muted' : 'unmuted') : (!isEnable ? 'paused' : 'resumed')} ${mediaType}`;
+    let text = '';
+    if (mediaType === 'audio') {
+      text = `You ${isEnable ? 'unmuted' : 'muted'} ${mediaType}`;
+    } else if (mediaType === 'video') {
+      text = `You ${isEnable ? 'resumed' : 'paused'} ${mediaType}`;
+    } else if (mediaType === 'screen') {
+      text = `You ${isEnable ? 'started' : 'stopped'} ${mediaType}ing`;
+    }
     this.showAlart('alert-warning', text);
   }
 }
