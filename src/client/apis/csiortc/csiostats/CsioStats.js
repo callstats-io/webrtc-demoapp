@@ -145,7 +145,6 @@ class CsioStats {
           }
         }
       });
-    console.warn('onRemoteStream ', roomName, pc, remoteUserId);
     for (const ssrc in ssrcs) {
       this.csObject.associateMstWithUserID(pc, remoteUserId, roomName, ssrcs[ssrc],
         'camera', /* video element id */remoteUserId);

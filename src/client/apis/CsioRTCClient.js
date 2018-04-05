@@ -27,8 +27,9 @@ class CsioRTCClient {
   // on connect with socket io
   onConnect(e) {
     const userId = e.detail.userId;
+    const userName = this.getUserName();
     const userID = {
-      'userName': userId,
+      'userName': userName.length > 0 ? userName : userId,
       'aliasName': userId
     };
     console.log('onConnect', userID);
@@ -67,6 +68,13 @@ class CsioRTCClient {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
     this.csiortc.toggleMediaStates(isEnable, mediaType);
+  }
+  getUserName() {
+    let userName = JSON.parse(localStorage.getItem('userName'));
+    if (userName) {
+      return userName;
+    }
+    return '';
   }
 }
 
