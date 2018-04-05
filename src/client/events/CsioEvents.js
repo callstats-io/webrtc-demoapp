@@ -42,7 +42,8 @@ const CsioEvents = {
     ON_APPLICATION_LOG: 'csiopeerconnection.applicationLogEvent'
   },
   CsioRTC: {
-    ON_TOGGLE_MEDIA_STATE: 'csiortc.ontogglemediastate'
+    ON_TOGGLE_MEDIA_STATE: 'csiortc.ontogglemediastate',
+    ON_FF_SCREEN_SHARE_OPTION: 'csiortc.onffscreenshareoption'
   },
   LANDING_PAGE: {
     ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'
@@ -54,6 +55,9 @@ const CsioEvents = {
     ON_TOGGLE_MEDIA_STATE: 'meetingpage.ontogglemediastate',
     VIDEO_FOCUS_CHANGE: 'meetingpage.videoFocusChanged',
     RESIZE_VIDEO_VIEW: 'meetingpage.resizevideoview'
+  },
+  FFScreenShare: {
+    ON_SCREEN_SHARE_OPTION_SELECTED: 'ffscreenshare.onscreenshareoptionselected'
   }
 };
 

@@ -5,6 +5,7 @@ import ContentLayout from './content/ContentLayout';
 import ShareLinkPopup from './popup/ShareLinkPopup';
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 import AlertLayout from './alert/AlertLayout';
+import FirefoxScreenShare from './popup/FirefoxScreenShare';
 
 export class AppLayout extends React.Component {
   constructor(props) {
@@ -24,6 +25,7 @@ export class AppLayout extends React.Component {
         <AlertLayout/>
         <ContentLayout/>
         <ShareLinkPopup/>
+        <FirefoxScreenShare/>
       </div>
     );
   }
