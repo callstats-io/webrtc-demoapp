@@ -4,10 +4,12 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 import Hark from 'hark';
 class CsioMediaCtrl {
   constructor() {
+    this.TIMEDIFF = 3; // 3 seconds for now
     this.previouslySelectedUserId = undefined;
     this.remoteStreams = {};
     this.speakers = {};
     this.localStream = {};
+    this.lastUpdate = new Date();
     // event listeners
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_REMOTE_STREAM,
@@ -29,11 +31,18 @@ class CsioMediaCtrl {
     };
     return audioOnly;
   }
-  isSpeaking(e) {
-    console.warn('->', 'speaking', e);
-  }
-  isStoppedSpeaking(e) {
-    console.warn('->', 'stopped speaking', e);
+  isSpeaking(userId) {
+    const current = new Date();
+    const seconds = (current.getTime() - this.lastUpdate.getTime())/1000;
+    console.log(this.TIMEDIFF, seconds, this.previouslySelectedUserId, userId);
+    if (seconds > this.TIMEDIFF && this.previouslySelectedUserId !== userId) {
+      this.lastUpdate = new Date();
+      const detail = {
+        userId: userId,
+        from: 'isSpeaking'
+      };
+      TriggerEvent(CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE, detail);
+    }
   }
   getUserMedia(constraints) {
     const self = this;
@@ -133,9 +142,6 @@ class CsioMediaCtrl {
     this.speakers[userId] = new Hark(streams[0], {});
     this.speakers[userId].on('speaking', function() {
       this.isSpeaking(userId);
-    }.bind(this));
-    this.speakers[userId].on('stopped_speaking', function() {
-      this.isStoppedSpeaking(userId);
     }.bind(this));
     const detail = {
       media: this.remoteStreams,
