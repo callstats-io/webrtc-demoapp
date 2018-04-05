@@ -15,28 +15,50 @@ class CsioMediaCtrl {
       CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE,
       this.onVideoFocusChanged.bind(this), false);
   }
+  async isAudioOnly(constraints) {
+    // if no audio, then don't need to check we need audio only
+    if (!constraints.audio) {
+      return false;
+    }
+    let audioOnly = false;
+    try {
+      await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (err) {
+      audioOnly = true;
+    };
+    return audioOnly;
+  }
   getUserMedia(constraints) {
     const self = this;
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(stream) {
-        const detail = {
-          media: stream
-        };
-        self.localStream = stream;
-        TriggerEvent(
-          CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA, detail);
-      },
-      function(e) {
-        console.error(e);
-        self.localStream = null;
-        const detail = {
-          type: 'getUserMedia',
-          pc: null,
-          error: e
-        };
-        TriggerEvent(
-          CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
-      });
+    let promise = this.isAudioOnly(constraints);
+    promise.then(function(audioOnly) {
+      let _contrain = {...constraints};
+      if (audioOnly) {
+        _contrain.video = false;
+      }
+      navigator.mediaDevices.getUserMedia(_contrain)
+        .then(function(stream) {
+          const detail = {
+            media: stream
+          };
+          self.localStream = stream;
+          TriggerEvent(
+            CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA, detail);
+        },
+        function(e) {
+          console.error(e);
+          self.localStream = null;
+          const detail = {
+            type: 'getUserMedia',
+            pc: null,
+            error: e
+          };
+          TriggerEvent(
+            CsioEvents.CsioPeerConnection.ON_WEBRTC_ERROR, detail);
+        });
+    }, (e) => {
+      console.error(e);
+    });
   }
   addStream(stream, ctx) {
     stream.getTracks().forEach(function(mediaTrack) {
