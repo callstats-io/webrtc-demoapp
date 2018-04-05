@@ -1,11 +1,12 @@
 'use strict';
 
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
-
+import Hark from 'hark';
 class CsioMediaCtrl {
   constructor() {
     this.previouslySelectedUserId = undefined;
     this.remoteStreams = {};
+    this.speakers = {};
     this.localStream = {};
     // event listeners
     document.addEventListener(
@@ -27,6 +28,12 @@ class CsioMediaCtrl {
       audioOnly = true;
     };
     return audioOnly;
+  }
+  isSpeaking(e) {
+    console.warn('->', 'speaking', e);
+  }
+  isStoppedSpeaking(e) {
+    console.warn('->', 'stopped speaking', e);
   }
   getUserMedia(constraints) {
     const self = this;
@@ -91,6 +98,7 @@ class CsioMediaCtrl {
   }
   disposeRemoteStream(userId) {
     delete this.remoteStreams[userId];
+    delete this.speakers[userId];
     const detail = {
       media: this.remoteStreams,
       userId: userId
@@ -122,6 +130,13 @@ class CsioMediaCtrl {
     const streams = e.detail.streams;
     const userId = e.detail.userId;
     this.remoteStreams[userId] = streams[0];
+    this.speakers[userId] = new Hark(streams[0], {});
+    this.speakers[userId].on('speaking', function() {
+      this.isSpeaking(userId);
+    }.bind(this));
+    this.speakers[userId].on('stopped_speaking', function() {
+      this.isStoppedSpeaking(userId);
+    }.bind(this));
     const detail = {
       media: this.remoteStreams,
       userId: userId

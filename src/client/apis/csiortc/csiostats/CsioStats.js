@@ -120,7 +120,6 @@ class CsioStats {
         console.log('Error', type, 'not handled!');
         return;
     }
-    console.warn('handleWebrtcError ', roomName, pcObject);
     this.csObject.reportError(pcObject, roomName, csioType, err);
   }
   onRemoteStream(e) {
@@ -178,7 +177,6 @@ class CsioStats {
         console.log('Error', type, 'not handled!');
         return;
     }
-    console.log({pcObject, fabricEvent, roomName});
     this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
   onApplicationLog(e) {

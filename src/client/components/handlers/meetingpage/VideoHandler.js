@@ -11,6 +11,7 @@ class VideoHandler {
   }
   getState() {
     return {
+      muted: this.muted
     };
   }
   componentDidMount() {

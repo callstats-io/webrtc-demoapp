@@ -81,6 +81,7 @@
     "compression": "1.7.2",
     "docker-names": "^1.0.3",
     "express": "4.16.3",
+    "hark": "^1.2.0",
     "immutable": "3.8.2",
     "intl": "1.2.5",
     "jsonwebtoken": "^8.2.0",

@@ -23,7 +23,7 @@ class Video extends React.Component {
     return (
       <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)}>
         <video id={this.videoHandler.name}
-          muted={this.videoHandler.muted}
+          muted={this.state.muted}
           className="thumbnail"
           autoPlay loop
           style={videoStyle}

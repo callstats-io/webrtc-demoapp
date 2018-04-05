@@ -10,7 +10,8 @@ class VideoMainHandler {
   }
   getState() {
     return {
-      videoHeight: 640.0
+      videoHeight: 640.0,
+      muted: this.muted
     };
   }
   componentDidMount() {

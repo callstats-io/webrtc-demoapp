@@ -25,7 +25,7 @@ class VideoMain extends React.Component {
     };
     return (
       <video id={this.videoHandler.name}
-        muted={this.videoHandler.muted}
+        muted={this.state.muted}
         autoPlay loop
         style={customStyle}
         ref={(video) => {
