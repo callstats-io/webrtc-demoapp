@@ -154,7 +154,20 @@ class CsioRTC {
         this.csoiMedia.getUserMedia({video: constraints, audio: false});
       }
     } else if (msg.data && msg.data === 'csioAddonInstalled') {
+      const detail = {
+        required: false
+      };
+      TriggerEvent(
+        CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
       window.postMessage('csioRequestScreenSourceId', '*');
+    } else if (msg.data && msg.data === 'csioCheckAddonInstalled') {
+      // No extension is installed
+      const detail = {
+        required: true,
+        downloadURL: __extension_download_url__
+      };
+      TriggerEvent(
+        CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
     }
   }
   toggleMediaStates(isEnable, mediaType) {

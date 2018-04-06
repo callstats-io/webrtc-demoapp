@@ -10,6 +10,8 @@ class AlertHandler {
     this.alertInfo = 'alert-info';
     this.alertWarning = 'alert-warning';
     this.alertDanger = 'alert-danger';
+    this.extensionDisplay = 'none';
+    this.extensionDownloadURL = '';
   }
 
   getState() {
@@ -17,7 +19,9 @@ class AlertHandler {
       alertType: this.alertType,
       text: this.text,
       display: this.display,
-      fadein: this.fadein
+      fadein: this.fadein,
+      extensionDisplay: this.extensionDisplay,
+      extensionDownloadURL: this.extensionDownloadURL
     };
   }
   showAlart(alertType, text) {
@@ -61,6 +65,19 @@ class AlertHandler {
       text = `You ${isEnable ? 'started' : 'stopped'} ${mediaType}ing`;
     }
     this.showAlart('alert-warning', text);
+  }
+  onMayBeDownloadExtention(e) {
+    const required = e.detail.required;
+    const downloadURL = e.detail.downloadURL;
+    this.setState({
+      extensionDownloadURL: downloadURL,
+      extensionDisplay: required ? 'block' : 'none'
+    });
+  }
+  onClickExtensionDownloadLink(e) {
+    this.setState({
+      extensionDisplay: 'none'
+    });
   }
 }
 export default AlertHandler;

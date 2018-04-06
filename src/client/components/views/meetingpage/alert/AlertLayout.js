@@ -14,13 +14,26 @@ class AlertLayout extends React.Component {
       this.alertHandler.onUserLeave.bind(this), false);
     document.addEventListener(CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
       this.alertHandler.onToggleMediaState.bind(this), false);
+    document.addEventListener(CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED,
+      this.alertHandler.onMayBeDownloadExtention.bind(this), false);
   }
   render() {
     return (
-      <div className={'container-fluid'} style={{padding: '0px', display: this.state.display}}>
-        <div id='alert' className={`alert ${this.state.fadein} ${this.state.alertType}`}
-          role="alert" style={{'textAlign': 'center'}}>
-          {this.state.text}
+      <div>
+        <div className={'container-fluid'} style={{padding: '0px', display: this.state.display}}>
+          <div id='alert' className={`alert ${this.state.fadein} ${this.state.alertType}`}
+            role="alert" style={{'textAlign': 'center'}}>
+            {this.state.text}
+          </div>
+        </div>
+        <div className={'container-fluid'} style={{padding: '0px', display: this.state.extensionDisplay}}>
+          <div id='alert' className={'alert alert-danger'}
+            role="alert" style={{'textAlign': 'center'}}>
+            <a onClick={this.alertHandler.onClickExtensionDownloadLink.bind(this)}
+              target="_blank"
+              href={this.state.extensionDownloadURL}>
+              {`Download extension from: ${this.state.extensionDownloadURL}`}</a>
+          </div>
         </div>
       </div>
     );
