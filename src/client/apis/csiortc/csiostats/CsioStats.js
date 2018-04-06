@@ -4,8 +4,9 @@ import CsioConfigParams from '../../utils/Common';
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class CsioStats {
-  constructor() {
+  constructor(signaling) {
     this.isInitialized = false;
+    this.signaling = signaling;
     this.config = {};
     this.roomName = undefined;
     this.csObject = new callstats();
@@ -55,17 +56,46 @@ class CsioStats {
     console.log({pcObject, fabricEvent, roomName});
     this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
+  createTokenGeneratorTimer(userId, forcenew, callback) {
+    return setTimeout(
+      function() {
+        console.log('calling tokenGenerator');
+        this.tokenGenerator(userId, forcenew, callback).bind(this);
+      }.bind(this),
+      100);
+  };
+  tokenGenerator(userId, forcenew, callback) {
+    this.signaling.generateToken(userId, function(err, token) {
+      if (err) {
+        console.log('Token generation failed: try again');
+        return this.createTokenGeneratorTimer(forcenew, callback).bind(this);
+      }
+      console.log('Received Token');
+      callback(null, token);
+    }.bind(this));
+  };
   initialize(userID) {
     if (this.isInitialized) {
       return;
     }
-    this.csObject.initialize(
-      __appid__,
-      __appsecret__,
-      userID,
-      this.csInitCallback.bind(this),
-      this.csStatsCallback.bind(this),
-      CsioConfigParams);
+
+    if (__jwtenabled__ === 'true') {
+      this.csObject.initialize(
+        __appid__,
+        this.tokenGenerator.bind(this),
+        userID,
+        this.csInitCallback.bind(this),
+        this.csStatsCallback.bind(this),
+        CsioConfigParams);
+    } else {
+      this.csObject.initialize(
+        __appid__,
+        __appsecret__,
+        userID,
+        this.csInitCallback.bind(this),
+        this.csStatsCallback.bind(this),
+        CsioConfigParams);
+    }
   }
   // csio related events, and function
   // CSIO object callback

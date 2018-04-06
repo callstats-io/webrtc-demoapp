@@ -42,6 +42,7 @@ Single command line expression to run from terminal for development mode
 ```
 PORT=4040 \
 SSL=true \
+JWT=false \
 APPID='change_here_to_your_callstats_app_id' \
 APP_SECRET='change_here_to your_callstats_app_secret' \
 EXTENSION_URL='https://change_here_to_your_chrome_extension_download_link' \

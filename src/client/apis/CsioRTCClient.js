@@ -6,7 +6,7 @@ import CsioStats from './csiortc/csiostats/CsioStats';
 class CsioRTCClient {
   constructor() {
     this.csiortc = new CsioRTC();
-    this.csiostats = new CsioStats();
+    this.csiostats = new CsioStats(this.csiortc.signaling);
     // event listeners
     document.addEventListener(CsioEvents.CSIOSignaling.ON_CONNECT,
       this.onConnect.bind(this), false);

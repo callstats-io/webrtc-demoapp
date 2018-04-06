@@ -5,7 +5,8 @@ const CsioEvents = {
     CONNECT: 'connect',
     JOIN: 'join',
     LEAVE: 'leave',
-    MESSAGE: 'message'
+    MESSAGE: 'message',
+    GENERATE_TOKEN: 'generateToken'
   },
   CSIOSignaling: {
     SEND_MESSAGE: 'csioevents.sendMessage',
@@ -13,7 +14,6 @@ const CsioEvents = {
     JOIN: 'csioevents.join',
     LEAVE: 'csioevents.leave',
     MESSAGE: 'csioevents.message',
-    GENERATE_TOKEN: 'csioevents.generateToken',
     ON_CONNECT: 'csioevents.onConnect',
     ON_JOIN: 'csioevents.onJoin',
     ON_LEAVE: 'csioevents.onLeave',
