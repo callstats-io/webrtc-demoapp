@@ -48,6 +48,7 @@ EXTENSION_URL='https://change_here_to_your_chrome_extension_download_link' \
 npm run dev
 ```
 Try the app locally by opening http://localhost:4040/ or https://localhost:4040/, depending on if SSL is enabled or not (there is NO redirect!)
+
 4. If you want to use SSL, generate SSL certificates to webrtc-demoapp/ssl/ folder (see below)
 5. If you want to use JWT authentication, generate EC key to webrtc-demoapp/ssl/ (see below)
 ### SSL
