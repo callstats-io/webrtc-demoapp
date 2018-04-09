@@ -9,6 +9,7 @@ class UserFeedbackPopupHandler {
     this.audioFeedback = this.parseRating(5);
     this.videoFeedback = this.parseRating(5);
     this.screenshareFeedback = this.parseRating(5);
+    this.comments = '';
   }
   getState() {
     return {
@@ -16,7 +17,8 @@ class UserFeedbackPopupHandler {
       meetingFeedback: this.meetingFeedback,
       audioFeedback: this.audioFeedback,
       videoFeedback: this.videoFeedback,
-      screenshareFeedback: this.screenshareFeedback
+      screenshareFeedback: this.screenshareFeedback,
+      comments: this.comments
     };
   }
   onMeetingPageClosed(e) {
@@ -29,7 +31,8 @@ class UserFeedbackPopupHandler {
       'meetingFeedback': this.countRating(this.state.meetingFeedback),
       'audioFeedback': this.countRating(this.state.audioFeedback),
       'videoFeedback': this.countRating(this.state.videoFeedback),
-      'screenshareFeedback': this.countRating(this.state.screenshareFeedback)
+      'screenshareFeedback': this.countRating(this.state.screenshareFeedback),
+      'commentFeedback': this.state.comments
     };
     const detail = {
       feedback: userExperienceFeedback
@@ -85,6 +88,11 @@ class UserFeedbackPopupHandler {
     e.preventDefault();
     this.setState({
       screenshareFeedback: this.parseRating(v)
+    });
+  }
+  handleInputChange(e) {
+    this.setState({
+      comments: e.target.value
     });
   }
 }

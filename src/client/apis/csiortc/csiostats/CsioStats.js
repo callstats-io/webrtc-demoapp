@@ -230,7 +230,8 @@ class CsioStats {
       overall: userFeedback.meetingFeedback,
       audio: userFeedback.audioFeedback,
       video: userFeedback.videoFeedback,
-      screen: userFeedback.screenshareFeedback
+      screen: userFeedback.screenshareFeedback,
+      comment: userFeedback.commentFeedback
     };
     console.log(feedback);
     this.csObject.sendUserFeedback(roomName, feedback, this.pcCallback);

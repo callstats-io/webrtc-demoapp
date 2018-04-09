@@ -114,6 +114,19 @@ class UserFeedbackPopup extends React.Component {
                 <div className={'col-xs-3'}/>
               </div>
             </div>
+            <div className={'row'}>
+              <div className={'col-xs-2'}/>
+              <div className={'col-xs-8'}>
+                <div className="form-group">
+                  <textarea className="form-control"
+                    onChange={this.userFeedbackPopupHandler.handleInputChange.bind(this)}
+                    placeholder="Please provide your feedback"
+                    value={this.state.comments}
+                    rows="5"/>
+                </div>
+              </div>
+              <div className={'col-xs-2'}/>
+            </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-primary"
                 onClick={this.userFeedbackPopupHandler.handleCloseModal.bind(this)}>Close</button>
