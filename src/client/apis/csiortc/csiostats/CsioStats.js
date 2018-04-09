@@ -46,7 +46,6 @@ class CsioStats {
     const pcObject = e.detail.pc;
     const remoteUserID = e.detail.userId;
     const usage = this.csObject.fabricUsage.multiplex;
-    console.log({pcObject, remoteUserID, usage, roomName});
     this.csObject.addNewFabric(pcObject, remoteUserID, usage,
       roomName, this.pcCallback);
   }
