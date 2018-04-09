@@ -10,7 +10,7 @@ class Browser {
     this.browser = await puppeteer.launch({
       ignoreHTTPSErrors: true,
       args: ['--disable-setuid-sandbox', '--no-sandbox'],
-      headless: true
+      headless: false
     });
     this.isLaunched = true;
   }
@@ -41,4 +41,6 @@ class Browser {
   }
 }
 
-export let browser = new Browser();
+module.exports = {
+  browser: new Browser()
+};
