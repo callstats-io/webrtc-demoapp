@@ -10,7 +10,7 @@ const commonConfig = require('./webpack.config.common');
 const isSSL = process.env.SSL === 'true';
 module.exports = merge(commonConfig, {
   mode: 'development',
-  entry: [`webpack-hot-middleware/client?${isSSL ? 'https' : 'http'}://localhost:${process.env.HTTP_PORT}&reload=true`],
+  entry: [`webpack-hot-middleware/client?${isSSL ? 'https' : 'http'}://localhost:${process.env.PORT}&reload=true`],
   output: {
     hotUpdateMainFilename: 'hot-update.[hash:6].json',
     hotUpdateChunkFilename: 'hot-update.[hash:6].js'
