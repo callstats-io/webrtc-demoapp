@@ -34,7 +34,7 @@ class LandingPage {
     const page = await chrome.browser.getPage();
     await page.goto(demoURL);
     // wait for 5 second
-    await page.waitFor(5 * 1000);
+    await page.waitFor(3 * 1000);
     // provide room name
     await page.type(
       '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input'
@@ -42,8 +42,8 @@ class LandingPage {
     await page.click(
       '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(3) > button'
     );
-    await page.waitFor(5 * 1000);
-    const _roomName = await page.evaluate((documentQueryTag) => {
+    await page.waitFor(3 * 1000);
+    const _roomName = await page.evaluate(() => {
       const elem = document.querySelector('#navbar > ul:nth-child(1) > li:nth-child(2) > a');
       return elem ? elem.text : '';
     });
@@ -51,12 +51,28 @@ class LandingPage {
     return _roomName.includes(roomName);
   }
   // check if we can open a meeting page
-  async openMeeting(demoURL) {
+  async openMeeting(demoURL, roomName) {
     const page = await chrome.browser.getPage();
     await page.goto(demoURL);
+    // wait for 5 second
     await page.waitFor(3 * 1000);
-    await page.screenshot({path: 'example.png'});
+    await page.click(
+      '#app > div > div > div.header.clearfix.container > nav > ul > li > a'
+    );
+    // provide room name
+    await page.type(
+      '#app > div > div > div.modal > div > div > div.modal-body > div > input'
+      , roomName
+    );
+    await page.click(
+      '#app > div > div > div.modal > div > div > div.modal-footer > button:nth-child(1)'
+    );
+    const _roomName = await page.evaluate(() => {
+      const elem = document.querySelector('#navbar > ul:nth-child(1) > li:nth-child(2) > a');
+      return elem ? elem.text : '';
+    });
     await chrome.browser.closeChrome();
+    return _roomName.includes(roomName);
   }
 }
 

@@ -5,7 +5,7 @@ const LandingPage = require('./LandingPage/LandingPage');
 describe('LandinPage', function() {
   describe('#openLandingPage', function() {
     const landingPage = new LandingPage();
-    /*it('should open the landing page and wait for 3 second', function(done) {
+    it('should open the landing page and wait for 3 second', function(done) {
       this.timeout(15 * 1000);
       landingPage.openPage('https://localhost:4040').then((success) => {
         done();
@@ -33,14 +33,26 @@ describe('LandinPage', function() {
       }, (e) => {
         done(e);
       });
-    });*/
+    });
     it('should create a meeting', function(done) {
       this.timeout(15 * 1000);
       landingPage.createMeeting('https://localhost:4040', 'test-room-101').then((success) => {
         if (success === true) {
           done();
         } else {
-          done(new Error('failed to authenticate with csio server'));
+          done(new Error('failed to create meeting page'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+    it('should open a meeting', function(done) {
+      this.timeout(15 * 1000);
+      landingPage.openMeeting('https://localhost:4040', 'test-room-101').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to open meeting page'));
         }
       }, (e) => {
         done(e);
