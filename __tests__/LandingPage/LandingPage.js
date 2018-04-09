@@ -29,7 +29,29 @@ class LandingPage {
     return isAuthenticate;
   }
   // check if we can create a meeting
-  async createMeeting(demoURL) {
+  async createMeeting(demoURL, roomName) {
+    const page = await chrome.browser.getPage();
+    await page.goto(demoURL);
+    await page.waitFor(
+      '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input',
+      { timeout: 5 * 1000 });
+    // provide room name
+    await page.evaluate((roomName) => {
+      document.querySelector(
+        '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input'
+      ).value = roomName;
+    }, roomName);
+
+    // click create room
+    await page.evaluate(() => {
+      document.querySelector(
+        '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(3) > button'
+      ).click();
+    });
+    await chrome.browser.closeChrome();
+  }
+  // check if we can open a meeting page
+  async openMeeting(demoURL) {
     const page = await chrome.browser.getPage();
     await page.goto(demoURL);
     await page.waitFor(3 * 1000);
