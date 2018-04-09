@@ -7,6 +7,9 @@ class UserFeedbackPopup extends React.Component {
   constructor(props) {
     super(props);
     this.userFeedbackPopupHandler = new UserFeedbackPopupHandler();
+    this.parseRating = this.userFeedbackPopupHandler.parseRating.bind(this);
+    this.countRating = this.userFeedbackPopupHandler.countRating.bind(this);
+
     this.state = this.userFeedbackPopupHandler.getState();
     document.addEventListener(
       CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED,
@@ -16,43 +19,99 @@ class UserFeedbackPopup extends React.Component {
   }
 
   render() {
-    const customStyle = {
-      paddingTop: '%',
-      paddingBottom: '0px'
-    };
+    const overallRating = Object.entries(this.state.meetingFeedback).map(([key, value]) =>
+      <li key={`meeting-${key}`}>
+        <a href="#"
+          value={key}
+          onClick={this.userFeedbackPopupHandler.onUpdateMeetingFeedback.bind(this, key)}>
+          <span className={value} aria-hidden="true"/>
+        </a>
+      </li>
+    );
+    const audioRating = Object.entries(this.state.audioFeedback).map(([key, value]) =>
+      <li key={`audio-${key}`}>
+        <a href="#"
+          value={key}
+          onClick={this.userFeedbackPopupHandler.onUpdateAudioFeedback.bind(this, key)}>
+          <span className={value} aria-hidden="true"/>
+        </a>
+      </li>
+    );
+    const videoRating = Object.entries(this.state.videoFeedback).map(([key, value]) =>
+      <li key={`video-${key}`}>
+        <a href="#"
+          value={key}
+          onClick={this.userFeedbackPopupHandler.onUpdateVideoFeedback.bind(this, key)}>
+          <span className={value} aria-hidden="true"/>
+        </a>
+      </li>
+    );
+    const screenShareRating = Object.entries(this.state.screenshareFeedback).map(([key, value]) =>
+      <li key={`screen-${key}`}>
+        <a href="#"
+          value={key}
+          onClick={this.userFeedbackPopupHandler.onUpdateScreenShareFeedback.bind(this, key)}>
+          <span className={value} aria-hidden="true"/>
+        </a>
+      </li>
+    );
 
     return (
       <div className="modal" tabIndex="-1" role="dialog" style={{
         display: this.state.showModal, paddingTop: '2%'}}>
         <div className="modal-dialog" role="document">
           <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title"> <strong>Meeting feedback : </strong></h4>
+            </div>
             <div className="modal-body">
-              <div className="input-group">
-                <span className="input-group-addon" id="basic-addon3">Meeting feedback: </span>
-                <input className="form-control" id="basic-url" aria-describedby="basic-addon3/"
-                  value={this.state.meetingFeedback}
-                  onChange={this.userFeedbackPopupHandler.onUpdateMeetingFeedback.bind(this)}/>
+              <div className={'row'}>
+                <div className={'col-xs-3'}/>
+                <div className={'col-xs-3'}>
+                  <p> <strong> Overall:  </strong></p>
+                </div>
+                <div className={'col-xs-3'}>
+                  <ul className="list-inline">
+                    {overallRating}
+                  </ul>
+                </div>
+                <div className={'col-xs-3'}/>
               </div>
-              <br/>
-              <div className="input-group">
-                <span className="input-group-addon" id="basic-addon3">Audio feedback: </span>
-                <input className="form-control" id="basic-url" aria-describedby="basic-addon3/"
-                  value={this.state.audioFeedback}
-                  onChange={this.userFeedbackPopupHandler.onUpdateAudioFeedback.bind(this)}/>
+              <div className={'row'}>
+                <div className={'col-xs-3'}/>
+                <div className={'col-xs-3'}>
+                  <p> <strong> Audio:  </strong></p>
+                </div>
+                <div className={'col-xs-3'}>
+                  <ul className="list-inline">
+                    {audioRating}
+                  </ul>
+                </div>
+                <div className={'col-xs-3'}/>
               </div>
-              <br/>
-              <div className="input-group">
-                <span className="input-group-addon" id="basic-addon3">Video feedback: </span>
-                <input className="form-control" id="basic-url" aria-describedby="basic-addon3/"
-                  value={this.state.videoFeedback}
-                  onChange={this.userFeedbackPopupHandler.onUpdateVideoFeedback.bind(this)}/>
+              <div className={'row'}>
+                <div className={'col-xs-3'}/>
+                <div className={'col-xs-3'}>
+                  <p> <strong> Video:  </strong></p>
+                </div>
+                <div className={'col-xs-3'}>
+                  <ul className="list-inline">
+                    {videoRating}
+                  </ul>
+                </div>
+                <div className={'col-xs-3'}/>
               </div>
-              <br/>
-              <div className="input-group">
-                <span className="input-group-addon" id="basic-addon3">Screen share feedback: </span>
-                <input className="form-control" id="basic-url" aria-describedby="basic-addon3/"
-                  value={this.state.screenshareFeedback}
-                  onChange={this.userFeedbackPopupHandler.onUpdateScreenShareFeedback.bind(this)}/>
+              <div className={'row'}>
+                <div className={'col-xs-3'}/>
+                <div className={'col-xs-3'}>
+                  <p> <strong> Screen Share:  </strong></p>
+                </div>
+                <div className={'col-xs-3'}>
+                  <ul className="list-inline">
+                    {screenShareRating}
+                  </ul>
+                </div>
+                <div className={'col-xs-3'}/>
               </div>
             </div>
             <div className="modal-footer">

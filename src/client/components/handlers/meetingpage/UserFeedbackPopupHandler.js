@@ -5,11 +5,10 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 class UserFeedbackPopupHandler {
   constructor() {
     this.showModal = 'none'; // none or block
-    this.meetingRoomURL = ''; // none or block
-    this.meetingFeedback = 5;
-    this.audioFeedback = 5;
-    this.videoFeedback = 5;
-    this.screenshareFeedback = 5;
+    this.meetingFeedback = this.parseRating(5);
+    this.audioFeedback = this.parseRating(5);
+    this.videoFeedback = this.parseRating(5);
+    this.screenshareFeedback = this.parseRating(5);
   }
   getState() {
     return {
@@ -27,10 +26,10 @@ class UserFeedbackPopupHandler {
   }
   handleCloseModal(e) {
     const userExperienceFeedback = {
-      'meetingFeedback': this.state.meetingFeedback,
-      'audioFeedback': this.state.audioFeedback,
-      'videoFeedback': this.state.videoFeedback,
-      'screenshareFeedback': this.state.screenshareFeedback
+      'meetingFeedback': this.countRating(this.state.meetingFeedback),
+      'audioFeedback': this.countRating(this.state.audioFeedback),
+      'videoFeedback': this.countRating(this.state.videoFeedback),
+      'screenshareFeedback': this.countRating(this.state.screenshareFeedback)
     };
     const detail = {
       feedback: userExperienceFeedback
@@ -39,29 +38,53 @@ class UserFeedbackPopupHandler {
       CsioEvents.MEETING_PAGE.ON_FEEDBACK_PROVIDED, detail);
     setTimeout((e) => {
       window.location.href = location.origin;
-    }, 1 * 1000);
+    }, 1 * 2000);
     this.setState({
       showModal: 'none'
     });
   }
-  onUpdateMeetingFeedback(e) {
+  parseRating(val) {
+    const upto = parseInt(val);
+    let ratingUI = {
+      1: 'glyphicon glyphicon-star-empty',
+      2: 'glyphicon glyphicon-star-empty',
+      3: 'glyphicon glyphicon-star-empty',
+      4: 'glyphicon glyphicon-star-empty',
+      5: 'glyphicon glyphicon-star-empty'};
+    for (let i = 1; i <= upto; i += 1) {
+      ratingUI[i] = 'glyphicon glyphicon-star';
+    }
+    return ratingUI;
+  }
+  countRating(ratings) {
+    let cnt = 0;
+    for (let i = 1; i <= 5; i += 1) {
+      cnt += (ratings[i] === 'glyphicon glyphicon-star' ? 1 : 0);
+    }
+    return cnt;
+  }
+  onUpdateMeetingFeedback(v, e) {
+    e.preventDefault();
     this.setState({
-      meetingFeedback: e.target.value
+      meetingFeedback: this.parseRating(v)
     });
   }
-  onUpdateAudioFeedback(e) {
+  onUpdateAudioFeedback(v, e) {
+    e.preventDefault();
     this.setState({
-      audioFeedback: e.target.value
+      audioFeedback: this.parseRating(v)
     });
   }
-  onUpdateVideoFeedback(e) {
+  onUpdateVideoFeedback(v, e) {
+    e.preventDefault();
     this.setState({
-      videoFeedback: e.target.value
+      videoFeedback: this.parseRating(v)
     });
   }
-  onUpdateScreenShareFeedback(e) {
+  onUpdateScreenShareFeedback(v, e) {
+    e.preventDefault();
     this.setState({
-      screenshareFeedback: e.target.value
+      screenshareFeedback: this.parseRating(v)
     });
   }
 }
