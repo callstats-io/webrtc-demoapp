@@ -38,7 +38,7 @@ class UserFeedbackPopupHandler {
       CsioEvents.MEETING_PAGE.ON_FEEDBACK_PROVIDED, detail);
     setTimeout((e) => {
       window.location.href = location.origin;
-    }, 1 * 2000);
+    }, 1 * 1000);
     this.setState({
       showModal: 'none'
     });
