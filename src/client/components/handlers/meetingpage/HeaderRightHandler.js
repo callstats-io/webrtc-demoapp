@@ -19,9 +19,6 @@ class HeaderRightHandler {
     e.preventDefault();
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
-    setTimeout((e) => {
-      window.location.href = location.origin;
-    }, 500);
   }
 }
 

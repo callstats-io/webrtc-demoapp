@@ -9,6 +9,7 @@ class CsioStats {
     this.signaling = signaling;
     this.config = {};
     this.roomName = undefined;
+    this.cachedUserId = undefined;
     this.csObject = new callstats();
     this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
     this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
@@ -33,6 +34,9 @@ class CsioStats {
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG,
       this.onApplicationLog.bind(this), false);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.ON_FEEDBACK_PROVIDED,
+      this.onFeedbackProvided.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     this.roomName = e.detail.roomName;
@@ -78,7 +82,7 @@ class CsioStats {
     if (this.isInitialized) {
       return;
     }
-
+    this.cachedUserId = userID.aliasName;
     if (__jwtenabled__ === 'true') {
       this.csObject.initialize(
         __appid__,
@@ -216,6 +220,20 @@ class CsioStats {
     const applicationLog = e.detail.eventLog;
     const csioType = this.csObject.webRTCFunctions.applicationLog;
     this.csObject.reportError(pcObject, roomName, csioType, applicationLog);
+  }
+  onFeedbackProvided(e) {
+    const roomName = this.roomName;
+    const userId = this.cachedUserId;
+    const userFeedback = e.detail.feedback;
+    const feedback = {
+      userID: userId,
+      overall: userFeedback.meetingFeedback,
+      audio: userFeedback.audioFeedback,
+      video: userFeedback.videoFeedback,
+      screen: userFeedback.screenshareFeedback
+    };
+    console.log(feedback);
+    this.csObject.sendUserFeedback(roomName, feedback, this.pcCallback);
   }
 }
 

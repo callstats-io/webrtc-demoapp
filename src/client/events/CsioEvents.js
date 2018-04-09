@@ -55,7 +55,8 @@ const CsioEvents = {
     ON_MEETING_CLOSE_CLICKED: 'meetingpage.onmeetingcloseclicked',
     ON_TOGGLE_MEDIA_STATE: 'meetingpage.ontogglemediastate',
     VIDEO_FOCUS_CHANGE: 'meetingpage.videoFocusChanged',
-    RESIZE_VIDEO_VIEW: 'meetingpage.resizevideoview'
+    RESIZE_VIDEO_VIEW: 'meetingpage.resizevideoview',
+    ON_FEEDBACK_PROVIDED: 'meetingpage.onfeedbackprovided'
   },
   FFScreenShare: {
     ON_SCREEN_SHARE_OPTION_SELECTED: 'ffscreenshare.onscreenshareoptionselected'
