@@ -233,7 +233,6 @@ class CsioStats {
       screen: userFeedback.screenshareFeedback,
       comment: userFeedback.commentFeedback
     };
-    console.log(feedback);
     this.csObject.sendUserFeedback(roomName, feedback, this.pcCallback);
   }
 }
