@@ -26,29 +26,29 @@ class LandingPage {
     });
     await page.goto(demoURL);
     await page.waitFor(5 * 1000);
+    await chrome.browser.closeChrome();
     return isAuthenticate;
   }
   // check if we can create a meeting
   async createMeeting(demoURL, roomName) {
     const page = await chrome.browser.getPage();
     await page.goto(demoURL);
-    await page.waitFor(
-      '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input',
-      { timeout: 5 * 1000 });
+    // wait for 5 second
+    await page.waitFor(5 * 1000);
     // provide room name
-    await page.evaluate((roomName) => {
-      document.querySelector(
-        '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input'
-      ).value = roomName;
-    }, roomName);
-
-    // click create room
-    await page.evaluate(() => {
-      document.querySelector(
-        '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(3) > button'
-      ).click();
+    await page.type(
+      '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(2) > div > input'
+      , roomName);
+    await page.click(
+      '#app > div > div > div.container-fluid > div:nth-child(1) > div.col-xs-5 > ul > li:nth-child(3) > button'
+    );
+    await page.waitFor(5 * 1000);
+    const _roomName = await page.evaluate((documentQueryTag) => {
+      const elem = document.querySelector('#navbar > ul:nth-child(1) > li:nth-child(2) > a');
+      return elem ? elem.text : '';
     });
     await chrome.browser.closeChrome();
+    return _roomName.includes(roomName);
   }
   // check if we can open a meeting page
   async openMeeting(demoURL) {
