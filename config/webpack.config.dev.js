@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const commonConfig = require('./webpack.config.common');
 const isSSL = process.env.SSL === 'true';
@@ -27,6 +28,15 @@ module.exports = merge(commonConfig, {
     }),
     new HtmlWebpackHarddiskPlugin({
       outputPath: resolve(__dirname, '..', 'build-dev', 'client')
+    }),
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'callstats',
+          entry: process.env.CSJSURL || 'https://api.callstats.io/static/callstats.min.js',
+          global: 'callstats'
+        }
+      ]
     })
   ]
 });

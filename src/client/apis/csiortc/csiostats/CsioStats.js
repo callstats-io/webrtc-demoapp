@@ -9,9 +9,13 @@ class CsioStats {
     this.signaling = signaling;
     this.config = {};
     this.roomName = undefined;
+    this.cachedUserId = undefined;
+    this.precallStats = undefined;
     this.csObject = new callstats();
     this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
     this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
+    this.csObject.on('preCallTestResults', this.csPreCallTestResultsCallback.bind(this));
+
     document.addEventListener(
       CsioEvents.MEETING_PAGE.ON_MEETING_PAGE_LOADED,
       this.onMeetingPageLoaded.bind(this), false);
@@ -33,6 +37,12 @@ class CsioStats {
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_APPLICATION_LOG,
       this.onApplicationLog.bind(this), false);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.ON_FEEDBACK_PROVIDED,
+      this.onFeedbackProvided.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioStats.ON_ASK_PRECALLTEST_RESULT_AVAILABLE,
+      this.onAskPrecallTestResult.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     this.roomName = e.detail.roomName;
@@ -42,7 +52,6 @@ class CsioStats {
     const pcObject = e.detail.pc;
     const remoteUserID = e.detail.userId;
     const usage = this.csObject.fabricUsage.multiplex;
-    console.log({pcObject, remoteUserID, usage, roomName});
     this.csObject.addNewFabric(pcObject, remoteUserID, usage,
       roomName, this.pcCallback);
   }
@@ -78,7 +87,7 @@ class CsioStats {
     if (this.isInitialized) {
       return;
     }
-
+    this.cachedUserId = userID.aliasName;
     if (__jwtenabled__ === 'true') {
       this.csObject.initialize(
         __appid__,
@@ -110,6 +119,31 @@ class CsioStats {
       config: this.config
     };
     TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, detail);
+  }
+  csPreCallTestResultsCallback(status, results) {
+    if (status === this.csObject.callStatsAPIReturnStatus.success) {
+      const precallStats = {
+        connectivity: results.mediaConnectivity,
+        rtt: results.rtt,
+        loss: results.fractionalLoss,
+        throughput: results.throughput
+      };
+      const detail = {
+        precallStats: precallStats
+      };
+      this.precallStats = precallStats;
+      TriggerEvent(
+        CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE, detail);
+    } else {
+      console.log('Pre-call test could not be run');
+    }
+  }
+  onAskPrecallTestResult(e) {
+    if (this.precallStats) {
+      const detail = this.precallStats;
+      TriggerEvent(
+        CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE, detail);
+    }
   }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);
@@ -216,6 +250,20 @@ class CsioStats {
     const applicationLog = e.detail.eventLog;
     const csioType = this.csObject.webRTCFunctions.applicationLog;
     this.csObject.reportError(pcObject, roomName, csioType, applicationLog);
+  }
+  onFeedbackProvided(e) {
+    const roomName = this.roomName;
+    const userId = this.cachedUserId;
+    const userFeedback = e.detail.feedback;
+    const feedback = {
+      userID: userId,
+      overall: userFeedback.meetingFeedback,
+      audio: userFeedback.audioFeedback,
+      video: userFeedback.videoFeedback,
+      screen: userFeedback.screenshareFeedback,
+      comment: userFeedback.commentFeedback
+    };
+    this.csObject.sendUserFeedback(roomName, feedback, this.pcCallback);
   }
 }
 

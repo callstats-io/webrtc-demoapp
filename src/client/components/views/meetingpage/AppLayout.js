@@ -6,6 +6,8 @@ import ShareLinkPopup from './popup/ShareLinkPopup';
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 import AlertLayout from './alert/AlertLayout';
 import FirefoxScreenShare from './popup/FirefoxScreenShare';
+import UserFeedbackPopup from './popup/UserFeedbackPopup';
+import PrecalltestResultPopup from './popup/PrecalltestResultPopup';
 
 export class AppLayout extends React.Component {
   constructor(props) {
@@ -26,6 +28,8 @@ export class AppLayout extends React.Component {
         <ContentLayout/>
         <ShareLinkPopup/>
         <FirefoxScreenShare/>
+        <UserFeedbackPopup/>
+        <PrecalltestResultPopup/>
       </div>
     );
   }

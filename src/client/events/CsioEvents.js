@@ -22,7 +22,10 @@ const CsioEvents = {
   },
   CsioStats: {
     ON_INITIALIZED: 'csiostats.initialized',
-    ON_DISCONNECTED: 'csiostats.disconnected'
+    ON_DISCONNECTED: 'csiostats.disconnected',
+    ON_PRECALLTEST_RESULT_AVAILABLE: 'csiostats.precalltestavailable',
+    ON_ASK_PRECALLTEST_RESULT_AVAILABLE: 'csiostats.askprecalltestavailable',
+    SHOW_PRECALLTEST_RESULT: 'csiostats.showprecalltestresult'
   },
   CsioMediaCtrl: {
     ON_LOCAL_USER_MEDIA: 'csiomediactrl.onLocalUserMedia',
@@ -55,7 +58,8 @@ const CsioEvents = {
     ON_MEETING_CLOSE_CLICKED: 'meetingpage.onmeetingcloseclicked',
     ON_TOGGLE_MEDIA_STATE: 'meetingpage.ontogglemediastate',
     VIDEO_FOCUS_CHANGE: 'meetingpage.videoFocusChanged',
-    RESIZE_VIDEO_VIEW: 'meetingpage.resizevideoview'
+    RESIZE_VIDEO_VIEW: 'meetingpage.resizevideoview',
+    ON_FEEDBACK_PROVIDED: 'meetingpage.onfeedbackprovided'
   },
   FFScreenShare: {
     ON_SCREEN_SHARE_OPTION_SELECTED: 'ffscreenshare.onscreenshareoptionselected'

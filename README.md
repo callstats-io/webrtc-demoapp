@@ -19,6 +19,7 @@ Environment variables to run the demo application
 - APPSECRET: callstats secret key from your dashboard, necessary if no JWT is used ([see here](https://callstats.io/api/#step-2-initialize-with-appsecret))
 - KEYID: callstats key ID for JWT authentication ([see here](https://callstats.io/api/#third-party-authentication))
 - JWT: boolean if JWT authentication should be used
+- CSJSURL: callstats.js URL
 - EXTENSION_URL: chrome extension download link. If extension is not installed where to get the extention 
 
 Example :
@@ -43,9 +44,11 @@ Single command line expression to run from terminal for development mode
 PORT=4040 \
 SSL=true \
 JWT=false \
+KEYID=callstatsKeyID \
 APPID='change_here_to_your_callstats_app_id' \
 APPSECRET='change_here_to your_callstats_app_secret' \
 EXTENSION_URL='https://change_here_to_your_chrome_extension_download_link' \
+CSJSURL='https://api.callstats.io/static/callstats.min.js' \
 npm run dev
 ```
 Try the app locally by opening http://localhost:4040/ or https://localhost:4040/, depending on if SSL is enabled or not (there is NO redirect!)
