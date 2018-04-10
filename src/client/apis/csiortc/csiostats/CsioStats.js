@@ -10,9 +10,12 @@ class CsioStats {
     this.config = {};
     this.roomName = undefined;
     this.cachedUserId = undefined;
+    this.precallStats = undefined;
     this.csObject = new callstats();
     this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
     this.csObject.on('recommendedConfig', this.recommendedConfigCallback.bind(this));
+    this.csObject.on('preCallTestResults', this.csPreCallTestResultsCallback.bind(this));
+
     document.addEventListener(
       CsioEvents.MEETING_PAGE.ON_MEETING_PAGE_LOADED,
       this.onMeetingPageLoaded.bind(this), false);
@@ -37,6 +40,9 @@ class CsioStats {
     document.addEventListener(
       CsioEvents.MEETING_PAGE.ON_FEEDBACK_PROVIDED,
       this.onFeedbackProvided.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioStats.ON_ASK_PRECALLTEST_RESULT_AVAILABLE,
+      this.onAskPrecallTestResult.bind(this), false);
   }
   onMeetingPageLoaded(e) {
     this.roomName = e.detail.roomName;
@@ -113,6 +119,31 @@ class CsioStats {
       config: this.config
     };
     TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, detail);
+  }
+  csPreCallTestResultsCallback(status, results) {
+    if (status === this.csObject.callStatsAPIReturnStatus.success) {
+      const precallStats = {
+        connectivity: results.mediaConnectivity,
+        rtt: results.rtt,
+        loss: results.fractionalLoss,
+        throughput: results.throughput
+      };
+      const detail = {
+        precallStats: precallStats
+      };
+      this.precallStats = precallStats;
+      TriggerEvent(
+        CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE, detail);
+    } else {
+      console.log('Pre-call test could not be run');
+    }
+  }
+  onAskPrecallTestResult(e) {
+    if (this.precallStats) {
+      const detail = this.precallStats;
+      TriggerEvent(
+        CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE, detail);
+    }
   }
   csInitCallback(csError, csErrMsg) {
     console.log('Status: errCode= ' + csError + ' errMsg= ' + csErrMsg);

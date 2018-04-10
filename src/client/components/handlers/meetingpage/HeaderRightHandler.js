@@ -3,8 +3,14 @@
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 
 class HeaderRightHandler {
+  constructor() {
+    this.showStat = 'none';
+    this.precallStats = {};
+  }
   getState() {
-    return {};
+    return {
+      showStat: this.showStat
+    };
   }
   onClickShareButton(e) {
     e.preventDefault();
@@ -19,6 +25,16 @@ class HeaderRightHandler {
     e.preventDefault();
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
+  }
+  onStatAvailable(e) {
+    this.precallStats = e.detail.precallStats;
+    this.setState({
+      showStat: 'block'
+    });
+  }
+  mayBeShowStat(e) {
+    e.preventDefault();
+    console.log('show pre call test', this.precallStats);
   }
 }
 
