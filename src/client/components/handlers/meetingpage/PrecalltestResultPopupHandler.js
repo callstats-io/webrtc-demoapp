@@ -15,7 +15,6 @@ class PrecalltestResultPopupHandler {
   }
   showPrecallStats(e) {
     const precallStats = e.detail.precallStats;
-    console.warn('->', precallStats);
     this.setState({
       showModal: 'block',
       mediaConnectivity: (precallStats.connectivity) ? 'True' : 'False',

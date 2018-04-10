@@ -27,7 +27,7 @@ class HeaderRightHandler {
       CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
   }
   onStatAvailable(e) {
-    this.precallStats = e.detail.precallStats;
+    this.precallStats = e.detail.precallStats || {};
     setTimeout(function() {
       this.setState({
         showStat: 'block'
