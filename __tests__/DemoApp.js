@@ -1,6 +1,7 @@
 'use strict';
 
 const LandingPage = require('./LandingPage/LandingPage');
+const MeetingPage = require('./MeetingPage/MeetingPage');
 
 describe('LandinPage', function() {
   describe('#openLandingPage', function() {
@@ -61,10 +62,20 @@ describe('LandinPage', function() {
   });
 });
 
-/* describe('MeetingPage', function() {
+describe('MeetingPage', function() {
+  const meetingPage = new MeetingPage();
   describe('#getUserMedia', function() {
-    describe('#audioOnly', function() {});
-    describe('#videoOnly', function() {});
-    describe('#both', function() {});
+    it('should able to get user media', function(done) {
+      this.timeout(15 * 1000);
+      meetingPage.canInitializeMedia('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to get user media'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
   });
-}); */
+});
