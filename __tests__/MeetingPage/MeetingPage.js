@@ -7,18 +7,26 @@ class MeetingPage {
     const page = await chrome.browser.getPage();
     await page.goto(demoURL);
     await page.waitFor(3 * 1000);
-    await page.screenshot({path: 'landing-page.png'});
+    await page.screenshot({ path: 'landing-page.png' });
     await chrome.browser.closeChrome();
   }
   async canInitializeMedia(meetingURL) {
     const page = await chrome.browser.getPage();
     await page.evaluateOnNewDocument(() => {
-      document.addEventListener('csiomediactrl.onLocalUserMedia', function(e) {
-        window.navigator.mediaSuccess = true;
-      }, false);
-      document.addEventListener('csiopeerconnection.onWebrtcError', function(e) {
-        window.navigator.mediaSuccess = false;
-      }, false);
+      document.addEventListener(
+        'csiomediactrl.onLocalUserMedia',
+        function(e) {
+          window.navigator.mediaSuccess = true;
+        },
+        false
+      );
+      document.addEventListener(
+        'csiopeerconnection.onWebrtcError',
+        function(e) {
+          window.navigator.mediaSuccess = false;
+        },
+        false
+      );
     });
     await page.goto(meetingURL);
     await page.waitFor(10 * 1000);
@@ -37,7 +45,9 @@ class MeetingPage {
     );
     // #app > div > div > div:nth-child(4) > div > div > div.modal-body > div > a
     const _meetingURL = await page.evaluate(() => {
-      const elem = document.querySelector('#app > div > div > div:nth-child(4) > div > div > div.modal-body > div > a');
+      const elem = document.querySelector(
+        '#app > div > div > div:nth-child(4) > div > div > div.modal-body > div > a'
+      );
       return elem ? elem.href : '';
     });
     await chrome.browser.closeChrome();
@@ -46,17 +56,25 @@ class MeetingPage {
   async closeMeeting(meetingURL) {
     const page = await chrome.browser.getPage();
     await page.evaluateOnNewDocument(() => {
-      document.addEventListener('meetingpage.onfeedbackprovided', function(e) {
-        const detail = e.detail.feedback;
-        console.log('*', detail);
-        if (detail.meetingFeedback === 4 && detail.audioFeedback === 3 &&
-        detail.videoFeedback === 3 && detail.screenshareFeedback === 3 &&
-        detail.commentFeedback === 'sample demo comment for testing') {
-          window.navigator.success = true;
-        } else {
-          window.navigator.success = false;
-        }
-      }, false);
+      document.addEventListener(
+        'meetingpage.onfeedbackprovided',
+        function(e) {
+          const detail = e.detail.feedback;
+          console.log('*', detail);
+          if (
+            detail.meetingFeedback === 4 &&
+            detail.audioFeedback === 3 &&
+            detail.videoFeedback === 3 &&
+            detail.screenshareFeedback === 3 &&
+            detail.commentFeedback === 'sample demo comment for testing'
+          ) {
+            window.navigator.success = true;
+          } else {
+            window.navigator.success = false;
+          }
+        },
+        false
+      );
     });
     await page.goto(meetingURL);
     await page.waitFor(5 * 1000);
@@ -77,7 +95,8 @@ class MeetingPage {
       '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(4) > div:nth-child(3) > ul > li:nth-child(3) > a'
     );
     await page.type(
-      '#app > div > div > div:nth-child(6) > div > div > div.row > div.col-xs-8 > div > textarea', 'sample demo comment for testing'
+      '#app > div > div > div:nth-child(6) > div > div > div.row > div.col-xs-8 > div > textarea',
+      'sample demo comment for testing'
     );
     // Give feedback, and close
     await page.click(
@@ -106,7 +125,10 @@ class MeetingPage {
     await page.waitFor(1 * 1000);
     // clear the input field
     page.evaluate(() => {
-      document.querySelector('#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input').value = ''
+      document.querySelector(
+        '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input'
+      ).value =
+        '';
     });
     await page.type(
       '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input',
@@ -124,6 +146,29 @@ class MeetingPage {
     });
     await chrome.browser.closeChrome();
     return retval;
+  }
+  // a conference with 3 people
+  async createe2econference(meetingURL) {
+    const page1 = await chrome.browser.getPage();
+    const page2 = await chrome.browser.getPage();
+    const page3 = await chrome.browser.getPage();
+    const participant = async(page) => {
+      await page.goto(meetingURL);
+      await page.waitFor(10 * 1000);
+      // get number of participants
+      const participantCount = page.evaluate(() => {
+        const elem = document.querySelectorAll('#app > div > div > div.container-fluid > div > div.col-xs-8 > div:nth-child(2) > div:nth-child(2) > div > div');
+        return elem ? elem.length : 0;
+      });
+      await page.waitFor(1 * 1000);
+      await page.close();
+      return participantCount;
+    };
+    const cnt = 3;
+    const retval = await Promise.all([participant(page1), participant(page2), participant(page3)]);
+
+    await chrome.browser.closeChrome();
+    return retval[0] === retval[1] && retval[1] === retval[2] && retval[2] === cnt - 1;
   }
 }
 

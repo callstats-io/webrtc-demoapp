@@ -120,4 +120,18 @@ describe('MeetingPage', function() {
       });
     });
   });
+  describe('#e2eMeeting', function() {
+    it('should able to create a meeting with n people', function(done) {
+      this.timeout(30 * 1000);
+      meetingPage.createe2econference('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to create an end2end conference'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+  });
 });
