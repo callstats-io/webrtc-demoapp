@@ -50,7 +50,8 @@ class MeetingPage {
         const detail = e.detail.feedback;
         console.log('*', detail);
         if (detail.meetingFeedback === 4 && detail.audioFeedback === 3 &&
-        detail.videoFeedback === 3 && detail.screenshareFeedback === 3) {
+        detail.videoFeedback === 3 && detail.screenshareFeedback === 3 &&
+        detail.commentFeedback === 'sample demo comment for testing') {
           window.navigator.success = true;
         } else {
           window.navigator.success = false;
@@ -74,6 +75,9 @@ class MeetingPage {
     );
     await page.click(
       '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(4) > div:nth-child(3) > ul > li:nth-child(3) > a'
+    );
+    await page.type(
+      '#app > div > div > div:nth-child(6) > div > div > div.row > div.col-xs-8 > div > textarea', 'sample demo comment for testing'
     );
     // Give feedback, and close
     await page.click(
