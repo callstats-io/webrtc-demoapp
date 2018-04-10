@@ -37,7 +37,7 @@ module.exports = merge(commonConfig, {
       externals: [
         {
           module: 'callstats',
-          entry: JSON.stringify(process.env.CSJSURL || 'https://api.callstats.io/static/callstats.min.js'),
+          entry: process.env.CSJSURL || 'https://api.callstats.io/static/callstats.min.js',
           global: 'callstats'
         }
       ]
