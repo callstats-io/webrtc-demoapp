@@ -90,6 +90,41 @@ class MeetingPage {
     await chrome.browser.closeChrome();
     return retval;
   }
+  async changeName(meetingURL) {
+    const page = await chrome.browser.getPage();
+    await page.goto(meetingURL);
+    await page.waitFor(5 * 1000);
+    await page.click(
+      '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > a'
+    );
+    await page.waitFor(1 * 1000);
+    // just bring focus
+    await page.type(
+      '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input',
+      ''
+    );
+    await page.waitFor(1 * 1000);
+    // clear the input field
+    page.evaluate(() => {
+      document.querySelector('#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input').value = ''
+    });
+    await page.type(
+      '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > div > div > input',
+      'demo-name'
+    );
+    await page.waitFor(1 * 1000);
+    // save name
+    await page.click(
+      '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(2) > div.col-xs-7 > div:nth-child(1) > a'
+    );
+    await page.waitFor(1 * 1000);
+    const retval = await page.evaluate(() => {
+      let userName = JSON.parse(localStorage.getItem('userName'));
+      return userName === 'demo-name';
+    });
+    await chrome.browser.closeChrome();
+    return retval;
+  }
 }
 
 module.exports = MeetingPage;

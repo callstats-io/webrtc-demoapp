@@ -106,4 +106,18 @@ describe('MeetingPage', function() {
       });
     });
   });
+  describe('#changeName', function() {
+    it('should able to change name', function(done) {
+      this.timeout(30 * 1000);
+      meetingPage.changeName('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to change name'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+  });
 });
