@@ -134,4 +134,18 @@ describe('MeetingPage', function() {
       });
     });
   });
+  describe('#exchangeMessage', function() {
+    it('should able to exchange message in a meeting with n people', function(done) {
+      this.timeout(30 * 1000);
+      meetingPage.exchangeMessage('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to exchange message in an end2end conference'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+  });
 });

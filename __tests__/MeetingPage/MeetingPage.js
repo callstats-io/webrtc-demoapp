@@ -170,6 +170,65 @@ class MeetingPage {
     await chrome.browser.closeChrome();
     return retval[0] === retval[1] && retval[1] === retval[2] && retval[2] === cnt - 1;
   }
+  async exchangeMessage(meetingURL) {
+    const page1 = await chrome.browser.getPage();
+    await page1.evaluateOnNewDocument(() => {
+      document.addEventListener(
+        'csiopeerconnection.onChannelMessage',
+        function(e) {
+          let userId = e.detail.userId;
+          const label = e.detail.label;
+          const channelMessage = JSON.parse(e.detail.message);
+          const message = channelMessage.message;
+          if (label === 'chat' && userId !== 'Me') {
+            window.navigator.msg1 = message;
+          }
+        },
+        false
+      );
+    });
+    const page2 = await chrome.browser.getPage();
+    await page2.evaluateOnNewDocument(() => {
+      document.addEventListener(
+        'csiopeerconnection.onChannelMessage',
+        function(e) {
+          let userId = e.detail.userId;
+          const label = e.detail.label;
+          const channelMessage = JSON.parse(e.detail.message);
+          const message = channelMessage.message;
+          if (label === 'chat' && userId !== 'Me') {
+            window.navigator.msg2 = message;
+          }
+        },
+        false
+      );
+    });
+    const participant = async(page, msg, isFirst) => {
+      await page.goto(meetingURL);
+      await page.waitFor(10 * 1000);
+      // type message
+      await page.type(
+        '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(4) > div > div:nth-child(2) > div > input',
+        msg
+      );
+      // send message
+      await page.click(
+        '#app > div > div > div.container-fluid > div > div.col-xs-4 > div:nth-child(4) > div > div:nth-child(2) > div > span > button'
+      );
+      await page.waitFor(5 * 1000);
+      const retval = isFirst ? await page.evaluate(() => {
+        return navigator.msg1;
+      }) : await page.evaluate(() => {
+        return navigator.msg2;
+      });
+      await page.close();
+      return retval;
+    };
+    const msg = ['test message from peer 1', 'test message from peer 2'];
+    const retval = await Promise.all([participant(page1, msg[0], true), participant(page2, msg[1], false)]);
+    await chrome.browser.closeChrome();
+    return msg[0] === retval[1] && msg[1] === retval[0];
+  }
 }
 
 module.exports = MeetingPage;
