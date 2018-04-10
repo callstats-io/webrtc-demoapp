@@ -24,7 +24,8 @@ const CsioEvents = {
     ON_INITIALIZED: 'csiostats.initialized',
     ON_DISCONNECTED: 'csiostats.disconnected',
     ON_PRECALLTEST_RESULT_AVAILABLE: 'csiostats.precalltestavailable',
-    ON_ASK_PRECALLTEST_RESULT_AVAILABLE: 'csiostats.askprecalltestavailable'
+    ON_ASK_PRECALLTEST_RESULT_AVAILABLE: 'csiostats.askprecalltestavailable',
+    SHOW_PRECALLTEST_RESULT: 'csiostats.showprecalltestresult'
   },
   CsioMediaCtrl: {
     ON_LOCAL_USER_MEDIA: 'csiomediactrl.onLocalUserMedia',

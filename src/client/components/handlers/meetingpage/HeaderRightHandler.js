@@ -34,7 +34,11 @@ class HeaderRightHandler {
   }
   mayBeShowStat(e) {
     e.preventDefault();
-    console.log('show pre call test', this.precallStats);
+    const detail = {
+      precallStats: this.precallStats
+    };
+    TriggerEvent(
+      CsioEvents.CsioStats.SHOW_PRECALLTEST_RESULT, detail);
   }
 }
 
