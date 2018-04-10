@@ -28,9 +28,11 @@ class HeaderRightHandler {
   }
   onStatAvailable(e) {
     this.precallStats = e.detail.precallStats;
-    this.setState({
-      showStat: 'block'
-    });
+    setTimeout(function() {
+      this.setState({
+        showStat: 'block'
+      });
+    }.bind(this), 200);
   }
   mayBeShowStat(e) {
     e.preventDefault();
