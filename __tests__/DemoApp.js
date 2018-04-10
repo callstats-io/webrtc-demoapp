@@ -78,4 +78,32 @@ describe('MeetingPage', function() {
       });
     });
   });
+  describe('#shareMeetingLink', function() {
+    it('should able to get meeting link', function(done) {
+      this.timeout(15 * 1000);
+      meetingPage.shareMeetingLink('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to get meeting link'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+  });
+  describe('#closeMeetingLink', function() {
+    it('should able to close meeting, and provide feedback', function(done) {
+      this.timeout(30 * 1000);
+      meetingPage.closeMeeting('https://localhost:4040/test-user-media').then((success) => {
+        if (success === true) {
+          done();
+        } else {
+          done(new Error('failed to close meeting, and provide feedback'));
+        }
+      }, (e) => {
+        done(e);
+      });
+    });
+  });
 });

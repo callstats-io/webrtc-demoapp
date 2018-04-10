@@ -28,6 +28,64 @@ class MeetingPage {
     await chrome.browser.closeChrome();
     return retval;
   }
+  async shareMeetingLink(meetingURL) {
+    const page = await chrome.browser.getPage();
+    await page.goto(meetingURL);
+    await page.waitFor(5 * 1000);
+    await page.click(
+      '#navbar > ul.nav.navbar-nav.navbar-right > li:nth-child(2) > a'
+    );
+    // #app > div > div > div:nth-child(4) > div > div > div.modal-body > div > a
+    const _meetingURL = await page.evaluate(() => {
+      const elem = document.querySelector('#app > div > div > div:nth-child(4) > div > div > div.modal-body > div > a');
+      return elem ? elem.href : '';
+    });
+    await chrome.browser.closeChrome();
+    return meetingURL === _meetingURL;
+  }
+  async closeMeeting(meetingURL) {
+    const page = await chrome.browser.getPage();
+    await page.evaluateOnNewDocument(() => {
+      document.addEventListener('meetingpage.onfeedbackprovided', function(e) {
+        const detail = e.detail.feedback;
+        console.log('*', detail);
+        if (detail.meetingFeedback === 4 && detail.audioFeedback === 3 &&
+        detail.videoFeedback === 3 && detail.screenshareFeedback === 3) {
+          window.navigator.success = true;
+        } else {
+          window.navigator.success = false;
+        }
+      }, false);
+    });
+    await page.goto(meetingURL);
+    await page.waitFor(5 * 1000);
+    await page.click(
+      '#navbar > ul.nav.navbar-nav.navbar-right > li:nth-child(3) > a'
+    );
+    // Change rating to all three star
+    await page.click(
+      '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(1) > div:nth-child(3) > ul > li:nth-child(4) > a'
+    );
+    await page.click(
+      '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(2) > div:nth-child(3) > ul > li:nth-child(3) > a'
+    );
+    await page.click(
+      '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(3) > div:nth-child(3) > ul > li:nth-child(3) > a'
+    );
+    await page.click(
+      '#app > div > div > div:nth-child(6) > div > div > div.modal-body > div:nth-child(4) > div:nth-child(3) > ul > li:nth-child(3) > a'
+    );
+    // Give feedback, and close
+    await page.click(
+      '#app > div > div > div:nth-child(6) > div > div > div.modal-footer > button'
+    );
+    const retval = await page.evaluate(() => {
+      return navigator.success;
+    });
+    await page.waitFor(2 * 1000);
+    await chrome.browser.closeChrome();
+    return retval;
+  }
 }
 
 module.exports = MeetingPage;
