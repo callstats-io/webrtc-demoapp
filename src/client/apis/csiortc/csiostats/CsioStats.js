@@ -77,9 +77,9 @@ class CsioStats {
     this.signaling.generateToken(userId, function(err, token) {
       if (err) {
         console.log('Token generation failed: try again');
-        return this.createTokenGeneratorTimer(forcenew, callback).bind(this);
+        return this.createTokenGeneratorTimer.bind(this, userId, forcenew, callback);
       }
-      console.log('Received Token');
+      console.log('Received Token', token);
       callback(null, token);
     }.bind(this));
   };
@@ -91,7 +91,7 @@ class CsioStats {
     if (__jwtenabled__ === 'true') {
       this.csObject.initialize(
         __appid__,
-        this.tokenGenerator.bind(this),
+        this.tokenGenerator.bind(this, userID),
         userID,
         this.csInitCallback.bind(this),
         this.csStatsCallback.bind(this),
