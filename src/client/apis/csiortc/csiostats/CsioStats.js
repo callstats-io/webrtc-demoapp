@@ -91,7 +91,7 @@ class CsioStats {
     if (__jwtenabled__ === 'true') {
       this.csObject.initialize(
         __appid__,
-        this.tokenGenerator.bind(this, userID),
+        this.tokenGenerator.bind(this, userID.aliasName),
         userID,
         this.csInitCallback.bind(this),
         this.csStatsCallback.bind(this),
