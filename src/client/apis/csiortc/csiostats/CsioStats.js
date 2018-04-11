@@ -79,7 +79,7 @@ class CsioStats {
         console.log('Token generation failed: try again');
         return this.createTokenGeneratorTimer.bind(this, userId, forcenew, callback);
       }
-      console.log('Received Token', token);
+      console.log('Received Token');
       callback(null, token);
     }.bind(this));
   };
