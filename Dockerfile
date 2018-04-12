@@ -8,4 +8,4 @@ RUN npm install --silent
 COPY . /usr/src/app
 
 RUN chmod +x run.sh
-ENTRYPOINT ["./run.sh"]
+CMD ["/bin/sh", "-c", "./run.sh"]
