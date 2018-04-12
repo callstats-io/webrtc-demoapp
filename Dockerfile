@@ -7,5 +7,5 @@ RUN npm install --silent
 
 COPY . /usr/src/app
 
-RUN chmod +x run.sh
-CMD ['/bin/bash', '-c' ,"./run.sh"]
+RUN npm run build
+CMD [ "npm", "start" ]
