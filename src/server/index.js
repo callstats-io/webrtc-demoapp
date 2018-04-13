@@ -10,7 +10,7 @@ const signalingServer = require('./csiosignalingserver');
 const logger = require('./logger');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-process.env.PORT = process.env.port || 4440;
+process.env.PORT = process.env.port || '4440';
 process.env.SSL = process.env.SSL || 'false';
 process.env.JWT = process.env.JWT || 'false';
 process.env.APPID = process.env.APPID || '';

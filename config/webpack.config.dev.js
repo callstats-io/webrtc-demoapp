@@ -9,7 +9,7 @@ const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const commonConfig = require('./webpack.config.common');
 const isSSL = process.env.SSL === 'true';
-process.env.PORT = process.env.port || 4440;
+process.env.PORT = process.env.port || '4440';
 module.exports = merge(commonConfig, {
   mode: 'development',
   entry: [`webpack-hot-middleware/client?${isSSL ? 'https' : 'http'}://localhost:${process.env.PORT}&reload=true`],
