@@ -5,6 +5,7 @@ import CsioStats from './csiortc/csiostats/CsioStats';
 
 class CsioRTCClient {
   constructor() {
+    this.isInitialized = false;
     this.csiortc = new CsioRTC();
     this.csiostats = new CsioStats(this.csiortc.signaling);
     // event listeners
@@ -36,8 +37,12 @@ class CsioRTCClient {
     this.csiostats.initialize(userID);
   }
   onInitializeCsio(e) {
+    this.isInitialized = true;
     const config = e.detail.config;
     this.csiortc.config = config;
+    if (this.isInitialized) {
+      return;
+    }
     this.csiortc.mayBeInitializeRTC();
   }
   // global events
