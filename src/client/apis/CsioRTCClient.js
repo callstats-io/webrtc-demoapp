@@ -37,12 +37,12 @@ class CsioRTCClient {
     this.csiostats.initialize(userID);
   }
   onInitializeCsio(e) {
-    this.isInitialized = true;
     const config = e.detail.config;
     this.csiortc.config = config;
     if (this.isInitialized) {
       return;
     }
+    this.isInitialized = true;
     this.csiortc.mayBeInitializeRTC();
   }
   // global events
