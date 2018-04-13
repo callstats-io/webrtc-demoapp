@@ -36,7 +36,7 @@ class AlertLayout extends React.Component {
             <a onClick={this.alertHandler.onClickExtensionDownloadLink.bind(this)}
               target="_blank"
               href={this.state.extensionDownloadURL}>
-              {`Download extension from: ${this.state.extensionDownloadURL}`}</a>
+              Download extension from: <strong> Here!</strong></a>
           </div>
         </div>
       </div>
