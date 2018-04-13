@@ -154,7 +154,7 @@ class MeetingPage {
     const page3 = await chrome.browser.getPage();
     const participant = async(page) => {
       await page.goto(meetingURL);
-      await page.waitFor(10 * 1000);
+      await page.waitFor(20 * 1000);
       // get number of participants
       const participantCount = page.evaluate(() => {
         const elem = document.querySelectorAll('#app > div > div > div.container-fluid > div > div.col-xs-8 > div:nth-child(2) > div:nth-child(2) > div > div');

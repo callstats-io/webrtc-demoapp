@@ -9,7 +9,7 @@ class Browser {
   async _launchChrome() {
     this.browser = await puppeteer.launch({
       ignoreHTTPSErrors: true,
-      args: ['--disable-setuid-sandbox', '--no-sandbox'],
+      args: ['--disable-setuid-sandbox', '--no-sandbox', '--use-fake-ui-for-media-stream'],
       headless: false
     });
     this.isLaunched = true;
