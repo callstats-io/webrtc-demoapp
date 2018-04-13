@@ -17,7 +17,7 @@ class ChatWindowHandler {
       this.setState({
         windowHeight: fixedHeight
       });
-    }.bind(this), 1 * 1000);
+    }.bind(this), 500);
   }
   onResizeWindow(e) {
     setTimeout(function() {
@@ -27,14 +27,14 @@ class ChatWindowHandler {
       this.setState({
         windowHeight: fixedHeight
       });
-    }.bind(this), 1 * 1000);
+    }.bind(this), 500);
   }
   getState() {
     return {
       inputText: this.inputText,
       chatMessages: this.chatMessages,
       chatText: this.chatText,
-      windowHeight: 120
+      windowHeight: 360
     };
   }
   onInputChange(e) {
