@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development node src/server",
-    "start": "cross-env NODE_ENV=production node build/server",
+    "start": "npm run build && cross-env NODE_ENV=production node build/server",
     "prebuild": "rimraf build",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=config/webpack.config.prod.js",
