@@ -62,7 +62,6 @@ class CsioStats {
     const roomName = this.roomName;
     const pcObject = e.detail.pc;
     const fabricEvent = this.csObject.fabricEvent.fabricTerminated;
-    console.log({pcObject, fabricEvent, roomName});
     this.csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
   }
   createTokenGeneratorTimer(userId, forcenew, callback) {
