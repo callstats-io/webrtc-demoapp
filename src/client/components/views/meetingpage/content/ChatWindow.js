@@ -11,6 +11,8 @@ class ChatLayout extends React.Component {
     this.state = this.chatWindowHandler.getState();
     // may be do a resize
     this.chatWindowHandler.maybeUpdateResizeWindow.apply(this);
+    window.addEventListener('resize',
+      this.chatWindowHandler.onResizeWindow.bind(this), false);
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE,
       this.chatWindowHandler.onChannelMessage.bind(this), false);
