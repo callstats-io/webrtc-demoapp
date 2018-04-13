@@ -2,12 +2,16 @@ import React from 'react';
 import AlertHandler from '../../../handlers/meetingpage/AlertHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
 
+// we will not show alert now. Instead we will direct all alert to data channel message
+// except chrome extension link
 class AlertLayout extends React.Component {
   constructor(props) {
     super(props);
     this.alertHandler = new AlertHandler();
     this.showAlart = this.alertHandler.showAlart.bind(this);
-    this.state = this.alertHandler.getState();
+    this.getUserName = this.alertHandler.getUserName.bind(this);
+    this.broadcastAlart = this.alertHandler.broadcastAlart.bind(this);
+    this.state = this.alertHandler.getState(this.props.roomName);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_JOIN,
       this.alertHandler.onNewUserJoined.bind(this), false);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,

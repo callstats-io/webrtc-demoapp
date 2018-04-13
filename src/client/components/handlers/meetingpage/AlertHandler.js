@@ -1,5 +1,7 @@
 'use strict';
 
+import { CsioEvents, TriggerEvent } from '../../../events/CsioEvents';
+
 class AlertHandler {
   constructor() {
     this.display = 'none';
@@ -13,15 +15,15 @@ class AlertHandler {
     this.extensionDisplay = 'none';
     this.extensionDownloadURL = '';
   }
-
-  getState() {
+  getState(roomName) {
     return {
       alertType: this.alertType,
       text: this.text,
       display: this.display,
       fadein: this.fadein,
       extensionDisplay: this.extensionDisplay,
-      extensionDownloadURL: this.extensionDownloadURL
+      extensionDownloadURL: this.extensionDownloadURL,
+      roomName: roomName
     };
   }
   showAlart(alertType, text) {
@@ -46,25 +48,56 @@ class AlertHandler {
   onNewUserJoined(e) {
     const userId = e.detail.userId;
     const text = `${userId} joined the meeting`;
-    this.showAlart('alert-info', text);
+    const roomName = this.state.roomName;
+    const detail = {
+      label: 'chat',
+      userId: 'Me',
+      message: JSON.stringify({
+        message: text,
+        aliseName: roomName || '',
+        event: 'alert'
+      })
+    };
+    this.broadcastAlart(detail);
   }
   onUserLeave(e) {
     const userId = e.detail.userId;
     const text = `${userId} left the meeting`;
-    this.showAlart('alert-warning', text);
+    const roomName = this.state.roomName;
+    const detail = {
+      label: 'chat',
+      userId: 'Me',
+      message: JSON.stringify({
+        message: text,
+        aliseName: roomName || '',
+        event: 'alert'
+      })
+    };
+    this.broadcastAlart(detail);
   }
   onToggleMediaState(e) {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
+    const aliseName = this.getUserName();
+    const roomName = this.state.roomName;
     let text = '';
     if (mediaType === 'audio') {
-      text = `You ${isEnable ? 'unmuted' : 'muted'} ${mediaType}`;
+      text = `${aliseName} ${isEnable ? 'unmuted' : 'muted'} ${mediaType}`;
     } else if (mediaType === 'video') {
-      text = `You ${isEnable ? 'resumed' : 'paused'} ${mediaType}`;
+      text = `${aliseName} ${isEnable ? 'resumed' : 'paused'} ${mediaType}`;
     } else if (mediaType === 'screen') {
-      text = `You ${isEnable ? 'started' : 'stopped'} ${mediaType}ing`;
+      text = `${aliseName} ${isEnable ? 'started' : 'stopped'} ${mediaType}ing`;
     }
-    this.showAlart('alert-warning', text);
+    const detail = {
+      label: 'chat',
+      userId: 'Me',
+      message: JSON.stringify({
+        message: text,
+        aliseName: roomName || '',
+        event: 'alert'
+      })
+    };
+    this.broadcastAlart(detail);
   }
   onMayBeDownloadExtention(e) {
     const required = e.detail.required;
@@ -78,6 +111,17 @@ class AlertHandler {
     this.setState({
       extensionDisplay: 'none'
     });
+  }
+  broadcastAlart(detail) {
+    TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
+    TriggerEvent(CsioEvents.CsioPeerConnection.SEND_CHANNEL_MESSAGE, detail);
+  }
+  getUserName() {
+    let userName = JSON.parse(localStorage.getItem('userName'));
+    if (userName) {
+      return userName;
+    }
+    return '';
   }
 }
 export default AlertHandler;

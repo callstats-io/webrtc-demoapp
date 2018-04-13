@@ -24,7 +24,7 @@ export class AppLayout extends React.Component {
     return (
       <div className={'container-fluid'} id='principle-dom'>
         <HeaderLayout roomName={this.roomName}/>
-        <AlertLayout/>
+        <AlertLayout roomName={this.roomName}/>
         <ContentLayout/>
         <ShareLinkPopup/>
         <FirefoxScreenShare/>
