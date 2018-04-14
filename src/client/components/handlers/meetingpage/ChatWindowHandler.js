@@ -9,11 +9,32 @@ class ChatWindowHandler {
     this.chatMessages = [];
   }
 
+  maybeUpdateResizeWindow() {
+    setTimeout(function() {
+      const fixedHeight = this.state.windowHeight +
+        (window.innerHeight - document.getElementById('principle-dom').offsetHeight);
+      // console.warn('doing a resize ', this.state.windowHeight, fixedHeight);
+      this.setState({
+        windowHeight: fixedHeight
+      });
+    }.bind(this), 500);
+  }
+  onResizeWindow(e) {
+    setTimeout(function() {
+      const fixedHeight = this.state.windowHeight +
+        (window.innerHeight - document.getElementById('principle-dom').offsetHeight);
+      // console.warn('doing a resize ', this.state.windowHeight, fixedHeight);
+      this.setState({
+        windowHeight: fixedHeight
+      });
+    }.bind(this), 500);
+  }
   getState() {
     return {
       inputText: this.inputText,
       chatMessages: this.chatMessages,
-      chatText: this.chatText
+      chatText: this.chatText,
+      windowHeight: 360
     };
   }
   onInputChange(e) {

@@ -1,10 +1,11 @@
 'use strict';
 import CsioRTC from './csiortc/CsioRTC';
-import {CsioEvents} from '../events/CsioEvents';
+import { CsioEvents, TriggerEvent } from '../events/CsioEvents';
 import CsioStats from './csiortc/csiostats/CsioStats';
 
 class CsioRTCClient {
   constructor() {
+    this.isInitialized = false;
     this.csiortc = new CsioRTC();
     this.csiostats = new CsioStats(this.csiortc.signaling);
     // event listeners
@@ -22,6 +23,8 @@ class CsioRTCClient {
       this.onUserLeave.bind(this), false);
     document.addEventListener(CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
       this.onToggleMediaState.bind(this), false);
+    document.addEventListener(CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED,
+      this.onMeetingPageClosed.bind(this), false);
   }
 
   // on connect with socket io
@@ -38,6 +41,10 @@ class CsioRTCClient {
   onInitializeCsio(e) {
     const config = e.detail.config;
     this.csiortc.config = config;
+    if (this.isInitialized) {
+      return;
+    }
+    this.isInitialized = true;
     this.csiortc.mayBeInitializeRTC();
   }
   // global events
@@ -68,6 +75,11 @@ class CsioRTCClient {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
     this.csiortc.toggleMediaStates(isEnable, mediaType);
+  }
+  onMeetingPageClosed(e) {
+    if (this.csiortc) {
+      this.csiortc.dispose();
+    }
   }
   getUserName() {
     let userName = JSON.parse(localStorage.getItem('userName'));

@@ -34,7 +34,6 @@ class CsioMediaCtrl {
   isSpeaking(userId) {
     const current = new Date();
     const seconds = (current.getTime() - this.lastUpdate.getTime()) / 1000;
-    console.log(this.TIMEDIFF, seconds, this.previouslySelectedUserId, userId);
     if (seconds > this.TIMEDIFF && this.previouslySelectedUserId !== userId) {
       this.lastUpdate = new Date();
       const detail = {
