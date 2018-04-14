@@ -3,7 +3,6 @@
 'use strict';
 import React from 'react';
 import VideoHandler from '../../../handlers/meetingpage/VideoHandler';
-import {CsioEvents} from '../../../../events/CsioEvents';
 class Video extends React.Component {
   constructor(props) {
     super(props);
@@ -21,7 +20,7 @@ class Video extends React.Component {
       MozTransform: 'scaleX(1.5)'
     };
     return (
-      <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)}>
+      <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)} title={this.props.name}>
         <video id={this.videoHandler.name}
           muted={this.state.muted}
           className="thumbnail"

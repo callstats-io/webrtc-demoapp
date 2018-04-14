@@ -3,7 +3,7 @@ import React from 'react';
 import Video from './Video';
 import ChatLayout from './ChatWindow';
 import ContentRightHandler from '../../../handlers/meetingpage/ContentRightHandler';
-import {CsioEvents} from '../../../../events/CsioEvents';
+import { CsioEvents, TriggerEvent } from "../../../../events/CsioEvents";
 
 class ContentRight extends React.Component {
   constructor(props) {
@@ -14,6 +14,10 @@ class ContentRight extends React.Component {
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
       this.contentRightHandler.onLocalVideoStream.bind(this),
+      false);
+    document.addEventListener(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
+      this.contentRightHandler.onToggleMediaState.bind(this),
       false);
     window.addEventListener('resize',
       this.contentRightHandler.onResizeWindow.bind(this), false);
