@@ -42,7 +42,8 @@ const CsioEvents = {
     SEND_MESSAGE: 'csiopeerconnection.sendMessage',
     SEND_CHANNEL_MESSAGE: 'csiopeerconnection.sendChannelMessage',
     ON_CHANNEL_MESSAGE: 'csiopeerconnection.onChannelMessage',
-    ON_APPLICATION_LOG: 'csiopeerconnection.applicationLogEvent'
+    ON_APPLICATION_LOG: 'csiopeerconnection.applicationLogEvent',
+    ON_ICE_FAILED: 'csiopeerconnection.onicefailed'
   },
   CsioRTC: {
     ON_TOGGLE_MEDIA_STATE: 'csiortc.ontogglemediastate',

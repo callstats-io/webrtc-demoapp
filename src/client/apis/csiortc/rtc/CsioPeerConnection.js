@@ -129,6 +129,14 @@ class CsioPeerConnection {
     if (this.pc.iceConnectionState === 'failed' ||
       this.pc.iceConnectionState === 'disconnected') {
       // this.createOffer(true);
+      if (this.pc.iceConnectionState === 'failed') {
+        const detail = {
+          pc: this.pc,
+          userId: this.userId
+        };
+        TriggerEvent(
+          CsioEvents.CsioPeerConnection.ON_ICE_FAILED, detail);
+      }
     } else if (this.pc.iceConnectionState === 'completed' ||
       this.pc.iceConnectionState === 'closed') {
       const detail = {
