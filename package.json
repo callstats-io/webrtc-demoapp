@@ -1,6 +1,6 @@
 {
   "name": "webrtc-demoapp",
-  "version": "3.0.0",
+  "version": "3.0.4",
   "description": "webrtc sample app written from scratch",
   "author": {
     "name": "callstats.io",
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development node src/server",
-    "start": "cross-env NODE_ENV=production node build/server",
+    "start": "npm run build && cross-env NODE_ENV=production node build/server",
     "prebuild": "rimraf build",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=config/webpack.config.prod.js",
@@ -42,6 +42,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "babel-watch": "2.0.7",
+    "chai": "^4.1.2",
     "copyfiles": "2.0.0",
     "cross-env": "5.1.4",
     "css-loader": "0.28.11",
@@ -61,10 +62,12 @@
     "html-webpack-externals-plugin": "^3.7.0",
     "html-webpack-harddisk-plugin": "0.2.0",
     "html-webpack-plugin": "3.1.0",
+    "mocha": "^5.0.5",
     "node-sass": "4.8.1",
     "postcss-load-config": "1.2.0",
     "postcss-loader": "2.1.3",
     "prettier": "1.11.1",
+    "puppeteer": "^1.2.0",
     "rimraf": "2.6.2",
     "sass-loader": "6.0.7",
     "standard": "^11.0.1",

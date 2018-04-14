@@ -9,6 +9,10 @@ class ChatLayout extends React.Component {
     this.onSendClick = this.chatWindowHandler.onSendClick.bind(this);
     this.getUserName = this.chatWindowHandler.getUserName.bind(this);
     this.state = this.chatWindowHandler.getState();
+    // may be do a resize
+    this.chatWindowHandler.maybeUpdateResizeWindow.apply(this);
+    window.addEventListener('resize',
+      this.chatWindowHandler.onResizeWindow.bind(this), false);
     document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE,
       this.chatWindowHandler.onChannelMessage.bind(this), false);
@@ -19,12 +23,6 @@ class ChatLayout extends React.Component {
     if (this.props.show) {
       left = '-300px';
     }
-    const slideoutTextarea = {
-      display: 'block',
-      minHeight: '300px',
-      maxHeight: '400px',
-      backgroundColor: '#FFFFFF'
-    };
     const customStyle = {
       backgroundColor: '#7C54B6',
       color: '#FFFFFF',
@@ -40,7 +38,11 @@ class ChatLayout extends React.Component {
         <div className="row-fluid"
           style={{transform: 'translateX(' + left + ')'}}>
           <textarea id='chatBox' className="form-control" readOnly='true'
-            style={slideoutTextarea}
+            style={{
+              display: 'block',
+              minHeight: `${this.state.windowHeight}px`,
+              backgroundColor: '#FFFFFF'
+            }}
             value={this.state.chatText}
             ref={(el) => { this.messagesContainer = el; } }/>
           <div className="input-group">

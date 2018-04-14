@@ -27,6 +27,9 @@ class CsioRTC {
     document.addEventListener(
       CsioEvents.FFScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED,
       this.onStartedScreenShare.bind(this), false);
+    document.addEventListener(
+      CsioEvents.CsioPeerConnection.ON_ICE_FAILED,
+      this.onIceFailed.bind(this), false);
     window.addEventListener(
       'message',
       this.onStartedScreenShare.bind(this), this);
@@ -212,6 +215,26 @@ class CsioRTC {
     const message = e.detail.message;
     for (let i in this.pcs) {
       this.pcs[i].sendChannelMessage(label, message);
+    }
+  }
+  onIceFailed(e) {
+    console.log(`ice failed for  ${e.userId}, retying in 200 ms`);
+    const pc = e.detail.pc;
+    // may be try to re-negotiate
+    setTimeout(function() {
+      pc.createOffer();
+    }, 200);
+  }
+  dispose() {
+    // leave room
+    if (this.signaling) {
+      this.signaling.stop();
+    }
+    // stop peer connections
+    for (const key in this.pcs) {
+      if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+        this.mayBeDisposePC.bind(this, key);
+      }
     }
   }
 }

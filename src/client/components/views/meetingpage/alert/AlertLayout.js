@@ -2,12 +2,16 @@ import React from 'react';
 import AlertHandler from '../../../handlers/meetingpage/AlertHandler';
 import {CsioEvents} from '../../../../events/CsioEvents';
 
+// we will not show alert now. Instead we will direct all alert to data channel message
+// except chrome extension link
 class AlertLayout extends React.Component {
   constructor(props) {
     super(props);
     this.alertHandler = new AlertHandler();
     this.showAlart = this.alertHandler.showAlart.bind(this);
-    this.state = this.alertHandler.getState();
+    this.getUserName = this.alertHandler.getUserName.bind(this);
+    this.broadcastAlart = this.alertHandler.broadcastAlart.bind(this);
+    this.state = this.alertHandler.getState(this.props.roomName);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_JOIN,
       this.alertHandler.onNewUserJoined.bind(this), false);
     document.addEventListener(CsioEvents.CSIOSignaling.ON_LEAVE,
@@ -29,10 +33,14 @@ class AlertLayout extends React.Component {
         <div className={'container-fluid'} style={{padding: '0px', display: this.state.extensionDisplay}}>
           <div id='alert' className={'alert alert-danger'}
             role="alert" style={{'textAlign': 'center'}}>
+            Download extension from:
             <a onClick={this.alertHandler.onClickExtensionDownloadLink.bind(this)}
               target="_blank"
               href={this.state.extensionDownloadURL}>
-              {`Download extension from: ${this.state.extensionDownloadURL}`}</a>
+              <strong> Here!</strong></a>
+            <a onClick={this.alertHandler.onCloseDownloadExtensionAlert.bind(this)}
+              href='#' className={'pull-right'}>
+              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
           </div>
         </div>
       </div>

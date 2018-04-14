@@ -98,6 +98,14 @@ class ContentRightHandler {
         detail);
     }
   }
+  onToggleMediaState(e) {
+    if (e.detail.mediaType === 'screen') {
+      this.setState({
+        screenShared: e.detail.isEnable
+      });
+    }
+  }
+
   onClickUserName(e) {
     e.preventDefault();
     const nextUserInput = this.state.userNameInput === 'disabled' ? '' : 'disabled';
