@@ -33,10 +33,14 @@ class AlertLayout extends React.Component {
         <div className={'container-fluid'} style={{padding: '0px', display: this.state.extensionDisplay}}>
           <div id='alert' className={'alert alert-danger'}
             role="alert" style={{'textAlign': 'center'}}>
+            Download extension from:
             <a onClick={this.alertHandler.onClickExtensionDownloadLink.bind(this)}
               target="_blank"
               href={this.state.extensionDownloadURL}>
-              Download extension from: <strong> Here!</strong></a>
+              <strong> Here!</strong></a>
+            <a onClick={this.alertHandler.onCloseDownloadExtensionAlert.bind(this)}
+              href='#' className={'pull-right'}>
+              <span className="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
           </div>
         </div>
       </div>

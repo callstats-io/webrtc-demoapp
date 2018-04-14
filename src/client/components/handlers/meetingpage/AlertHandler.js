@@ -111,6 +111,24 @@ class AlertHandler {
     this.setState({
       extensionDisplay: 'none'
     });
+    const detail = {
+      mediaType: 'screen',
+      isEnable: false
+    };
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+  }
+  onCloseDownloadExtensionAlert(e) {
+    e.preventDefault();
+    this.setState({
+      extensionDisplay: 'none'
+    });
+    const detail = {
+      mediaType: 'screen',
+      isEnable: false
+    };
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
   }
   broadcastAlart(detail) {
     TriggerEvent(CsioEvents.CsioPeerConnection.ON_CHANNEL_MESSAGE, detail);
