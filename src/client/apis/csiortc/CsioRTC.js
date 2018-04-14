@@ -214,6 +214,19 @@ class CsioRTC {
       this.pcs[i].sendChannelMessage(label, message);
     }
   }
+  dispose() {
+    // leave room
+    if (this.signaling) {
+      this.signaling.stop();
+    }
+    // stop peer connections
+    for (const key in this.pcs) {
+      if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+        console.warn('dispose pc ', key);
+        this.mayBeDisposePC.bind(this, key);
+      }
+    }
+  }
 }
 
 export default CsioRTC;
