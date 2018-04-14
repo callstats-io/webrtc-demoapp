@@ -233,7 +233,6 @@ class CsioRTC {
     // stop peer connections
     for (const key in this.pcs) {
       if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
-        console.warn('dispose pc ', key);
         this.mayBeDisposePC.bind(this, key);
       }
     }

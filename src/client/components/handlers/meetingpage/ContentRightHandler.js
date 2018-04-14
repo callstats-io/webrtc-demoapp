@@ -100,7 +100,6 @@ class ContentRightHandler {
   }
   onToggleMediaState(e) {
     if (e.detail.mediaType === 'screen') {
-      console.log('screen shared ', e.detail.isEnable);
       this.setState({
         screenShared: e.detail.isEnable
       });
