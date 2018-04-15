@@ -42,6 +42,7 @@
     "__appsecret__": false,
     "__extension_download_url__": false,
     "__jwtenabled__": false,
+    "__addon_id__": false,
     "callstats": false
   },
   "parserOptions": {

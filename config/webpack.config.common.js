@@ -68,7 +68,8 @@ module.exports = {
       __appid__: JSON.stringify(process.env.APPID || ''),
       __appsecret__: JSON.stringify(process.env.APPSECRET || ''),
       __extension_download_url__: JSON.stringify(process.env.EXTENSION_URL || ''),
-      __jwtenabled__: JSON.stringify(process.env.JWT || 'false')
+      __jwtenabled__: JSON.stringify(process.env.JWT || 'false'),
+      __addon_id__: JSON.stringify(process.env.ADDONID || '')
     })
   ],
   resolve: {
