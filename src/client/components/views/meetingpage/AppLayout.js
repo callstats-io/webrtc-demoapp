@@ -8,6 +8,7 @@ import AlertLayout from './alert/AlertLayout';
 import FirefoxScreenShare from './popup/FirefoxScreenShare';
 import UserFeedbackPopup from './popup/UserFeedbackPopup';
 import PrecalltestResultPopup from './popup/PrecalltestResultPopup';
+import LoadingLayout from './loading/LoadingLayout';
 
 export class AppLayout extends React.Component {
   constructor(props) {
@@ -25,6 +26,7 @@ export class AppLayout extends React.Component {
       <div className={'container-fluid'} id='principle-dom'>
         <HeaderLayout roomName={this.roomName}/>
         <AlertLayout roomName={this.roomName}/>
+        <LoadingLayout/>
         <ContentLayout/>
         <ShareLinkPopup/>
         <FirefoxScreenShare/>

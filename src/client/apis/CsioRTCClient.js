@@ -1,6 +1,6 @@
 'use strict';
 import CsioRTC from './csiortc/CsioRTC';
-import { CsioEvents, TriggerEvent } from '../events/CsioEvents';
+import { CsioEvents } from '../events/CsioEvents';
 import CsioStats from './csiortc/csiostats/CsioStats';
 
 class CsioRTCClient {
