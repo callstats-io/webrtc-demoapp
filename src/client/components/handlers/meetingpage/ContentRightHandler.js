@@ -75,16 +75,28 @@ class ContentRightHandler {
   }
   onScreenShareToggle(e) {
     e.preventDefault();
-    const screenShared = !this.state.screenShared;
-    this.setState({
-      screenShared: screenShared
-    });
-    const detail = {
-      mediaType: 'screen',
-      isEnable: screenShared
-    };
-    TriggerEvent(
-      CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+    const extensionInstalled = this.isExtensionInstalled();
+    const isFF = !!navigator.mozGetUserMedia;
+    if (extensionInstalled === false && !isFF) {
+      // No extension is installed
+      const detail = {
+        required: true,
+        downloadURL: __extension_download_url__
+      };
+      TriggerEvent(
+        CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
+    } else {
+      const screenShared = !this.state.screenShared;
+      this.setState({
+        screenShared: screenShared
+      });
+      const detail = {
+        mediaType: 'screen',
+        isEnable: screenShared
+      };
+      TriggerEvent(
+        CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+    }
   }
   onResizeWindow(e) {
     if (this.rightContainer) {
@@ -135,6 +147,10 @@ class ContentRightHandler {
     userName = nameGenerator.getRandomName(); // some random name
     this.saveUserName(userName);
     return userName;
+  }
+  isExtensionInstalled() {
+    const isExtensionInstalled = JSON.parse(localStorage.getItem('csioExtension'));
+    return isExtensionInstalled;
   }
 }
 

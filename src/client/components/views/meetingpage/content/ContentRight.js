@@ -3,13 +3,14 @@ import React from 'react';
 import Video from './Video';
 import ChatLayout from './ChatWindow';
 import ContentRightHandler from '../../../handlers/meetingpage/ContentRightHandler';
-import { CsioEvents, TriggerEvent } from "../../../../events/CsioEvents";
+import { CsioEvents } from '../../../../events/CsioEvents';
 
 class ContentRight extends React.Component {
   constructor(props) {
     super(props);
     this.contentRightHandler = new ContentRightHandler();
     this.saveUserName = this.contentRightHandler.saveUserName.bind(this);
+    this.isExtensionInstalled = this.contentRightHandler.isExtensionInstalled.bind(this);
     this.state = this.contentRightHandler.getState();
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,
