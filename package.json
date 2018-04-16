@@ -1,6 +1,6 @@
 {
   "name": "webrtc-demoapp",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "webrtc sample app written from scratch",
   "author": {
     "name": "callstats.io",
