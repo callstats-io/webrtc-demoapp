@@ -1,9 +1,9 @@
 {
   "name": "Callstats.io WebRTC Screen sharing",
   "author": "Callstats.io",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "manifest_version" : 2,
-  "minimum_chrome_version": "51",
+  "minimum_chrome_version": "49",
   "description" : "An utility extension for callstats.io to support screen sharing",
   "homepage_url": "https://github.com/callstats-io/webrtc-demoapp",
   "background": {
