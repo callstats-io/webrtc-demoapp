@@ -52,7 +52,7 @@ class CsioRTC {
         const stream = this.csoiMedia.getStream(true);
         for (const key in this.pcs) {
           if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
-            this.csoiMedia.addStream(stream, this.pcs[key]);
+            this.csoiMedia.addStream(stream, this.pcs[key].pc);
           }
         }
         // renegotiate
@@ -90,7 +90,7 @@ class CsioRTC {
       for (const label of this.labels) {
         this.pcs[userId].createChannel(label);
       }
-      this.csoiMedia.addStream(stream, this.pcs[userId]);
+      this.csoiMedia.addStream(stream, this.pcs[userId].pc);
     }
   }
   mayBeDisposePC(userId) {
@@ -103,7 +103,7 @@ class CsioRTC {
   mayBeStartStopScreenShare(isEnable) {
     for (const key in this.pcs) {
       if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
-        this.csoiMedia.removeStream(this.pcs[key]);
+        this.csoiMedia.removeStream(this.pcs[key].pc);
       }
     }
     this.csoiMedia.disposeLocalStream();

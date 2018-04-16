@@ -75,23 +75,23 @@ class CsioMediaCtrl {
       console.error(e);
     });
   }
-  addStream(stream, ctx) {
+  addStream(stream, pc) {
     stream.getTracks().forEach(function(mediaTrack) {
-      if (typeof ctx.pc.addTrack === 'function') {
-        ctx.pc.addTrack(mediaTrack, stream);
+      if (typeof pc.addTrack === 'function') {
+        pc.addTrack(mediaTrack, stream);
       }
-    }, ctx);
+    }, pc);
   }
-  removeStream(ctx, userId) {
-    ctx.pc.getSenders().forEach(function(sender) {
-      if (typeof ctx.pc.removeTrack === 'function') {
+  removeStream(pc, userId) {
+    pc.getSenders().forEach(function(sender) {
+      if (typeof pc.removeTrack === 'function') {
         try {
-          ctx.pc.removeTrack(sender);
+          pc.removeTrack(sender);
         } catch (e) {
           console.error(e);
         }
       }
-    }, ctx);
+    }, pc);
   }
   getStream(isLocal, userId) {
     if (isLocal) {
