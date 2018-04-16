@@ -1,3 +1,7 @@
+/**
+ * React main page
+ * for webrtc demo application
+ */
 import React from 'react';
 import {hot} from 'react-hot-loader';
 

@@ -10,12 +10,13 @@ import ReactDOM from 'react-dom';
 import App from './App';
 // global styles
 import './style.scss';
-import CsioRTC from './apis/CsioRTC';
+// load the csioRTC Client
+// with CsioRTCClient we hold, and control the application state.
+
+import {} from './apis/CsioRTCClient';
 
 // apply polyfill
 if (!window.Intl) {
   window.Intl = intl;
 }
-const tmp = new CsioRTC();
-tmp.sayHello();
 ReactDOM.render(<App />, document.getElementById('app'));

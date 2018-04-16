@@ -4,6 +4,7 @@ const {resolve} = require('path');
 const merge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 
 const commonConfig = require('./webpack.config.common');
 
@@ -31,6 +32,15 @@ module.exports = merge(commonConfig, {
         minifyCSS: true,
         minifyURLs: true
       }
+    }),
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+          module: 'callstats',
+          entry: process.env.CSJSURL || 'https://api.callstats.io/static/callstats.min.js',
+          global: 'callstats'
+        }
+      ]
     })
   ]
 });
