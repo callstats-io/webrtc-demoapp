@@ -98,6 +98,11 @@ class ContentRightHandler {
         CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
     }
   }
+  onClickCloseButton(e) {
+    e.preventDefault();
+    TriggerEvent(
+      CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
+  }
   onResizeWindow(e) {
     if (this.rightContainer) {
       const curHeight = this.rightContainer.clientHeight;

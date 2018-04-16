@@ -57,7 +57,7 @@ class ContentRight extends React.Component {
               </div>
             </div>
             <div className={'row'} style={{paddingTop: '10%'}}>
-              <div className={'col-xs-4'}>
+              <div className={'col-xs-3'}>
                 <a href='#' onClick={this.contentRightHandler.onAudioToggle.bind(this)}>
                   <span className={'glyphicon glyphicon-volume-up'} aria-hidden="true" style={{
                     fontSize: '22px',
@@ -65,7 +65,7 @@ class ContentRight extends React.Component {
                   }}></span>
                 </a>
               </div>
-              <div className={'col-xs-4'}>
+              <div className={'col-xs-3'}>
                 <a href='#' onClick={this.contentRightHandler.onVideoToggle.bind(this)}>
                   <span className="glyphicon glyphicon-facetime-video" aria-hidden="true" style={{
                     fontSize: '22px',
@@ -73,12 +73,18 @@ class ContentRight extends React.Component {
                   }}></span>
                 </a>
               </div>
-              <div className={'col-xs-4'}>
+              <div className={'col-xs-3'}>
                 <a href='#' onClick={this.contentRightHandler.onScreenShareToggle.bind(this)}>
                   <span className="glyphicon glyphicon-eye-open" aria-hidden="true" style={{
                     fontSize: '22px',
                     color: this.state.screenShared ? '#442173' : '#808080'
                   }}></span>
+                </a>
+              </div>
+              <div className={'col-xs-3'}>
+                <a href="#" style={{color: '#FFFFFF', background: 'inherit'}}
+                  onClick={this.contentRightHandler.onClickCloseButton.bind(this)}>
+                  <img alt="Hangup" src={'/static/images/hangup.png'}/>
                 </a>
               </div>
             </div>

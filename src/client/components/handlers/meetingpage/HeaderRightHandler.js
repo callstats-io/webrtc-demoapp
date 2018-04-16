@@ -21,11 +21,6 @@ class HeaderRightHandler {
     TriggerEvent(
       CsioEvents.MEETING_PAGE.ON_SHARE_MEETING_LINK, detail);
   }
-  onClickCloseButton(e) {
-    e.preventDefault();
-    TriggerEvent(
-      CsioEvents.MEETING_PAGE.ON_MEETING_CLOSE_CLICKED, {});
-  }
   onStatAvailable(e) {
     this.precallStats = e.detail.precallStats || {};
     setTimeout(function() {
