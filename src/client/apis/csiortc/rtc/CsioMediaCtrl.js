@@ -85,7 +85,11 @@ class CsioMediaCtrl {
   removeStream(ctx, userId) {
     ctx.pc.getSenders().forEach(function(sender) {
       if (typeof ctx.pc.removeTrack === 'function') {
-        ctx.pc.removeTrack(sender);
+        try {
+          ctx.pc.removeTrack(sender);
+        } catch (e) {
+          console.error(e);
+        }
       }
     }, ctx);
   }
