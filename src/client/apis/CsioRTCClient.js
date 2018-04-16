@@ -3,6 +3,10 @@ import CsioRTC from './csiortc/CsioRTC';
 import { CsioEvents } from '../events/CsioEvents';
 import CsioStats from './csiortc/csiostats/CsioStats';
 
+/**
+ * Main interceptor that pass states, and action between different libraries
+ * We initialize the object at the start of the application
+ */
 class CsioRTCClient {
   constructor() {
     // script to detect if screen share extension is installed
@@ -29,7 +33,10 @@ class CsioRTCClient {
       this.onMeetingPageClosed.bind(this), false);
   }
 
-  // on connect with socket io
+  /**
+   * User successfully connected with socker io server
+   * @param e json object containing sockerio generated user id
+   */
   onConnect(e) {
     const userId = e.detail.userId;
     const userName = this.getUserName();
@@ -40,6 +47,12 @@ class CsioRTCClient {
     console.log('onConnect', userID);
     this.csiostats.initialize(userID);
   }
+
+  /**
+   * Callstats library is successfully initialized
+   * @param e json object provide basic configuration. Both media configuration
+   * and peer connection configuration
+   */
   onInitializeCsio(e) {
     const config = e.detail.config;
     this.csiortc.config = config;
@@ -49,17 +62,31 @@ class CsioRTCClient {
     this.isInitialized = true;
     this.csiortc.mayBeInitializeRTC();
   }
-  // global events
+
+  /**
+   * User redirected from landing page to meeting page for the first or
+   * user directly come to meeting page
+   * @param e json object containing the roomName
+   */
   onMeetingPageLoaded(e) {
     const roomName = e.detail.roomName;
     this.csiortc.roomName = roomName;
     this.csiortc.mayBeInitializeRTC();
   }
+  /**
+   * When a new user join a room
+   * @param e json object containing the userId
+   */
   onNewUserJoined(e) {
     const userId = e.detail.userId;
     console.log('onUserJoined', userId);
     this.csiortc.doOffer(userId);
   }
+
+  /**
+   * Signaling related message passed through socket.io
+   * @param e json object containing either ice, or sdp message
+   */
   onUserMessage(e) {
     const userId = e.detail.userId;
     const json = JSON.parse(e.detail.message);
@@ -69,10 +96,19 @@ class CsioRTCClient {
       this.csiortc.doAnswer(userId, json.offer);
     }
   }
+  /**
+   * When a user leave a socket.io room, or disconnected from server
+   * @param e json object containing the user ID
+   */
   onUserLeave(e) {
     const userId = e.detail.userId;
     this.csiortc.mayBeDisposePC(userId);
   }
+
+  /**
+   * Fired when user toggle local user media state
+   * @param e
+   */
   onToggleMediaState(e) {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;

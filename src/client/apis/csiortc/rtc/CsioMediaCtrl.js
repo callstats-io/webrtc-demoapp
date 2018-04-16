@@ -1,3 +1,7 @@
+/**
+ * Simple media constroller wrapper class to handle local, and remove media streams for
+ * webrtc demo application
+ */
 'use strict';
 
 import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';

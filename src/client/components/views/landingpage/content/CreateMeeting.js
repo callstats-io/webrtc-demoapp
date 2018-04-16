@@ -1,3 +1,9 @@
+/**
+ * Create meeting layout for demo application
+ * All application logic for demo application is handled by CreateMeetingHandler
+ * Once user give a username the react router redirect the user to conference page
+ */
+'use strict';
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import CreateMetingHandler from '../../../handlers/landingpage/CreateMeetingHandler';

@@ -1,3 +1,7 @@
+/**
+ * Application related events and
+ * Helper method to dispatch events
+ */
 'use strict';
 
 const CsioEvents = {

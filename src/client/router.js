@@ -1,3 +1,11 @@
+/**
+ * Router for demo application.
+ * Currently router has two route
+ *    1. Landing page for demo application
+ *          From landing page we can create, or open an existing meeting
+ *    2. Meeting page for demo application
+ *          Main conference page of the demo application
+ */
 import React from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
 

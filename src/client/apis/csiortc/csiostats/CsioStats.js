@@ -1,3 +1,7 @@
+/**
+ * callstats.io library wrapper. It is registered to different csio events
+ * and send those events callstats.io server
+ */
 'use strict';
 
 import CsioConfigParams from '../../utils/Common';

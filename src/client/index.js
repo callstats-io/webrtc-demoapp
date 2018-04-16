@@ -11,6 +11,8 @@ import App from './App';
 // global styles
 import './style.scss';
 // load the csioRTC Client
+// with CsioRTCClient we hold, and control the application state.
+
 import {} from './apis/CsioRTCClient';
 
 // apply polyfill
