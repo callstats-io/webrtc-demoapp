@@ -461,13 +461,39 @@ document.addEventListener('newPeerConnection',
       var usage = csObject.fabricUsage.multiplex;
       csObject.addNewFabric(pcObject, remoteUserID, usage,
           roomName, pcCallback);
-
+      console.log('added new fabric');
       if (e.detail.id > 0) {
         var fabricEvent = csObject.fabricEvent.fabricHold;
         csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
       }
     },
     false);
+
+document.addEventListener('fabricHold',
+  function(e) {
+    console.warn('fabricHold');
+    var pcObject = e.detail.pc;
+    var fabricEvent = csObject.fabricEvent.fabricHold;
+    csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+  },
+  false);
+
+document.addEventListener('fabricResume',
+  function(e) {
+    console.warn('fabricResume');
+    var pcObject = e.detail.pc;
+    var fabricEvent = csObject.fabricEvent.fabricResume;
+    csObject.sendFabricEvent(pcObject, fabricEvent, roomName);
+  },
+false);
+
+
+window.triggerFabricEvent = function(ev) {
+  lib.fabricEvent(ev);
+};
+window.triggerCreateOffer = function() {
+  lib.triggerCreateOffer();
+};
 
 // a peer connection is closed due to a user leaving
 document.addEventListener('closePeerConnection',

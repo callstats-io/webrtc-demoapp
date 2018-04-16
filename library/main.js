@@ -52,6 +52,10 @@ function handleUserJoin(userId, _localStream, id) {
       iceConfig,
       _localStream,
       id);
+  if (id > 0) {
+    modCommon.triggerEvent('fabricHold', {'pc': pc.pc});
+  }
+
   for (var i in datachannels) {
     pc.createChannel(datachannels[i]);
   }
@@ -60,7 +64,15 @@ function handleUserJoin(userId, _localStream, id) {
     pcs[userId] = [];
   }
   pcs[userId].push(pc);
-  pc.createOffer();
+}
+
+function triggerCreateOffer() {
+  for (var userId in pcs) {
+    for (var i in pcs[userId]) {
+      var pc = pcs[userId][i];
+      pc.createOffer();
+    }
+  }
 }
 
 /**
@@ -72,7 +84,6 @@ function handleUserLeave(userId) {
   if (pcs[userId]) {
     for (var i in pcs[userId]) {
       pcs[userId][i].close();
-      delete pcs[userId][i];
     }
   }
 }
@@ -159,6 +170,17 @@ function setLocalStream(_localStream) {
   localStream = _localStream;
 }
 
+function fabricEvent(ev) {
+  for (var userId in pcs) {
+    for (var i in pcs[userId]) {
+      if (pcs[userId][i].id === 0) {
+        continue;
+      }
+      modCommon.triggerEvent(ev, {'pc': pcs[userId][i].pc});
+    }
+  }
+}
+
 // public functions
 function CsioWebrtcApp(labels) {
   datachannels = (typeof labels === 'undefined')? [] : labels;
@@ -180,6 +202,12 @@ CsioWebrtcApp.prototype.sendChannelMessageAll = function(label, message) {
       pcs[i][0].sendChannelMessage(label, message);
     }
   }
+};
+CsioWebrtcApp.prototype.fabricEvent = function(ev) {
+  fabricEvent(ev);
+};
+CsioWebrtcApp.prototype.triggerCreateOffer = function() {
+  triggerCreateOffer();
 };
 CsioWebrtcApp.prototype.setIceConfig = setIceConfig;
 CsioWebrtcApp.prototype.setLocalStream = setLocalStream;
