@@ -107,18 +107,28 @@ class CsioRTCClient {
 
   /**
    * Fired when user toggle local user media state
-   * @param e
+   * @param e json object containing mediaType, and media status
    */
   onToggleMediaState(e) {
     const isEnable = e.detail.isEnable;
     const mediaType = e.detail.mediaType;
     this.csiortc.toggleMediaStates(isEnable, mediaType);
   }
+
+  /**
+   * When we close a meeting
+   * @param e json object, can be empty
+   */
   onMeetingPageClosed(e) {
     if (this.csiortc) {
       this.csiortc.dispose();
     }
   }
+
+  /**
+   * Provide user name which is stored in local storage
+   * @returns {string}  username of the local participant
+   */
   getUserName() {
     let userName = JSON.parse(localStorage.getItem('userName'));
     if (userName) {
