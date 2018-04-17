@@ -2,3 +2,7 @@
 node_modules
 ssl
 build
+build-dev
+.tags*
+.idea
+*.log
