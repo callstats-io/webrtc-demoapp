@@ -153,31 +153,28 @@ class ContentRightHandler {
     this.saveUserName(userName);
     return userName;
   }
-  isExtensionInstalled() {
-    const checkScreenShareDetails = _ => {
-      const updateExtensionDetail = (isInstalled) => {
-        localStorage.setItem('csioExtension', JSON.stringify(isInstalled));
-      };
-      const extensionURL = `chrome-extension://${__addon_id__}/logo_48_48.png`;
-      let xhr = new XMLHttpRequest();
-      xhr.open('GET', extensionURL, true);
-      xhr.onload = function(e) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            updateExtensionDetail(true);
-          } else {
-            updateExtensionDetail(false);
+  checkChromeExtInstalled(options) {
+    return new Promise((resolve, reject) => {
+      if (typeof chrome === 'undefined' || !chrome || !chrome.runtime) {
+        // No API, so no extension for sure
+        reject(new Error('Extension not installed'));
+        return;
+      }
+      chrome.runtime.sendMessage(
+        options.desktopSharingChromeExtId,
+        { getVersion: true },
+        response => {
+          if (!response || !response.version) {
+            reject(new Error('Extension not installed'));
+            return;
           }
+          // Check installed extension version
+          const extVersion = response.version;
+          console.log(`Extension version is: ${extVersion}`);
+          resolve(true);
         }
-      };
-      xhr.onerror = function(e) {
-        updateExtensionDetail(false);
-      };
-      xhr.send(null);
-    };
-    checkScreenShareDetails();
-    const isExtensionInstalled = JSON.parse(localStorage.getItem('csioExtension'));
-    return isExtensionInstalled;
+      );
+    });
   }
 }
 
