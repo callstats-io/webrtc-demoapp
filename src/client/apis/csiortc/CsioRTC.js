@@ -125,7 +125,7 @@ class CsioRTC {
               return;
             }
             const detail = {
-              mediaSource: 'application',
+              mediaSource: '',
               from: 'cmScreenShare',
               csioSourceId: response.streamId
             };
