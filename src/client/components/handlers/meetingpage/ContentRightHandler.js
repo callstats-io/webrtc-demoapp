@@ -75,18 +75,10 @@ class ContentRightHandler {
   }
   onScreenShareToggle(e) {
     e.preventDefault();
-    const extensionInstalled = this.isExtensionInstalled();
+    const screenShared = !this.state.screenShared;
     const isFF = !!navigator.mozGetUserMedia;
-    if (extensionInstalled === false && !isFF) {
+    if (isFF) {
       // No extension is installed
-      const detail = {
-        required: true,
-        downloadURL: __extension_download_url__
-      };
-      TriggerEvent(
-        CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
-    } else {
-      const screenShared = !this.state.screenShared;
       this.setState({
         screenShared: screenShared
       });
@@ -96,6 +88,28 @@ class ContentRightHandler {
       };
       TriggerEvent(
         CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+    } else {
+      this.checkChromeExtInstalled().then(installed => {
+        // screen share extension is installed, may be try to start screen share
+        const screenShared = !this.state.screenShared;
+        this.setState({
+          screenShared: screenShared
+        });
+        // do need to enable screen share
+        const detail = {
+          mediaType: 'screen',
+          isEnable: screenShared
+        };
+        TriggerEvent(
+          CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+      }, _ => {
+        const detail = {
+          required: true,
+          downloadURL: __extension_download_url__
+        };
+        TriggerEvent(
+          CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
+      });
     }
   }
   onClickCloseButton(e) {
@@ -153,7 +167,8 @@ class ContentRightHandler {
     this.saveUserName(userName);
     return userName;
   }
-  checkChromeExtInstalled(options) {
+  checkChromeExtInstalled() {
+    const extensionid = __addon_id__; // getting from environment variable
     return new Promise((resolve, reject) => {
       if (typeof chrome === 'undefined' || !chrome || !chrome.runtime) {
         // No API, so no extension for sure
@@ -161,7 +176,7 @@ class ContentRightHandler {
         return;
       }
       chrome.runtime.sendMessage(
-        options.desktopSharingChromeExtId,
+        extensionid,
         { getVersion: true },
         response => {
           if (!response || !response.version) {

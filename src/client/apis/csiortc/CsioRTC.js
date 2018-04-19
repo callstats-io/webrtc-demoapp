@@ -28,11 +28,11 @@ class CsioRTC {
       CsioEvents.FFScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED,
       this.onStartedScreenShare.bind(this), false);
     document.addEventListener(
+      CsioEvents.CMScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED,
+      this.onStartedScreenShare.bind(this), false);
+    document.addEventListener(
       CsioEvents.CsioPeerConnection.ON_ICE_FAILED,
       this.onIceFailed.bind(this), false);
-    window.addEventListener(
-      'message',
-      this.onStartedScreenShare.bind(this), this);
   }
   mayBeInitializeRTC() {
     const mediaConfig = this.config ? this.config.media : undefined;
@@ -113,7 +113,26 @@ class CsioRTC {
         // show popup
         TriggerEvent(CsioEvents.CsioRTC.ON_FF_SCREEN_SHARE_OPTION, {});
       } else {
-        window.postMessage('csioCheckAddonInstalled', '*');
+        // request screen share for chrome
+        const extensionid = __addon_id__; // getting from environment variable
+        chrome.runtime.sendMessage(
+          extensionid, {
+            getStream: true
+          },
+          response => {
+            if (!response) {
+              console.error('->', response);
+              return;
+            }
+            const detail = {
+              mediaSource: 'application',
+              from: 'cmScreenShare',
+              csioSourceId: response.streamId
+            };
+            TriggerEvent(
+              CsioEvents.CMScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED, detail);
+          }
+        );
       }
     } else {
       // restart with getting local audio video
@@ -128,25 +147,21 @@ class CsioRTC {
     if (msg.detail && msg.detail.from === 'ffScreenShare') {
       const constraints = {
         'mediaSource': msg.detail.mediaSource,
-        // 'mediaSource': 'screen', // whole screen sharing
-        // 'mediaSource': 'window', // choose a window to share
-        // 'mediaSource': 'application', // choose a window to share
         'width': {max: '1920'},
         'height': {max: '1080'},
         'frameRate': {max: '10'}
       };
       const roomName = this.roomName;
-      console.warn(constraints);
       if (constraints && roomName) {
         this.csoiMedia.getUserMedia({video: constraints, audio: false});
       }
-    } else if (msg.data && msg.data.evt === 'onCsioSourceId') {
+    } else if (msg.detail && msg.detail.from === 'cmScreenShare') {
       const constraints = {
         'mandatory': {
           'chromeMediaSource': 'desktop',
           'maxWidth': Math.min(screen.width, 1920),
           'maxHeight': Math.min(screen.height, 1080),
-          'chromeMediaSourceId': msg.data.csioSourceId
+          'chromeMediaSourceId': msg.detail.csioSourceId
         },
         'optional': [
           {googTemporalLayeredScreencast: true}
@@ -156,9 +171,6 @@ class CsioRTC {
       if (constraints && roomName) {
         this.csoiMedia.getUserMedia({video: constraints, audio: false});
       }
-    } else if (msg.data && msg.data === 'csioAddonInstalled') {
-      window.postMessage('csioRequestScreenSourceId', '*');
-    } else if (msg.data && msg.data === 'csioCheckAddonInstalled') {
     }
   }
   toggleMediaStates(isEnable, mediaType) {

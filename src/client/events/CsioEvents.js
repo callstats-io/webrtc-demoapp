@@ -68,6 +68,9 @@ const CsioEvents = {
   },
   FFScreenShare: {
     ON_SCREEN_SHARE_OPTION_SELECTED: 'ffscreenshare.onscreenshareoptionselected'
+  },
+  CMScreenShare: {
+    ON_SCREEN_SHARE_OPTION_SELECTED: 'cmscreenshare.onscreenshareoptionselected'
   }
 };
 
