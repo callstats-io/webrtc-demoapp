@@ -75,18 +75,10 @@ class ContentRightHandler {
   }
   onScreenShareToggle(e) {
     e.preventDefault();
-    const extensionInstalled = this.isExtensionInstalled();
+    const screenShared = !this.state.screenShared;
     const isFF = !!navigator.mozGetUserMedia;
-    if (extensionInstalled === false && !isFF) {
+    if (isFF) {
       // No extension is installed
-      const detail = {
-        required: true,
-        downloadURL: __extension_download_url__
-      };
-      TriggerEvent(
-        CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
-    } else {
-      const screenShared = !this.state.screenShared;
       this.setState({
         screenShared: screenShared
       });
@@ -96,6 +88,28 @@ class ContentRightHandler {
       };
       TriggerEvent(
         CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+    } else {
+      this.checkChromeExtInstalled().then(installed => {
+        // screen share extension is installed, may be try to start screen share
+        const screenShared = !this.state.screenShared;
+        this.setState({
+          screenShared: screenShared
+        });
+        // do need to enable screen share
+        const detail = {
+          mediaType: 'screen',
+          isEnable: screenShared
+        };
+        TriggerEvent(
+          CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE, detail);
+      }, _ => {
+        const detail = {
+          required: true,
+          downloadURL: __extension_download_url__
+        };
+        TriggerEvent(
+          CsioEvents.CsioRTC.ON_EXTENTION_REQUIRED, detail);
+      });
     }
   }
   onClickCloseButton(e) {
@@ -153,31 +167,29 @@ class ContentRightHandler {
     this.saveUserName(userName);
     return userName;
   }
-  isExtensionInstalled() {
-    const checkScreenShareDetails = _ => {
-      const updateExtensionDetail = (isInstalled) => {
-        localStorage.setItem('csioExtension', JSON.stringify(isInstalled));
-      };
-      const extensionURL = `chrome-extension://${__addon_id__}/logo_48_48.png`;
-      let xhr = new XMLHttpRequest();
-      xhr.open('GET', extensionURL, true);
-      xhr.onload = function(e) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            updateExtensionDetail(true);
-          } else {
-            updateExtensionDetail(false);
+  checkChromeExtInstalled() {
+    const extensionid = __addon_id__; // getting from environment variable
+    return new Promise((resolve, reject) => {
+      if (typeof chrome === 'undefined' || !chrome || !chrome.runtime) {
+        // No API, so no extension for sure
+        reject(new Error('Extension not installed'));
+        return;
+      }
+      chrome.runtime.sendMessage(
+        extensionid,
+        { getVersion: true },
+        response => {
+          if (!response || !response.version) {
+            reject(new Error('Extension not installed'));
+            return;
           }
+          // Check installed extension version
+          const extVersion = response.version;
+          console.log(`Extension version is: ${extVersion}`);
+          resolve(true);
         }
-      };
-      xhr.onerror = function(e) {
-        updateExtensionDetail(false);
-      };
-      xhr.send(null);
-    };
-    checkScreenShareDetails();
-    const isExtensionInstalled = JSON.parse(localStorage.getItem('csioExtension'));
-    return isExtensionInstalled;
+      );
+    });
   }
 }
 

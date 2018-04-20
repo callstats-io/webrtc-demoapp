@@ -10,7 +10,7 @@ class ContentRight extends React.Component {
     super(props);
     this.contentRightHandler = new ContentRightHandler();
     this.saveUserName = this.contentRightHandler.saveUserName.bind(this);
-    this.isExtensionInstalled = this.contentRightHandler.isExtensionInstalled.bind(this);
+    this.checkChromeExtInstalled = this.contentRightHandler.checkChromeExtInstalled.bind(this);
     this.state = this.contentRightHandler.getState();
     document.addEventListener(
       CsioEvents.CsioMediaCtrl.ON_LOCAL_USER_MEDIA,

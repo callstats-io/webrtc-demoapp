@@ -10,7 +10,6 @@ import CsioStats from './csiortc/csiostats/CsioStats';
 class CsioRTCClient {
   constructor() {
     // script to detect if screen share extension is installed
-    this.detectScreenShareExtenstion();
     this.isInitialized = false;
     this.csiortc = new CsioRTC();
     this.csiostats = new CsioStats(this.csiortc.signaling);
@@ -135,27 +134,6 @@ class CsioRTCClient {
       return userName;
     }
     return '';
-  }
-  detectScreenShareExtenstion() {
-    const updateExtensionDetail = (isInstalled) => {
-      localStorage.setItem('csioExtension', JSON.stringify(isInstalled));
-    };
-    const extensionURL = `chrome-extension://${__addon_id__}/logo_48_48.png`;
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', extensionURL, true);
-    xhr.onload = function(e) {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          updateExtensionDetail(true);
-        } else {
-          updateExtensionDetail(false);
-        }
-      }
-    };
-    xhr.onerror = function(e) {
-      updateExtensionDetail(false);
-    };
-    xhr.send(null);
   }
 }
 
