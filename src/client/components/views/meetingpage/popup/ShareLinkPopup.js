@@ -27,13 +27,14 @@ class ShareLinkPopup extends React.Component {
             <div className="modal-body">
               <div className="input-group col-lg-offset-4"
                 style={customStyle}>
-                <a onClick={this.shareLinkPopupHandler.handleCloseModal.bind(this)}
+                <a id="sharelink-popup-open-link" onClick={this.shareLinkPopupHandler.handleCloseModal.bind(this)}
                   href={this.state.meetingRoomURL}
                   target="_blank">{this.state.meetingRoomURL}</a>
               </div>
             </div>
             <div className="modal-footer">
               <button type="button"
+                id="sharelink-popup-close-btn"
                 className="btn btn-primary"
                 onClick={this.shareLinkPopupHandler.handleCloseModal.bind(this)}>Close</button>
             </div>

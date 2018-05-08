@@ -17,11 +17,11 @@ class HeaderRight extends React.Component {
   render() {
     return (
       <ul className="nav navbar-nav navbar-right">
-        <li><a href="#" style={{color: '#FFFFFF', background: 'inherit', display: this.state.showStat}}
+        <li><a id="meeting-show-precall-test-btn" href="#" style={{color: '#FFFFFF', background: 'inherit', display: this.state.showStat}}
           onClick={this.headerRightHandler.mayBeShowStat.bind(this)}>
           <span className="glyphicon glyphicon-ice-lolly" aria-hidden="true"></span>
         </a></li>
-        <li><a href="#" style={{color: '#FFFFFF', background: 'inherit'}}
+        <li><a id="meeting-share-link-btn" href="#" style={{color: '#FFFFFF', background: 'inherit'}}
           onClick={this.headerRightHandler.onClickShareButton.bind(this)}>
           <span className="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
         </a></li>

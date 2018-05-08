@@ -40,6 +40,7 @@ class ContentRight extends React.Component {
           <div className={'col-xs-7'}>
             <div className={'row'}>
               <a href='#' style={{color: '#442173'}} title="click to enter a name"
+                id="meeting-change-uName-link"
                 onClick={this.contentRightHandler.onClickUserName.bind(this)}>
                 <div className={'col-xs-4'} style={{padding: '0px', paddingTop: '3%'}}>
                 Your name
@@ -48,6 +49,7 @@ class ContentRight extends React.Component {
               <div className={'col-xs-8'} style={{padding: '0px'}}>
                 <div className="input-group">
                   <input className="form-control"
+                    id="meeting-change-uName-input"
                     disabled={this.state.userNameInput}
                     value={this.state.userName}
                     onChange={this.contentRightHandler.handleInputChange.bind(this)}
@@ -58,7 +60,7 @@ class ContentRight extends React.Component {
             </div>
             <div className={'row'} style={{paddingTop: '10%'}}>
               <div className={'col-xs-3'}>
-                <a href='#' onClick={this.contentRightHandler.onAudioToggle.bind(this)}>
+                <a href='#' id="meeting-toggle-audio-state" onClick={this.contentRightHandler.onAudioToggle.bind(this)}>
                   <span className={'glyphicon glyphicon-volume-up'} aria-hidden="true" style={{
                     fontSize: '22px',
                     color: this.state.audioMuted ? '#808080' : '#442173'
@@ -66,7 +68,7 @@ class ContentRight extends React.Component {
                 </a>
               </div>
               <div className={'col-xs-3'}>
-                <a href='#' onClick={this.contentRightHandler.onVideoToggle.bind(this)}>
+                <a href='#' id="meeting-toggle-video-state" onClick={this.contentRightHandler.onVideoToggle.bind(this)}>
                   <span className="glyphicon glyphicon-facetime-video" aria-hidden="true" style={{
                     fontSize: '22px',
                     color: this.state.videoMuted ? '#808080' : '#442173'
@@ -74,7 +76,7 @@ class ContentRight extends React.Component {
                 </a>
               </div>
               <div className={'col-xs-3'}>
-                <a href='#' onClick={this.contentRightHandler.onScreenShareToggle.bind(this)}>
+                <a href='#' id="meeting-toggle-screenshare-state" onClick={this.contentRightHandler.onScreenShareToggle.bind(this)}>
                   <span className="glyphicon glyphicon-eye-open" aria-hidden="true" style={{
                     fontSize: '22px',
                     color: this.state.screenShared ? '#442173' : '#808080'
@@ -82,7 +84,7 @@ class ContentRight extends React.Component {
                 </a>
               </div>
               <div className={'col-xs-3'}>
-                <a href="#" style={{color: '#FFFFFF', background: 'inherit'}}
+                <a href="#" id="meeting-close-meeting-btn" style={{color: '#FFFFFF', background: 'inherit'}}
                   onClick={this.contentRightHandler.onClickCloseButton.bind(this)}>
                   <img alt="Hangup" src={'/static/images/hangup.png'}/>
                 </a>
