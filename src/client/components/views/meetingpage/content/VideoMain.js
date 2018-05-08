@@ -23,11 +23,20 @@ class VideoMain extends React.Component {
       paddingRight: '5%',
       maxHeight: `${this.state.videoHeight}px`
     };
+    const mirrorStyle = {
+      objectFit: 'fill',
+      width: '90%',
+      paddingRight: '5%',
+      maxHeight: `${this.state.videoHeight}px`,
+      transform: 'rotateY(180deg)',
+      webkitTransform: 'rotateY(180deg)',
+      mozTransform: 'rotateY(180deg)'
+    };
     return (
       <video id={this.videoHandler.name}
         muted={this.state.muted}
         autoPlay loop
-        style={customStyle}
+        style={this.videoHandler.name === 'local' ? mirrorStyle : customStyle}
         ref={(video) => {
           this.video = video;
         }}>
