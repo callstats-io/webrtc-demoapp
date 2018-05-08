@@ -35,6 +35,7 @@ class JoinMeetingRoomPopup extends React.Component {
                 style={customStyle}>
                 <input className="form-control"
                   placeholder="Meeting name"
+                  id="join-meeting-popup-name-input"
                   value={this.state.roomName}
                   onChange={this.joinMeetingHandler.handleInputChange.bind(this)}
                   onKeyUp={this.joinMeetingHandler.onKeyUp.bind(this)}/>
@@ -42,11 +43,13 @@ class JoinMeetingRoomPopup extends React.Component {
             </div>
             <div className="modal-footer">
               <button type="button"
+                id="join-meeting-popup-join-btn"
                 className="btn btn-primary"
                 disabled={!this.state.joinRoomButtonEnabled}
                 onClick={this.joinMeetingHandler.handleJoinMeeting.bind(this)}
               > Join room </button>
               <button type="button"
+                id="join-meeting-popup-close-btn"
                 className="btn btn-primary"
                 onClick={this.joinMeetingHandler.handleCloseModal.bind(this)}>Close</button>
             </div>

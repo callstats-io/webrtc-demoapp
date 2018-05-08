@@ -49,6 +49,7 @@ class CreateMeetingLayout extends React.Component {
             <li style={liCustomStyle}>
               <div className="input-group">
                 <input className="form-control"
+                  id="join-meeting-name-input"
                   placeholder="Meeting name"
                   value={this.state.roomName}
                   onChange={this.joinMeetingHandler.handleInputChange.bind(this)}
@@ -57,6 +58,7 @@ class CreateMeetingLayout extends React.Component {
             </li>
             <li style={liCustomStyle}>
               <button type="button" className={'btn btn-info dropdown-toggle'}
+                id="join-meeting-btn"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                 disabled={!this.state.createRoomButtonEnabled}
                 onClick={this.joinMeetingHandler.handleCreateRoomClick.bind(this)}>

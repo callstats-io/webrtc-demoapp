@@ -35,10 +35,12 @@ class AlertLayout extends React.Component {
             role="alert" style={{'textAlign': 'center'}}>
             Download extension from:
             <a onClick={this.alertHandler.onClickExtensionDownloadLink.bind(this)}
+              id="download-extension-download-link"
               target="_blank"
               href={this.state.extensionDownloadURL}>
               <strong> Here!</strong></a>
             <a onClick={this.alertHandler.onCloseDownloadExtensionAlert.bind(this)}
+              id="download-extension-download-close-link"
               href='#' className={'pull-right'}>
               <span className="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
           </div>

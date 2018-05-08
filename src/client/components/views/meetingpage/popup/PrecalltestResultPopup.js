@@ -67,6 +67,7 @@ class PrecalltestResultPopup extends React.Component {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary"
+                  id="precall-test-popup-close-btn"
                   onClick={this.precalltestResultPopupHandler.handleCloseModal.bind(this)}>Close</button>
               </div>
             </div>

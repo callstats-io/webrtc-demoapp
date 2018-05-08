@@ -22,6 +22,7 @@ class UserFeedbackPopup extends React.Component {
     const overallRating = Object.entries(this.state.meetingFeedback).map(([key, value]) =>
       <li key={`meeting-${key}`}>
         <a href="#"
+          id={`userfeedback-meeting-fb-${key}`}
           value={key}
           onClick={this.userFeedbackPopupHandler.onUpdateMeetingFeedback.bind(this, key)}>
           <span className={value} aria-hidden="true"/>
@@ -31,6 +32,7 @@ class UserFeedbackPopup extends React.Component {
     const audioRating = Object.entries(this.state.audioFeedback).map(([key, value]) =>
       <li key={`audio-${key}`}>
         <a href="#"
+          id={`userfeedback-audio-fb-${key}`}
           value={key}
           onClick={this.userFeedbackPopupHandler.onUpdateAudioFeedback.bind(this, key)}>
           <span className={value} aria-hidden="true"/>
@@ -40,6 +42,7 @@ class UserFeedbackPopup extends React.Component {
     const videoRating = Object.entries(this.state.videoFeedback).map(([key, value]) =>
       <li key={`video-${key}`}>
         <a href="#"
+          id={`userfeedback-video-fb-${key}`}
           value={key}
           onClick={this.userFeedbackPopupHandler.onUpdateVideoFeedback.bind(this, key)}>
           <span className={value} aria-hidden="true"/>
@@ -49,6 +52,7 @@ class UserFeedbackPopup extends React.Component {
     const screenShareRating = Object.entries(this.state.screenshareFeedback).map(([key, value]) =>
       <li key={`screen-${key}`}>
         <a href="#"
+          id={`userfeedback-screenshare-fb-${key}`}
           value={key}
           onClick={this.userFeedbackPopupHandler.onUpdateScreenShareFeedback.bind(this, key)}>
           <span className={value} aria-hidden="true"/>
@@ -119,6 +123,7 @@ class UserFeedbackPopup extends React.Component {
               <div className={'col-xs-8'}>
                 <div className="form-group">
                   <textarea className="form-control"
+                    id="userfeedback-popup-comment-text"
                     onChange={this.userFeedbackPopupHandler.handleInputChange.bind(this)}
                     placeholder="Please provide your feedback"
                     value={this.state.comments}
@@ -129,6 +134,7 @@ class UserFeedbackPopup extends React.Component {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-primary"
+                id="userfeedback-popup-close-btn"
                 onClick={this.userFeedbackPopupHandler.handleCloseModal.bind(this)}>Close</button>
             </div>
           </div>

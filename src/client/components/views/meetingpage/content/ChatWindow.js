@@ -48,11 +48,13 @@ class ChatLayout extends React.Component {
           <div className="input-group">
             <input className="form-control" placeholder="Send a message"
               type="text"
+              id="chat-window-msg-input-box"
               value={this.state.inputText}
               onChange={this.chatWindowHandler.onInputChange.bind(this)}
               onKeyUp={this.chatWindowHandler.onKeyUp.bind(this)}/>
             <span className="input-group-btn">
               <button className="btn btn-default" type="button"
+                id="chat-window-send-msg-btn"
                 onClick={this.chatWindowHandler.onSendClick.bind(this)}>
               Send
               </button>

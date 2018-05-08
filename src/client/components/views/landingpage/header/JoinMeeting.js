@@ -17,6 +17,7 @@ class JoinMeeting extends React.Component {
         <ul className={'nav nav-pills pull-right'}>
           <li role={'presentation'}>
             <a href="#" className={'btn btn-link'} style={customeStyle}
+              id="join-meeting-link"
               onClick={JoinMeeting}>Join a meeting</a></li>
         </ul>
       </nav>
