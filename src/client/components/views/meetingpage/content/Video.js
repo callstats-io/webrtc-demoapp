@@ -21,11 +21,9 @@ class Video extends React.Component {
     };
     const mirrorStyle = {
       padding: '0px',
-      WebkitTransform: 'scaleX(1.5)',
-      MozTransform: 'scaleX(1.5)',
+      WebkitTransform: 'scaleX(1.5) rotateY(180deg',
+      MozTransform: 'scaleX(1.5) rotateY(180deg)',
       transform: 'rotateY(180deg)',
-      webkitTransform: 'rotateY(180deg)',
-      mozTransform: 'rotateY(180deg)'
     };
     return (
       <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)} title={this.props.name}>

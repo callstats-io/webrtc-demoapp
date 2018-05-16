@@ -29,8 +29,8 @@ class VideoMain extends React.Component {
       paddingRight: '5%',
       maxHeight: `${this.state.videoHeight}px`,
       transform: 'rotateY(180deg)',
-      webkitTransform: 'rotateY(180deg)',
-      mozTransform: 'rotateY(180deg)'
+      WebkitTransform: 'rotateY(180deg)',
+      MozTransform: 'rotateY(180deg)'
     };
     return (
       <video id={this.videoHandler.name}
