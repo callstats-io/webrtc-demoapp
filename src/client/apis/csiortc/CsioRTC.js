@@ -101,12 +101,35 @@ class CsioRTC {
     }
   }
   mayBeStartStopScreenShare(isEnable) {
-    for (const key in this.pcs) {
-      if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
-        this.csoiMedia.removeStream(this.pcs[key].pc);
+    const getStreamID = (callback) => {
+      const extensionid = __addon_id__; // getting from environment variable
+      chrome.runtime.sendMessage(
+        extensionid, {
+          getStream: true
+        },
+        response => {
+          if (!response) {
+            console.error('->', response);
+            callback(new Error('Failed to start screen share'), response);
+            return;
+          }
+          if (response.streamId === '' || response.streamId.length <= 0) {
+            callback(new Error('User selected cancel'), null);
+            return;
+          }
+          callback(null, response.streamId);
+        }
+      );
+    };
+    const resetStream = () => {
+      for (const key in this.pcs) {
+        if (this.pcs.hasOwnProperty(key) && this.pcs[key]) {
+          this.csoiMedia.removeStream(this.pcs[key].pc);
+        }
       }
-    }
-    this.csoiMedia.disposeLocalStream();
+      this.csoiMedia.disposeLocalStream();
+    };
+
     const isFF = !!navigator.mozGetUserMedia;
     if (isEnable) {
       if (isFF) {
@@ -114,27 +137,26 @@ class CsioRTC {
         TriggerEvent(CsioEvents.CsioRTC.ON_FF_SCREEN_SHARE_OPTION, {});
       } else {
         // request screen share for chrome
-        const extensionid = __addon_id__; // getting from environment variable
-        chrome.runtime.sendMessage(
-          extensionid, {
-            getStream: true
-          },
-          response => {
-            if (!response) {
-              console.error('->', response);
-              return;
-            }
-            const detail = {
-              mediaSource: '',
-              from: 'cmScreenShare',
-              csioSourceId: response.streamId
-            };
+        getStreamID((err, streamId) => {
+          if (err) {
             TriggerEvent(
-              CsioEvents.CMScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED, detail);
+              CsioEvents.CsioRTC.ON_USER_CANCEL_SCREENSHARE, {});
+            return;
           }
-        );
+          resetStream();
+          const detail = {
+            mediaSource: '',
+            from: 'cmScreenShare',
+            csioSourceId: streamId
+          };
+          TriggerEvent(
+            CsioEvents.CMScreenShare.ON_SCREEN_SHARE_OPTION_SELECTED, detail);
+        });
       }
     } else {
+      this.notifyMediaStateChange(isEnable, 'screen');
+      // reset stream first
+      resetStream();
       // restart with getting local audio video
       const mediaConfig = this.config ? this.config.media : undefined;
       const roomName = this.roomName;
@@ -144,6 +166,7 @@ class CsioRTC {
     }
   }
   onStartedScreenShare(msg) {
+    this.notifyMediaStateChange(true, 'screen');
     if (msg.detail && msg.detail.from === 'ffScreenShare') {
       const constraints = {
         'mediaSource': msg.detail.mediaSource,
@@ -153,7 +176,7 @@ class CsioRTC {
       };
       const roomName = this.roomName;
       if (constraints && roomName) {
-        this.csoiMedia.getUserMedia({video: constraints, audio: false});
+        this.csoiMedia.getUserMedia({video: constraints, audio: false}, true);
       }
     } else if (msg.detail && msg.detail.from === 'cmScreenShare') {
       const constraints = {
@@ -169,7 +192,7 @@ class CsioRTC {
       };
       const roomName = this.roomName;
       if (constraints && roomName) {
-        this.csoiMedia.getUserMedia({video: constraints, audio: false});
+        this.csoiMedia.getUserMedia({video: constraints, audio: false}, true);
       }
     }
   }
@@ -178,8 +201,17 @@ class CsioRTC {
       // this is screen share
       this.mayBeStartStopScreenShare(isEnable);
     } else {
+      this.notifyMediaStateChange(isEnable, mediaType);
       this.csoiMedia.toggleMediaStates(isEnable, mediaType);
     }
+  }
+  notifyMediaStateChange(isEnable, mediaType) {
+    const detail = {
+      mediaType: mediaType,
+      isEnable: isEnable
+    };
+    TriggerEvent(
+      CsioEvents.CsioRTC.ON_MEDIA_STATE_CHANGED, detail);
     const getLog = (userId) => {
       let _type;
       let eventLog;

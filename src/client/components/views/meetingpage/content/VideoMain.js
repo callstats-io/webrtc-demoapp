@@ -15,7 +15,6 @@ class VideoMain extends React.Component {
       CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
       this.videoHandler.onResizeVideoView.bind(this), false);
   }
-
   render() {
     const customStyle = {
       objectFit: 'fill',
@@ -36,7 +35,7 @@ class VideoMain extends React.Component {
       <video id={this.videoHandler.name}
         muted={this.state.muted}
         autoPlay loop
-        style={this.videoHandler.name === 'local' ? mirrorStyle : customStyle}
+        style={this.videoHandler.name === 'local' && this.props.isScreenShare !== true ? mirrorStyle : customStyle}
         ref={(video) => {
           this.video = video;
         }}>

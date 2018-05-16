@@ -20,6 +20,10 @@ class ContentRight extends React.Component {
       CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
       this.contentRightHandler.onToggleMediaState.bind(this),
       false);
+    document.addEventListener(
+      CsioEvents.CsioRTC.ON_USER_CANCEL_SCREENSHARE,
+      this.contentRightHandler.onCancelScreenShare.bind(this),
+      false);
     window.addEventListener('resize',
       this.contentRightHandler.onResizeWindow.bind(this), false);
   }
@@ -94,7 +98,7 @@ class ContentRight extends React.Component {
           <div className={'col-xs-5'}>
             <div align="center" className="embed-responsive embed-responsive-16by9">
               <Video key={'local'} name={'local'}
-                stream={this.state.media}/>
+                stream={this.state.media} isScreenShare={this.state.isScreenShare}/>
             </div>
           </div>
         </div>
