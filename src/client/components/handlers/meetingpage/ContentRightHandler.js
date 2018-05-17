@@ -5,7 +5,6 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 class ContentRightHandler {
   constructor() {
     this.mediaStream = null;
-    this.isScreenShare = false;
     this.userName = this.getUserName();
     this.audioMuted = false;
     this.videoMuted = false;
@@ -15,7 +14,6 @@ class ContentRightHandler {
   getState() {
     return {
       mediaStream: this.mediaStream,
-      isScreenShare: this.isScreenShare,
       userName: this.userName,
       audioMuted: this.audioMuted,
       videoMuted: this.videoMuted,
@@ -25,10 +23,8 @@ class ContentRightHandler {
   }
   onLocalVideoStream(e) {
     const media = e.detail.media;
-    const isScreenShare = e.detail.isScreenShare || false;
     this.setState({
-      media: media,
-      isScreenShare: isScreenShare
+      media: media
     });
     // a hack to find right container height on runtime
     // when it first arrive

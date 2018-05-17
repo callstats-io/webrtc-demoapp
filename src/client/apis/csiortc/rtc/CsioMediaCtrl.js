@@ -57,6 +57,8 @@ class CsioMediaCtrl {
       }
       navigator.mediaDevices.getUserMedia(_contrain)
         .then(function(stream) {
+          stream.isLocal = true;
+          stream.isScreen = isScreenShare || false;
           const detail = {
             media: stream,
             isScreenShare: isScreenShare

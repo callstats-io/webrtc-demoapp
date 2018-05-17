@@ -4,9 +4,12 @@ import {CsioEvents, TriggerEvent} from '../../../events/CsioEvents';
 class VideoHandler {
   constructor(name) {
     this.name = name;
+    this.isLocal = false;
+    this.isScreen = false;
     this.muted = false;
     if (name === 'local') {
       this.muted = true;
+      this.isLocal = true;
     }
   }
   getState() {
@@ -18,6 +21,10 @@ class VideoHandler {
     this.video.srcObject = this.props.stream;
   }
   shouldComponentUpdate(props) {
+    if (this.props.stream) {
+      this.videoHandler.isLocal = props.stream.isLocal === true;
+      this.videoHandler.isScreen = props.stream.isScreen === true;
+    }
     return this.props.stream !== props.stream;
   }
   componentDidUpdate() {

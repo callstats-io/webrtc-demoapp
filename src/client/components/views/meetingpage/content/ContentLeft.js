@@ -38,7 +38,7 @@ class ContentLeft extends React.Component {
         <div className={'row'} style={rowStyle}>
           <div className={'row'} style={rowStyle}>
             <VideoMain key={'local'} name={'local'}
-              stream={this.state.media} isScreenShare={this.state.isScreenShare}/>
+              stream={this.state.media}/>
           </div>
         </div>
         <RemoteVideos/>

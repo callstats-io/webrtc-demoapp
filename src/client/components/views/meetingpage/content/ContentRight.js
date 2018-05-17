@@ -98,7 +98,7 @@ class ContentRight extends React.Component {
           <div className={'col-xs-5'}>
             <div align="center" className="embed-responsive embed-responsive-16by9">
               <Video key={'local'} name={'local'}
-                stream={this.state.media} isScreenShare={this.state.isScreenShare}/>
+                stream={this.state.media}/>
             </div>
           </div>
         </div>

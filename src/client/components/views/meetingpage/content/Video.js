@@ -14,7 +14,7 @@ class Video extends React.Component {
   }
 
   render() {
-    const videoStyle = {
+    const customStyle = {
       padding: '0px',
       WebkitTransform: 'scaleX(1.5)',
       MozTransform: 'scaleX(1.5)'
@@ -31,7 +31,7 @@ class Video extends React.Component {
           muted={this.state.muted}
           className="thumbnail"
           autoPlay loop
-          style={this.videoHandler.name === 'local' && this.props.isScreenShare !== true ? mirrorStyle : videoStyle}
+          style={this.videoHandler.isLocal === true && this.videoHandler.isScreen !== true ? mirrorStyle : customStyle}
           ref={(video) => {
             this.video = video;
           }}>

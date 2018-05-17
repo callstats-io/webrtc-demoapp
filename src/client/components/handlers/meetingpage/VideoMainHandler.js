@@ -3,9 +3,12 @@
 class VideoMainHandler {
   constructor(name) {
     this.name = name;
+    this.isLocal = false;
+    this.isScreen = false;
     this.muted = false;
     if (name === 'local') {
       this.muted = true;
+      this.isLocal = true;
     }
   }
   getState() {
@@ -19,6 +22,13 @@ class VideoMainHandler {
   }
   componentDidUpdate() {
     this.video.srcObject = this.props.stream;
+  }
+  shouldComponentUpdate() {
+    if (this.props.stream) {
+      this.videoHandler.isLocal = this.props.stream.isLocal === true;
+      this.videoHandler.isScreen = this.props.stream.isScreen === true;
+    }
+    return true;
   }
   onResizeVideoView(e) {
     setTimeout(function() {

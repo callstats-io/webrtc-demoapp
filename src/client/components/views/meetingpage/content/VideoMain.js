@@ -10,6 +10,7 @@ class VideoMain extends React.Component {
     this.videoHandler = new VideoMainHandler(this.props.name);
     this.state = this.videoHandler.getState();
     this.componentDidMount = this.videoHandler.componentDidMount.bind(this);
+    this.shouldComponentUpdate = this.videoHandler.shouldComponentUpdate.bind(this);
     this.componentDidUpdate = this.videoHandler.componentDidUpdate.bind(this);
     document.addEventListener(
       CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
@@ -35,7 +36,7 @@ class VideoMain extends React.Component {
       <video id={this.videoHandler.name}
         muted={this.state.muted}
         autoPlay loop
-        style={this.videoHandler.name === 'local' && this.props.isScreenShare !== true ? mirrorStyle : customStyle}
+        style={this.videoHandler.isLocal === true && this.videoHandler.isScreen !== true ? mirrorStyle : customStyle}
         ref={(video) => {
           this.video = video;
         }}>
