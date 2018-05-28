@@ -10,12 +10,12 @@ class VideoMain extends React.Component {
     this.videoHandler = new VideoMainHandler(this.props.name);
     this.state = this.videoHandler.getState();
     this.componentDidMount = this.videoHandler.componentDidMount.bind(this);
+    this.shouldComponentUpdate = this.videoHandler.shouldComponentUpdate.bind(this);
     this.componentDidUpdate = this.videoHandler.componentDidUpdate.bind(this);
     document.addEventListener(
       CsioEvents.MEETING_PAGE.RESIZE_VIDEO_VIEW,
       this.videoHandler.onResizeVideoView.bind(this), false);
   }
-
   render() {
     const customStyle = {
       objectFit: 'fill',
@@ -29,14 +29,14 @@ class VideoMain extends React.Component {
       paddingRight: '5%',
       maxHeight: `${this.state.videoHeight}px`,
       transform: 'rotateY(180deg)',
-      webkitTransform: 'rotateY(180deg)',
-      mozTransform: 'rotateY(180deg)'
+      WebkitTransform: 'rotateY(180deg)',
+      MozTransform: 'rotateY(180deg)'
     };
     return (
       <video id={this.videoHandler.name}
         muted={this.state.muted}
         autoPlay loop
-        style={this.videoHandler.name === 'local' ? mirrorStyle : customStyle}
+        style={this.videoHandler.isLocal === true && this.videoHandler.isScreen !== true ? mirrorStyle : customStyle}
         ref={(video) => {
           this.video = video;
         }}>

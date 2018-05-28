@@ -136,6 +136,11 @@ class ContentRightHandler {
       });
     }
   }
+  onCancelScreenShare(e) {
+    this.setState({
+      screenShared: e.detail.isEnable
+    });
+  }
 
   onClickUserName(e) {
     e.preventDefault();

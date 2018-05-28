@@ -201,7 +201,9 @@ class CsioStats {
   }
   onAskPrecallTestResult(e) {
     if (this.precallStats) {
-      const detail = this.precallStats;
+      const detail = {
+        precallStats : this.precallStats
+      };
       TriggerEvent(
         CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE,
         detail

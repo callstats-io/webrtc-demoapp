@@ -47,7 +47,7 @@ class CsioMediaCtrl {
       TriggerEvent(CsioEvents.MEETING_PAGE.VIDEO_FOCUS_CHANGE, detail);
     }
   }
-  getUserMedia(constraints) {
+  getUserMedia(constraints, isScreenShare) {
     const self = this;
     let promise = this.isAudioOnly(constraints);
     promise.then(function(audioOnly) {
@@ -57,8 +57,11 @@ class CsioMediaCtrl {
       }
       navigator.mediaDevices.getUserMedia(_contrain)
         .then(function(stream) {
+          stream.isLocal = true;
+          stream.isScreen = isScreenShare || false;
           const detail = {
-            media: stream
+            media: stream,
+            isScreenShare: isScreenShare
           };
           self.localStream = stream;
           TriggerEvent(

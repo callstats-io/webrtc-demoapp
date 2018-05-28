@@ -52,7 +52,9 @@ const CsioEvents = {
   CsioRTC: {
     ON_TOGGLE_MEDIA_STATE: 'csiortc.ontogglemediastate',
     ON_FF_SCREEN_SHARE_OPTION: 'csiortc.onffscreenshareoption',
-    ON_EXTENTION_REQUIRED: 'csiortc.onextentionrequired'
+    ON_EXTENTION_REQUIRED: 'csiortc.onextentionrequired',
+    ON_USER_CANCEL_SCREENSHARE: 'csiortc.onusercancelscreenshare',
+    ON_MEDIA_STATE_CHANGED: 'csiortc.onmediastatechanged'
   },
   LANDING_PAGE: {
     ON_JOIN_MEETING_ROOM_LINK_CLICK: 'landingpage.onjoinmeetingroomlinkclick'

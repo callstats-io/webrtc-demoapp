@@ -14,18 +14,16 @@ class Video extends React.Component {
   }
 
   render() {
-    const videoStyle = {
+    const customStyle = {
       padding: '0px',
       WebkitTransform: 'scaleX(1.5)',
       MozTransform: 'scaleX(1.5)'
     };
     const mirrorStyle = {
       padding: '0px',
-      WebkitTransform: 'scaleX(1.5)',
-      MozTransform: 'scaleX(1.5)',
-      transform: 'rotateY(180deg)',
-      webkitTransform: 'rotateY(180deg)',
-      mozTransform: 'rotateY(180deg)'
+      WebkitTransform: 'scaleX(1.5) rotateY(180deg',
+      MozTransform: 'scaleX(1.5) rotateY(180deg)',
+      transform: 'rotateY(180deg)'
     };
     return (
       <a href='#' onClick={this.videoHandler.onClickHandler.bind(this)} title={this.props.name}>
@@ -33,7 +31,7 @@ class Video extends React.Component {
           muted={this.state.muted}
           className="thumbnail"
           autoPlay loop
-          style={this.videoHandler.name === 'local' ? mirrorStyle : videoStyle}
+          style={this.videoHandler.isLocal === true && this.videoHandler.isScreen !== true ? mirrorStyle : customStyle}
           ref={(video) => {
             this.video = video;
           }}>

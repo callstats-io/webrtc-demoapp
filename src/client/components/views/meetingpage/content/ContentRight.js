@@ -20,6 +20,10 @@ class ContentRight extends React.Component {
       CsioEvents.MEETING_PAGE.ON_TOGGLE_MEDIA_STATE,
       this.contentRightHandler.onToggleMediaState.bind(this),
       false);
+    document.addEventListener(
+      CsioEvents.CsioRTC.ON_USER_CANCEL_SCREENSHARE,
+      this.contentRightHandler.onCancelScreenShare.bind(this),
+      false);
     window.addEventListener('resize',
       this.contentRightHandler.onResizeWindow.bind(this), false);
   }
