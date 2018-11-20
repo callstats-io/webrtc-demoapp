@@ -15,6 +15,7 @@ class CsioPeerConnection {
     this.userId = userId;
 
     // TODO is there any error when the TURN servers are not responding o.s.?
+    iceConfig = {...iceConfig, sdpSemantics: 'unified-plan'};
     this.pc = new RTCPeerConnection(iceConfig);
     const detail = {
       userId: this.userId,
