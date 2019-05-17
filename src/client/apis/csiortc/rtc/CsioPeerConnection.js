@@ -15,7 +15,12 @@ class CsioPeerConnection {
     this.userId = userId;
 
     // TODO is there any error when the TURN servers are not responding o.s.?
-    iceConfig = {...iceConfig, sdpSemantics: 'unified-plan'};
+    // iceConfig = {...iceConfig, iceTransportPolicy: 'all', bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require', iceCandidatePoolSize: 0, sdpSemantics: 'unified-plan'};
+    // iceConfig = {...iceConfig, sdpSemantics: 'unified-plan'}; // doesn't work
+    // iceConfig = {...iceConfig, sdpSemantics: 'plan-b'}; // works
+    // iceConfig = {...iceConfig, bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require', iceCandidatePoolSize: 0, sdpSemantics: 'unified-plan'}; // works
+    iceConfig = {...iceConfig, bundlePolicy: 'max-bundle', sdpSemantics: 'unified-plan'}; // works
+    console.warn('->', iceConfig);
     this.pc = new RTCPeerConnection(iceConfig);
     const detail = {
       userId: this.userId,
@@ -33,7 +38,6 @@ class CsioPeerConnection {
     this.pc.oniceconnectionstatechange = this.oniceconnectionstatechange.bind(this);
     this.pc.ontrack = this.onTrack.bind(this);
   }
-
   // callable functions
   close() {
     for (const label in this.datachannels) {
@@ -272,9 +276,26 @@ class CsioPeerConnection {
   }
 
   sendChannelMessage(label, message) {
-    if (this.datachannels[label]) {
-      this.datachannels[label].send(message);
-    }
+    const sleep = async() => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(null);
+        }, 1000);
+      });
+    };
+    let dc = this.datachannels[label];
+    setTimeout(async() => {
+      let retryCount = 0;
+      while (retryCount < 3) {
+        if (dc.readyState === 'open') {
+          dc.send(message);
+          retryCount = 3;
+        } else {
+          await sleep();
+          retryCount += 1;
+        }
+      }
+    }, 0);
   }
 }
 

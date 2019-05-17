@@ -138,7 +138,12 @@ class CsioMediaCtrl {
     }
     for (const i in mediaTracks) {
       if (mediaTracks.hasOwnProperty(i) && mediaTracks[i]) {
-        mediaTracks[i].enabled = isMuteOrPaused;
+        if (window.disruptionTest) {
+          // mediaTracks[i].enabled = isMuteOrPaused;
+          mediaTracks[i].stop();
+        } else {
+          mediaTracks[i].enabled = isMuteOrPaused;
+        }
       }
     }
   }
