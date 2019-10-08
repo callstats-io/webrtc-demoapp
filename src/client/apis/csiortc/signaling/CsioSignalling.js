@@ -96,6 +96,14 @@ class CsioSignalling {
     this.socket.emit(
       CsioEvents.SocketIOEvents.GENERATE_TOKEN, userId, callback);
   }
+
+  /**
+   * Ask server for a JWT token
+   */
+  generateTurnToken(callback) {
+    this.socket.emit(
+      CsioEvents.SocketIOEvents.GENERATE_TURN_TOKEN, callback);
+  }
 }
 
 export default CsioSignalling;
