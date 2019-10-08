@@ -16,11 +16,6 @@ class CsioStats {
     this.cachedUserId = undefined;
     this.precallStats = undefined;
     this.csObject = new callstats();
-    this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
-    this.csObject.on(
-      'recommendedConfig',
-      this.recommendedConfigCallback.bind(this)
-    );
     this.csObject.on(
       'preCallTestResults',
       this.csPreCallTestResultsCallback.bind(this)
@@ -129,56 +124,32 @@ class CsioStats {
       return;
     }
     this.cachedUserId = userID.aliasName;
+    let appSecret = __appsecret__;
     if (__jwtenabled__ === 'true') {
-      this.csObject.initialize(
-        __appid__,
-        this.tokenGenerator.bind(this, userID.aliasName),
-        userID,
-        this.csInitCallback.bind(this),
-        this.csStatsCallback.bind(this),
-        CsioConfigParams
-      );
-    } else {
-      this.csObject.initialize(
-        __appid__,
-        __appsecret__,
-        userID,
-        this.csInitCallback.bind(this),
-        this.csStatsCallback.bind(this),
-        CsioConfigParams
-      );
+      appSecret = this.tokenGenerator.bind(this, userID.aliasName);
+    }
+
+    this.csObject.initialize(
+      __appid__,
+      appSecret,
+      userID,
+      this.csInitCallback.bind(this),
+      this.csStatsCallback.bind(this),
+      CsioConfigParams
+    );
+
+    if (this.csObject.getTurnCredentials) {
+      this.csObject.getTurnCredentials(__appid__, appSecret)
+        .then((turnCredentials) => {
+          console.log('Callstats: Turn Config', turnCredentials);
+          TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, {config: turnCredentials});
+        })
+        .catch((err) => {
+          console.log('Turn err', err);
+        });
     }
   }
-  // csio related events, and function
-  // CSIO object callback
-  defaultConfigCallback(config) {
-    console.log('ConfigService, default config:', config);
-    if (
-      this.config.peerConnection &&
-      this.config.peerConnection.iceServers &&
-      config.peerConnection &&
-      !config.peerConnection.iceServers
-    ) {
-      config.peerConnection.iceServers = this.config.peerConnection.iceServers;
-    }
-    this.config = { ...this.config, ...config };
-  }
-  recommendedConfigCallback(config) {
-    console.log('ConfigService, recommended config:', config);
-    if (
-      this.config.peerConnection &&
-      this.config.peerConnection.iceServers &&
-      config.peerConnection &&
-      !config.peerConnection.iceServers
-    ) {
-      config.peerConnection.iceServers = this.config.peerConnection.iceServers;
-    }
-    this.config = { ...this.config, ...config };
-    const detail = {
-      config: this.config
-    };
-    TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, detail);
-  }
+
   csPreCallTestResultsCallback(status, results) {
     if (status === this.csObject.callStatsAPIReturnStatus.success) {
       const precallStats = {
