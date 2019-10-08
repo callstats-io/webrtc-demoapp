@@ -119,14 +119,44 @@ class CsioStats {
       }.bind(this)
     );
   }
+
+  createTurnTokenGeneratorTimer(forcenew, callback) {
+    return setTimeout(
+      function() {
+        console.log('calling tokenGenerator');
+        this.turnTokenGenerator(forcenew, callback).bind(this);
+      }.bind(this),
+      100
+    );
+  }
+
+  turnTokenGenerator(forcenew, callback) {
+    this.signaling.generateTurnToken(
+      function(err, token) {
+        if (err) {
+          console.log('Token generation failed: try again');
+          return this.createTurnTokenGeneratorTimer.bind(
+            this,
+            forcenew,
+            callback
+          );
+        }
+        console.log('Received Turn Token');
+        callback(null, token);
+      }.bind(this)
+    );
+  }
+
   initialize(userID) {
     if (this.isInitialized) {
       return;
     }
     this.cachedUserId = userID.aliasName;
     let appSecret = __appsecret__;
+    let turnAppSecret = __appsecret__;
     if (__jwtenabled__ === 'true') {
       appSecret = this.tokenGenerator.bind(this, userID.aliasName);
+      turnAppSecret = this.turnTokenGenerator.bind(this, userID.aliasName);
     }
 
     this.csObject.initialize(
@@ -139,7 +169,7 @@ class CsioStats {
     );
 
     if (this.csObject.getTurnCredentials) {
-      this.csObject.getTurnCredentials(__appid__, appSecret)
+      this.csObject.getTurnCredentials(__appid__, turnAppSecret)
         .then((turnCredentials) => {
           console.log('Callstats: Turn Config', turnCredentials);
           TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, {config: turnCredentials});

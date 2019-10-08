@@ -10,7 +10,8 @@ const CsioEvents = {
     JOIN: 'join',
     LEAVE: 'leave',
     MESSAGE: 'message',
-    GENERATE_TOKEN: 'generateToken'
+    GENERATE_TOKEN: 'generateToken',
+    GENERATE_TURN_TOKEN: 'generateTurnToken'
   },
   CSIOSignaling: {
     SEND_MESSAGE: 'csioevents.sendMessage',
