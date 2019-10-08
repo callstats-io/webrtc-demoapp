@@ -35,7 +35,7 @@ class CsioRTC {
       this.onIceFailed.bind(this), false);
   }
   mayBeInitializeRTC() {
-    const mediaConfig = this.config ? this.config.media : undefined;
+    const mediaConfig = this.config ? this.config.media : {audio: true, video: true};
     const roomName = this.roomName;
     if (mediaConfig && roomName) {
       console.log('may be initialize media ', mediaConfig);
