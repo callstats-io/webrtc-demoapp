@@ -16,6 +16,7 @@ class CsioStats {
     this.cachedUserId = undefined;
     this.precallStats = undefined;
     this.csObject = new callstats();
+    this.csObject.on('defaultConfig', this.defaultConfigCallback.bind(this));
     this.csObject.on(
       'preCallTestResults',
       this.csPreCallTestResultsCallback.bind(this)
@@ -156,7 +157,7 @@ class CsioStats {
     let turnAppSecret = __appsecret__;
     if (__jwtenabled__ === 'true') {
       appSecret = this.tokenGenerator.bind(this, userID.aliasName);
-      turnAppSecret = this.turnTokenGenerator.bind(this, userID.aliasName);
+      turnAppSecret = this.turnTokenGenerator.bind(this);
     }
 
     this.csObject.initialize(
@@ -172,12 +173,25 @@ class CsioStats {
       this.csObject.getTurnCredentials(__appid__, turnAppSecret)
         .then((turnCredentials) => {
           console.log('Callstats: Turn Config', turnCredentials);
-          TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, {config: turnCredentials});
+          this.config = { ...this.config, peerConnection: {iceServers: turnCredentials} };
         })
         .catch((err) => {
           console.log('Turn err', err);
         });
     }
+  }
+  // csio related events, and function
+  // CSIO object callback
+  defaultConfigCallback(config) {
+    this.config = {...this.config, media: config.media};
+    if (config && config.peerConnection && config.peerConnection.iceTransportPolicy) {
+      this.config.peerConnection.iceTransportPolicy = config.peerConnection.iceTransportPolicy;
+    }
+    const detail = {
+      config: this.config
+    };
+    console.log('ConfigService, default config:', config, this.config);
+    TriggerEvent(CsioEvents.CsioStats.ON_INITIALIZED, detail);
   }
 
   csPreCallTestResultsCallback(status, results) {
@@ -203,7 +217,7 @@ class CsioStats {
   onAskPrecallTestResult(e) {
     if (this.precallStats) {
       const detail = {
-        precallStats : this.precallStats
+        precallStats: this.precallStats
       };
       TriggerEvent(
         CsioEvents.CsioStats.ON_PRECALLTEST_RESULT_AVAILABLE,
