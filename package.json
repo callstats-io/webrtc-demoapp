@@ -22,7 +22,7 @@
     "dev": "cross-env NODE_ENV=development node src/server",
     "start": "npm run build && cross-env NODE_ENV=production node build/server",
     "prebuild": "rimraf build",
-    "build": "npm run build:client && npm run build:server && npm run build:generatecertificate",
+    "build": "npm run build:client && npm run build:server",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=config/webpack.config.prod.js",
     "build:server": "copyfiles -u 1 src/server/**/**/* src/server/**/* src/server/* build",
     "build:generatecertificate": "mkdir -p ssl && cd ssl && openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout server.key -out server.crt -passin pass:v2ZIZj2jKUap -subj '/CN=localhost/O=Local/C=FI' && cp server.crt ca.crt",
