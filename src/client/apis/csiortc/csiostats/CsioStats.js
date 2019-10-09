@@ -131,6 +131,7 @@ class CsioStats {
   }
 
   turnTokenGenerator(forcenew, callback) {
+    console.warn(forcenew, callback, arguments, arguments.length);
     this.signaling.generateTurnToken(
       function(err, token) {
         if (err) {
@@ -156,7 +157,7 @@ class CsioStats {
     let turnAppSecret = __appsecret__;
     if (__jwtenabled__ === 'true') {
       appSecret = this.tokenGenerator.bind(this, userID.aliasName);
-      turnAppSecret = this.turnTokenGenerator.bind(this, userID.aliasName);
+      turnAppSecret = this.turnTokenGenerator.bind(this);
     }
 
     this.csObject.initialize(
